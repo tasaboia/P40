@@ -1,0 +1,34 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Region {
+  BRAZIL
+  EUROPE
+  NORTH_AMERICA
+  LATIN_AMERICA
+  GLOBAL
+}
+
+model TimeZone {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  offset      String
+  zions       Zion[]
+}
+
+model Zion {
+  id          String   @id @default(uuid())
+  name        String
+  address     String?
+  city        String
+  country     String
+  region      Region
+  timeZoneId  String
+  timeZone    TimeZone @relation(fields: [timeZoneId], references: [id])
+}

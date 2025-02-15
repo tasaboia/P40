@@ -2,13 +2,18 @@
   "name": "p40",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
+  "prisma": {
+    "seed": "node --loader ts-node/esm prisma/seed.ts"
+  },
   "dependencies": {
+    "@prisma/client": "^6.3.1",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.2",
@@ -29,7 +34,9 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
     "postcss": "^8",
+    "prisma": "^6.3.1",
     "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

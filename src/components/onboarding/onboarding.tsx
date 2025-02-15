@@ -8,27 +8,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { getZions } from "@p40/commons/services/zion";
+import { getRegionName } from "@p40/commons/utils/mapping";
+import { Region } from "@p40/commons/types/zions/zions";
 
-export default function Onboarding() {
+export default async function Onboarding() {
+  const zions = await getZions();
+
   return (
     <Select>
       <SelectTrigger className="w-[280px]">
         <SelectValue placeholder="Escolha sua Zion" />
       </SelectTrigger>
       <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Zion Brasil</SelectLabel>
-          <SelectItem value="est">São Paulo</SelectItem>
-          <SelectItem value="cst">Santos</SelectItem>
-          <SelectItem value="mst">Campinas</SelectItem>
-          <SelectItem value="pst">Recife</SelectItem>
-          <SelectItem value="akst">Campo Grande</SelectItem>
-        </SelectGroup>
-        <SelectGroup>
-          <SelectLabel>Zion Europa</SelectLabel>
-          <SelectItem value="gmt">Lisboa</SelectItem>
-          <SelectItem value="cet">Porto</SelectItem>
-        </SelectGroup>
+        <SelectContent>
+          {Object.entries(zions).map(([region, zionList]) => (
+            <SelectGroup key={region}>
+              <SelectLabel>
+                {getRegionName(region as keyof typeof Region)}
+              </SelectLabel>
+              {zionList.map((zion) => (
+                <SelectItem key={zion.id} value={zion.id}>
+                  {zion.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          ))}
+        </SelectContent>
       </SelectContent>
     </Select>
   );
