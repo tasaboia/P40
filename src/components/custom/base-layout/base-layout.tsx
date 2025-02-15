@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ReactNode } from "react";
-import { ChangeLanguage } from "../menu-language/menu-language";
 
 const inter = Inter({ subsets: ["latin"] });
 

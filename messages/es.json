@@ -1,0 +1,33 @@
+{
+  "setup": {
+    "choose_zion": "Elige tu Zion",
+    "enter_schedules": "Ingresar a los horarios"
+  },
+  "geral": {
+    "title": "40 Días de oración"
+  },
+  "login": {
+    "title": "40 días de oración",
+    "choose_zion": "Elige tu Zion",
+    "login_with_provider": "Inicia sesión con tus datos de Prover",
+    "email": "Correo electrónico",
+    "email_placeholder": "ejemplo@email.com",
+    "password": "Contraseña",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "login_button": "Iniciar sesión",
+    "create_account": "Crear cuenta en Prover",
+    "terms": "Al hacer clic en continuar, aceptas nuestros {terms} y {privacy}.",
+    "terms_of_service": "Términos de Servicio",
+    "privacy_policy": "Política de Privacidad"
+  },
+  "zionSelect": {
+    "title": "Selecciona tu Zion",
+    "regions": {
+      "BRAZIL": "Brasil",
+      "EUROPE": "Europa",
+      "NORTH_AMERICA": "América del Norte",
+      "LATIN_AMERICA": "América Latina",
+      "GLOBAL": "Global"
+    }
+  }
+}

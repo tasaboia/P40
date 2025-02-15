@@ -1,10 +1,34 @@
 {
-  "home": {
-    "title": "Welcome!",
-    "description": "This is an example."
+  "setup": {
+    "choose_zion": "Choose your Zion",
+    "enter_schedules": "Enter the schedules"
   },
 
   "geral": {
     "title": "40 Days of Prayer"
+  },
+  "login": {
+    "title": "40 Days of Prayer",
+    "choose_zion": "Choose your Zion",
+    "login_with_provider": "Log in with your Prover credentials",
+    "email": "Email",
+    "email_placeholder": "example@email.com",
+    "password": "Password",
+    "forgot_password": "Forgot your password?",
+    "login_button": "Sign in",
+    "create_account": "Create an account on Prover",
+    "terms": "By clicking continue, you agree to our {terms} and {privacy}.",
+    "terms_of_service": "Terms of Service",
+    "privacy_policy": "Privacy Policy"
+  },
+  "zionSelect": {
+    "title": "Select your Zion",
+    "regions": {
+      "BRAZIL": "Brazil",
+      "EUROPE": "Europe",
+      "NORTH_AMERICA": "North America",
+      "LATIN_AMERICA": "Latin America",
+      "GLOBAL": "Global"
+    }
   }
 }

@@ -1,17 +1,17 @@
 "use client";
 
 import * as React from "react";
+
+import { routing } from "@p40/i18n/routing";
+import { useChangeLanguage } from "@p40/common/hook/useChangeLanguage";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { routing } from "@p40/i18n/routing";
-import { useChangeLanguage } from "@p40/commons/hook/useChangeLanguage";
+} from "@p40/components/ui/dropdown-menu";
+import { Button } from "@p40/components/ui/button";
 
 export function ChangeLanguage() {
   const { locale, isPending, handleLanguageChange } = useChangeLanguage();

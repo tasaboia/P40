@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ReactNode } from "react";
 import { LocaleType, routing } from "@p40/i18n/routing";
-import BaseLayout from "@p40/components/base-layout/base-layout";
-import { ChangeLanguage } from "@p40/components/menu-language/menu-language";
+import BaseLayout from "@p40/components/custom/base-layout/base-layout";
+import { ChangeLanguage } from "@p40/components/custom/menu-language/menu-language";
 
 type Props = {
   children: ReactNode;

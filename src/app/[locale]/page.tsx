@@ -1,9 +1,7 @@
-import { getZions } from "@p40/commons/services/zion";
-import { LoginForm } from "@p40/components/login/login";
 import { GalleryVerticalEnd } from "lucide-react";
+import { SetUp } from "@p40/components/custom/setup/setup";
 
 export default async function Home() {
-  const zions = await getZions();
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -13,7 +11,7 @@ export default async function Home() {
           </div>
           Acme Inc.
         </a>
-        <LoginForm />
+        <SetUp />
       </div>
     </div>
   );
