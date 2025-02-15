@@ -2,5 +2,9 @@
   "home": {
     "title": "Welcome!",
     "description": "This is an example."
+  },
+
+  "LocaleLayout": {
+    "title": "40 Days of Prayer"
   }
 }

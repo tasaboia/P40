@@ -2,5 +2,8 @@
   "home": {
     "title": "Bem-vindo!",
     "description": "Este é um exemplo."
+  },
+  "LocaleLayout": {
+    "title": "40 Dias de oração"
   }
 }
