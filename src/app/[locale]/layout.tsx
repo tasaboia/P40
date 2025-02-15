@@ -3,10 +3,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ReactNode } from "react";
 import { LocaleType, routing } from "@p40/i18n/routing";
 import BaseLayout from "@p40/components/base-layout/base-layout";
+import { ChangeLanguage } from "@p40/components/menu-language/menu-language";
 
 type Props = {
   children: ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
 export function generateStaticParams() {
@@ -16,30 +17,32 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale = params.locale;
-
-  if (!routing.locales.includes(locale as LocaleType)) {
+  const { locale } = await params;
+  if (!locale) {
     notFound();
   }
 
-  const t = await getTranslations({ locale, namespace: "LocaleLayout" });
+  const t = await getTranslations({ locale, namespace: "geral" });
 
   return {
     title: t("title"),
   };
 }
 
-export default async function LocaleLayout({
-  children,
-  params: { locale },
-}: Props) {
-  if (!routing.locales.includes(locale as any)) {
+export default async function LocaleLayout({ children, params }: Props) {
+  const { locale } = await params;
+  if (!locale) {
     notFound();
   }
 
   setRequestLocale(locale);
 
-  return <BaseLayout locale={locale}>{children}</BaseLayout>;
+  return (
+    <BaseLayout locale={locale}>
+      <ChangeLanguage />
+      {children}
+    </BaseLayout>
+  );
 }

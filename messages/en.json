@@ -4,7 +4,7 @@
     "description": "This is an example."
   },
 
-  "LocaleLayout": {
+  "geral": {
     "title": "40 Days of Prayer"
   }
 }

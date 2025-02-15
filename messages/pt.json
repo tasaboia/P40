@@ -3,7 +3,7 @@
     "title": "Bem-vindo!",
     "description": "Este é um exemplo."
   },
-  "LocaleLayout": {
+  "geral": {
     "title": "40 Dias de oração"
   }
 }
