@@ -21,9 +21,10 @@ export function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const t = useTranslations("login");
-  const [state, formAction] = useActionState(loginAction, {}); // Corrigido o estado
+  const [state, formAction] = useActionState(loginAction, {});
   const { pending } = useFormStatus();
 
+  console.log(state);
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>

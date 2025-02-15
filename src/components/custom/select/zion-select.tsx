@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { Region } from "@p40/common/types/zions/zions";
+import { Region } from "@p40/common/contracts/zions/zions";
 import { useSettingStore } from "@p40/common/states/zion";
 import { useTranslations } from "next-intl";
 

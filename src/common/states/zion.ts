@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware"; // Middleware para salvar no localStorage
-import { Zion, ZionApiResponse } from "@p40/common/types/zions/zions";
+import { Zion, ZionApiResponse } from "@p40/common/contracts/zions/zions";
 import { getZions } from "@p40/services/zion";
 
 interface SettingStore {
