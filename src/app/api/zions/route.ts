@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import Log from "@p40/services/logging";
 
 const prisma = new PrismaClient();
 
@@ -20,6 +21,7 @@ export async function GET() {
 
     return NextResponse.json(groupedZions, { status: 200 });
   } catch (error) {
+    Log(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
