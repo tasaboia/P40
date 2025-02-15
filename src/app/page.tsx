@@ -1,10 +1,11 @@
-import { LoginForm } from "@p40/components/login/login";
+import { getZions } from "@p40/commons/services/zion";
 import Onboarding from "@p40/components/onboarding/onboarding";
 
-export default function Home() {
+export default async function Home() {
+  const zions = await getZions();
   return (
     <div className="w-full flex justify-center items-center h-screen p-10">
-      <Onboarding />
+      <Onboarding zions={zions} />
     </div>
   );
 }
