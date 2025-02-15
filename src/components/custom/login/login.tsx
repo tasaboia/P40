@@ -1,4 +1,5 @@
 "use client";
+
 import { useTranslations } from "next-intl";
 import { cn } from "@p40/lib/utils";
 import {
@@ -14,14 +15,15 @@ import { Input } from "../../ui/input";
 import { useActionState } from "react";
 import { loginAction } from "@p40/services/actions/auth";
 import { useFormStatus } from "react-dom";
-import ZionSelect from "../select/zion-select";
+
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const t = useTranslations("login");
-  const [state, formAction] = useActionState(loginAction, {});
+  const [state, formAction] = useActionState(loginAction, {}); // Corrigido o estado
   const { pending } = useFormStatus();
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -37,6 +39,7 @@ export function LoginForm({
                   <Label htmlFor="email">{t("email")}</Label>
                   <Input
                     id="email"
+                    name="email"
                     type="email"
                     placeholder={t("email_placeholder")}
                     required
@@ -52,9 +55,14 @@ export function LoginForm({
                       {t("forgot_password")}
                     </a>
                   </div>
-                  <Input id="password" type="password" required />
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                  />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={pending}>
                   {t("login_button")}
                 </Button>
               </div>

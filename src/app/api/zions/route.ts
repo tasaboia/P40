@@ -4,6 +4,15 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function GET() {
+  if (
+    process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ||
+    process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+  ) {
+    return NextResponse.json(
+      { message: "API não disponível durante o build" },
+      { status: 503 }
+    );
+  }
   try {
     const zions = await prisma.zion.findMany();
 
