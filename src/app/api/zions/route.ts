@@ -7,7 +7,6 @@ export async function GET() {
   try {
     const zions = await prisma.zion.findMany();
 
-    // Agrupar Zions por região
     const groupedZions = zions.reduce((acc, zion) => {
       if (!acc[zion.region]) acc[zion.region] = [];
       acc[zion.region].push({

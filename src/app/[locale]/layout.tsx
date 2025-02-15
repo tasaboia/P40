@@ -13,16 +13,6 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-// export async function generateMetadata({
-//   params: { locale },
-// }: Omit<Props, "children">) {
-//   const t = await getTranslations({ locale, namespace: "LocaleLayout" });
-
-//   return {
-//     title: t("title"),
-//   };
-// }
-
 export async function generateMetadata({
   params,
 }: {
@@ -30,7 +20,6 @@ export async function generateMetadata({
 }) {
   const locale = params.locale;
 
-  // ✅ Verificamos se o idioma é válido
   if (!routing.locales.includes(locale as LocaleType)) {
     notFound();
   }
@@ -46,12 +35,10 @@ export default async function LocaleLayout({
   children,
   params: { locale },
 }: Props) {
-  // Ensure that the incoming `locale` is valid
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
 
-  // Enable static rendering
   setRequestLocale(locale);
 
   return <BaseLayout locale={locale}>{children}</BaseLayout>;

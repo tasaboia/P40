@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("📌 Seeding database...");
 
-  // Create time zones
   const utcMinus3 = await prisma.timeZone.upsert({
     where: { name: "America/Sao_Paulo" },
     update: {},
@@ -25,7 +24,7 @@ async function main() {
   });
 
   // Create Zions
-  await prisma.zion.createMany({
+  const zions = await prisma.zion.createMany({
     data: [
       {
         name: "São Paulo",
@@ -76,7 +75,6 @@ async function main() {
         region: Region.EUROPE,
         timeZoneId: utc0.id,
       },
-
       {
         name: "Miami",
         city: "Miami",
@@ -84,7 +82,6 @@ async function main() {
         region: Region.NORTH_AMERICA,
         timeZoneId: utcMinus5.id,
       },
-
       {
         name: "Santiago",
         city: "Santiago",
@@ -101,6 +98,38 @@ async function main() {
       },
     ],
   });
+
+  console.log("✅ Zions created!");
+
+  // Get Zions to associate languages
+  const zionList = await prisma.zion.findMany();
+
+  // Create Languages
+  await prisma.language.createMany({
+    data: [
+      { code: "en", label: "English", region: Region.GLOBAL, zionId: null },
+      {
+        code: "pt",
+        label: "Português",
+        region: Region.BRAZIL,
+        zionId: zionList.find((z) => z.name === "São Paulo")?.id,
+      },
+      {
+        code: "es",
+        label: "Español",
+        region: Region.LATIN_AMERICA,
+        zionId: zionList.find((z) => z.name === "Santiago")?.id,
+      },
+      {
+        code: "fr",
+        label: "Français",
+        region: Region.EUROPE,
+        zionId: zionList.find((z) => z.name === "Lisboa")?.id,
+      },
+    ],
+  });
+
+  console.log("✅ Languages created!");
 
   console.log("✅ Seeding complete!");
 }

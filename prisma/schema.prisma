@@ -24,11 +24,21 @@ model TimeZone {
 
 model Zion {
   id          String   @id @default(uuid())
-  name        String
+  name        String   @unique   
   address     String?
   city        String
   country     String
   region      Region
   timeZoneId  String
   timeZone    TimeZone @relation(fields: [timeZoneId], references: [id])
+  Language Language[]
+}
+
+model Language {
+  id       String  @id @default(uuid())
+  code     String  @unique
+  label    String
+  region   Region
+  zionId   String?
+  zion     Zion?   @relation(fields: [zionId], references: [id])
 }

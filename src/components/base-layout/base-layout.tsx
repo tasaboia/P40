@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ReactNode } from "react";
+import { ChangeLanguage } from "../toggle-langugage/toggle-language";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +19,7 @@ export default async function BaseLayout({ children, locale }: Props) {
     <html className="h-full" lang={locale}>
       <body className={clsx(inter.className, "flex h-full flex-col")}>
         <NextIntlClientProvider messages={messages}>
+          <ChangeLanguage />
           {children}
         </NextIntlClientProvider>
       </body>
