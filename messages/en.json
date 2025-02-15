@@ -21,6 +21,14 @@
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy"
   },
+  "error": {
+    "title": "An error occurred",
+    "description": "Something went wrong. Try again or return to the home page.",
+    "unknown": "Unknown error",
+    "home_button": "Go back to Home",
+    "retry_button": "Try again"
+  },
+
   "zionSelect": {
     "title": "Select your Zion",
     "regions": {

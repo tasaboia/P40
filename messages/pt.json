@@ -20,6 +20,13 @@
     "terms_of_service": "Termos de Serviço",
     "privacy_policy": "Política de Privacidade"
   },
+  "error": {
+    "title": "Ocorreu um erro",
+    "description": "Algo deu errado. Tente novamente ou volte para a página inicial.",
+    "unknown": "Erro desconhecido",
+    "home_button": "Voltar para Home",
+    "retry_button": "Tentar novamente"
+  },
   "zionSelect": {
     "title": "Selecione sua Zion",
     "regions": {
