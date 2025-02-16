@@ -23,7 +23,7 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const locale = useLocale();
   const t = useTranslations("login");
-  const [state, formAction] = useActionState(loginAction, {});
+  const [state, formAction] = useActionState(loginAction, false);
   const { pending } = useFormStatus();
 
   if (state)

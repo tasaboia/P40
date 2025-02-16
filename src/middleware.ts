@@ -8,24 +8,26 @@ const publicPages = ["/", "/welcome"];
 
 export default async function middleware(req: NextRequest) {
   const publicPathnameRegex = RegExp(
-    `^(/(${routing.locales.join("|")}))?(${publicPages
-      .flatMap((p) => (p === "/" ? ["", "/"] : p))
-      .join("|")})/?$`,
+    `^/(${routing.locales.join("|")})?(${publicPages.join("|")})/?$`,
     "i"
   );
 
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
   const session = await auth();
 
-  if (!session && !isPublicPage) {
-    return NextResponse.redirect(new URL("/welcome", req.url));
+  const localeMatch = req.nextUrl.pathname.match(/^\/(en|pt|es)/);
+  const locale = localeMatch ? localeMatch[1] : "pt"; // Se não achar, assume "pt"
+
+  if (!session && req.nextUrl.pathname === `/${locale}/welcome`) {
+    return NextResponse.next();
   }
 
-  if (
-    session &&
-    (req.nextUrl.pathname === "/welcome" || req.nextUrl.pathname === "/")
-  ) {
-    return NextResponse.redirect(new URL("/schedule", req.url));
+  if (!session && !isPublicPage) {
+    return NextResponse.redirect(new URL(`/${locale}/welcome`, req.url));
+  }
+
+  if (session && req.nextUrl.pathname === `/${locale}/welcome`) {
+    return NextResponse.redirect(new URL(`/${locale}/schedule`, req.url));
   }
 
   return intlMiddleware(req);
