@@ -6,14 +6,22 @@ import { auth } from "../auth";
 const intlMiddleware = createMiddleware(routing);
 const publicPages = ["/", "/welcome"];
 
+const availableLocales = routing?.locales || ["en", "pt", "es"];
+
 export default async function middleware(req: NextRequest) {
   const publicPathnameRegex = RegExp(
-    `^/(${routing.locales.join("|")})?(${publicPages.join("|")})/?$`,
+    `^/(${availableLocales.join("|")})?(${publicPages.join("|")})/?$`,
     "i"
   );
 
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
-  const session = await auth();
+
+  let session = null;
+  try {
+    session = await auth();
+  } catch (error) {
+    console.error("⚠ Erro ao obter a sessão:", error);
+  }
 
   const localeMatch = req.nextUrl.pathname.match(/^\/(en|pt|es)/);
   const locale = localeMatch ? localeMatch[1] : "pt"; // Se não achar, assume "pt"
