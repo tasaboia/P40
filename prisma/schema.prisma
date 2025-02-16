@@ -7,38 +7,101 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Region {
-  BRAZIL
-  EUROPE
-  NORTH_AMERICA
-  LATIN_AMERICA
-  GLOBAL
+enum Role {
+  ADMIN
+  USER
 }
 
-model TimeZone {
+enum PrayerTurnType {
+  SHIFT // turnos de oração
+  CLOCK // relógio de oração
+}
+
+model Region {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  code      String   @unique
+  churchs   Church[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Church {
+  id        String   @id @default(uuid())
+  name      String   @unique   
+  address   String?
+  city      String
+  country   String
+  regionId  String
+  region    Region   @relation(fields: [regionId], references: [id])
+  timezone  String    
+  events    Event[]
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
   id          String   @id @default(uuid())
-  name        String   @unique
-  offset      String
-  zions       Zion[]
+  churchId    String
+  church      Church     @relation(fields: [churchId], references: [id])
+  name        String
+  startDate   DateTime
+  type        PrayerTurnType @default(SHIFT)
+  endDate     DateTime
+  description String?
+  prayerTurns PrayerTurn[]
+  prayerTopics DailyPrayerTopic[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
-model Zion {
-  id          String   @id @default(uuid())
-  name        String   @unique   
-  address     String?
-  city        String
-  country     String
-  region      Region
-  timeZoneId  String
-  timeZone    TimeZone @relation(fields: [timeZoneId], references: [id])
-  Language Language[]
+model PrayerTurn {
+  id              String   @id @default(uuid())
+  eventId         String
+  event           Event    @relation(fields: [eventId], references: [id])
+  type            PrayerTurnType
+  startTime       DateTime
+  endTime         DateTime
+  duration        Int      
+  maxParticipants Int
+  userShifts      UserShift[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
-model Language {
-  id       String  @id @default(uuid())
-  code     String  @unique
-  label    String
-  region   Region
-  zionId   String?
-  zion     Zion?   @relation(fields: [zionId], references: [id])
+model UserShift {
+  id           String  @id @default(uuid())
+  userId       String
+  prayerTurnId String
+  user         User     @relation(fields: [userId], references: [id])
+  prayerTurn   PrayerTurn @relation(fields: [prayerTurnId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model User {
+  id         String   @id @default(uuid())
+  idProver   String?   @unique
+  name       String
+  whatsapp   String?  @unique
+  email      String   @unique 
+  imageUrl   String?  
+  role       Role     @default(USER)
+  userShifts UserShift[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  churchId   String?   
+  church     Church?  @relation(fields: [churchId], references: [id])
+}
+
+model DailyPrayerTopic {
+  id          String  @id @default(uuid())
+  eventId     String
+  event       Event   @relation(fields: [eventId], references: [id])
+  date        DateTime
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

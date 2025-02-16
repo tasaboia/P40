@@ -16,6 +16,7 @@ import { useActionState } from "react";
 import { loginAction } from "@p40/services/actions/auth";
 import { useFormStatus } from "react-dom";
 import { redirect } from "@p40/i18n/routing";
+import { useSettingStore } from "@p40/common/states/zion";
 
 export function LoginForm({
   className,
@@ -25,6 +26,7 @@ export function LoginForm({
   const t = useTranslations("login");
   const [state, formAction] = useActionState(loginAction, false);
   const { pending } = useFormStatus();
+  const { selectedZion } = useSettingStore();
 
   if (state)
     return redirect({
@@ -40,8 +42,12 @@ export function LoginForm({
           <CardDescription>{t("login_with_provider")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <>{JSON.stringify(state)}</>
-          <form action={formAction}>
+          <form
+            action={(e) => {
+              e.append("zionId", selectedZion?.id);
+              formAction(e);
+            }}
+          >
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">

@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { Region } from "@p40/common/contracts/zions/zions";
 import { useSettingStore } from "@p40/common/states/zion";
 import { useTranslations } from "next-intl";
 
@@ -19,15 +18,15 @@ export default function ZionSelect() {
   React.useEffect(() => {
     fetchZions();
   }, [fetchZions]);
-  const t = useTranslations("zionSelect"); // Pega as traduções da chave "zionSelect"
+  const t = useTranslations("zionSelect");
 
-  if (!zions) return <p>Carregando Zions...</p>;
+  if (!zions || zions.length === 0) return <p>Carregando Igrejas...</p>;
 
   return (
     <Select
       onValueChange={(value) => {
-        const selectedChurch = Object.values(zions)
-          .flat()
+        const selectedChurch = zions
+          .flatMap((zion) => zion.churches)
           .find((church) => church.id === value);
 
         if (selectedChurch) {
@@ -39,19 +38,16 @@ export default function ZionSelect() {
         <SelectValue placeholder={t("title")} />
       </SelectTrigger>
       <SelectContent>
-        <SelectContent>
-          {(Object.keys(zions) as (keyof typeof Region)[]).map((region) => (
-            <SelectGroup key={region}>
-              <SelectLabel>{t(`regions.${region}`)}</SelectLabel>
-
-              {zions[region].map((church) => (
-                <SelectItem key={church.id} value={church.id}>
-                  {church.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          ))}
-        </SelectContent>
+        {zions.map((zion) => (
+          <SelectGroup key={zion.region.id}>
+            <SelectLabel>{t(`regions.${zion.region.code}`)}</SelectLabel>
+            {zion.churches.map((church) => (
+              <SelectItem key={church.id} value={church.id}>
+                {church.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        ))}
       </SelectContent>
     </Select>
   );

@@ -32,10 +32,10 @@
   "zionSelect": {
     "title": "Select your Zion",
     "regions": {
-      "BRAZIL": "Brazil",
-      "EUROPE": "Europe",
-      "NORTH_AMERICA": "North America",
-      "LATIN_AMERICA": "Latin America",
+      "BR": "Brazil",
+      "EU": "Europe",
+      "NA": "North America",
+      "LATAM": "Latin America",
       "GLOBAL": "Global"
     }
   }

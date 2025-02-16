@@ -1,28 +1,25 @@
-export enum Region {
-  BRAZIL = "Brasil",
-  EUROPE = "Europa",
-  NORTH_AMERICA = "America do Norte",
-  LATIN_AMERICA = "America Latina",
-  GLOBAL = "Global",
+export enum RegionCode {
+  BRAZIL = "BR",
+  EUROPE = "EU",
+  NORTH_AMERICA = "NA",
+  LATIN_AMERICA = "LATAM",
+  GLOBAL = "GLOBAL",
 }
 
-export interface TimeZone {
+export interface Region {
   id: string;
   name: string;
-  offset: string;
+  code: RegionCode;
 }
 
-export interface Zion {
+export interface Church {
   id: string;
   name: string;
-  address?: string;
   city: string;
   country: string;
-  region: Region;
-  timeZoneId: string;
-  timeZone: TimeZone;
 }
 
-export type ZionApiResponse = {
-  [key in Region]: Zion[];
-};
+export interface ZionApiResponse {
+  region: Region;
+  churches: Church[];
+}

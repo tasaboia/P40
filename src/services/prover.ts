@@ -1,20 +1,24 @@
-const prover = process.env.PROVER_BASE_URL;
+import api from "@p40/lib/axios";
+import { FailException } from "@p40/common/contracts/exceptions/exception";
+import { AuthProverResponse } from "@p40/common/contracts/auth/auth";
 
-export async function authProver(username: string, password: string) {
-  const response = await fetch(`${prover}/login/user`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      usuario: username,
-      senha: password,
-    }),
-  });
+export async function authProver(
+  username: string,
+  password: string,
+  zionId: string
+): Promise<AuthProverResponse | null> {
+  try {
+    const response = await api.post("/api/auth/migrar", {
+      username,
+      password,
+      zionId,
+    });
 
-  if (!response.ok) {
-    throw new Error("Usuário ou senha incorretos.");
+    return response.data.user;
+  } catch (error) {
+    throw new FailException({
+      message: error.response?.data?.message || "Usuário ou senha incorretos.",
+      statusCode: error.response?.status || 500,
+    });
   }
-
-  return await response.json();
 }

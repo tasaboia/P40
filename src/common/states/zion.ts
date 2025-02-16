@@ -1,13 +1,13 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware"; // Middleware para salvar no localStorage
-import { Zion, ZionApiResponse } from "@p40/common/contracts/zions/zions";
+import { persist } from "zustand/middleware";
 import { getZions } from "@p40/services/zion";
+import { Church, ZionApiResponse } from "../contracts/zions/zions";
 
 interface SettingStore {
-  zions: ZionApiResponse | null;
-  selectedZion: Zion | null;
+  zions: ZionApiResponse[] | null;
+  selectedZion: Church | null;
   activeTab: string;
-  setSelectedZion: (zion: Zion) => void;
+  setSelectedZion: (zion: Church) => void;
   setActiveTab: (tab: string) => void;
   fetchZions: () => Promise<void>;
 }
@@ -26,7 +26,7 @@ export const useSettingStore = create(
       fetchZions: async () => {
         if (get().zions) return;
         try {
-          const fetchedZions = await getZions();
+          const fetchedZions: ZionApiResponse[] = await getZions();
           set({ zions: fetchedZions });
         } catch (error) {
           console.error("Erro ao buscar as Zions:", error);

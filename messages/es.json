@@ -27,13 +27,14 @@
     "home_button": "Volver a inicio",
     "retry_button": "Intentar de nuevo"
   },
+
   "zionSelect": {
     "title": "Selecciona tu Zion",
     "regions": {
-      "BRAZIL": "Brasil",
-      "EUROPE": "Europa",
-      "NORTH_AMERICA": "América del Norte",
-      "LATIN_AMERICA": "América Latina",
+      "BR": "Brasil",
+      "EU": "Europa",
+      "NA": "América del Norte",
+      "LATAM": "América Latina",
       "GLOBAL": "Global"
     }
   }

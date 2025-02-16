@@ -9,3 +9,13 @@ export interface User {
   admOracao: boolean;
   admEscala: boolean;
 }
+
+export interface AuthProverResponse {
+  id: string;
+  idProver: string;
+  name: string;
+  email: string;
+  imageUrl: string;
+  phone: string;
+  role: string;
+}

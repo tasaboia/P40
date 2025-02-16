@@ -1,135 +1,177 @@
-import { PrismaClient, Region } from "@prisma/client";
+import { PrismaClient, Role, PrayerTurnType } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log("📌 Seeding database...");
 
-  const utcMinus3 = await prisma.timeZone.upsert({
-    where: { name: "America/Sao_Paulo" },
-    update: {},
-    create: { name: "America/Sao_Paulo", offset: "UTC-3" },
+  // Criando Regiões
+  const regions = await prisma.region.createMany({
+    data: [
+      { name: "Brazil", code: "BR" },
+      { name: "Europe", code: "EU" },
+      { name: "North America", code: "NA" },
+      { name: "Latin America", code: "LATAM" },
+      { name: "Global", code: "GLOBAL" },
+    ],
   });
 
-  const utcMinus5 = await prisma.timeZone.upsert({
-    where: { name: "America/New_York" },
-    update: {},
-    create: { name: "America/New_York", offset: "UTC-5" },
-  });
+  console.log("✅ Regions created!");
 
-  const utc0 = await prisma.timeZone.upsert({
-    where: { name: "Europe/Lisbon" },
-    update: {},
-    create: { name: "Europe/Lisbon", offset: "UTC+0" },
-  });
+  // Obtendo as regiões para referência
+  const regionList = await prisma.region.findMany();
 
-  // Create Zions
-  const zions = await prisma.zion.createMany({
+  // Criando Igrejas (Churches)
+  const churches = await prisma.church.createMany({
     data: [
       {
-        name: "São Paulo",
+        name: "Igreja São Paulo",
         city: "São Paulo",
         country: "Brazil",
-        region: Region.BRAZIL,
-        timeZoneId: utcMinus3.id,
+        regionId: regionList.find((r) => r.name === "Brazil")?.id,
+        timezone: "America/Sao_Paulo",
       },
       {
-        name: "Santos",
+        name: "Igreja Santos",
         city: "Santos",
         country: "Brazil",
-        region: Region.BRAZIL,
-        timeZoneId: utcMinus3.id,
+        regionId: regionList.find((r) => r.name === "Brazil")?.id,
+        timezone: "America/Sao_Paulo",
       },
       {
-        name: "Campinas",
+        name: "Igreja Campinas",
         city: "Campinas",
         country: "Brazil",
-        region: Region.BRAZIL,
-        timeZoneId: utcMinus3.id,
+        regionId: regionList.find((r) => r.name === "Brazil")?.id,
+        timezone: "America/Sao_Paulo",
       },
       {
-        name: "Recife",
+        name: "Igreja Recife",
         city: "Recife",
         country: "Brazil",
-        region: Region.BRAZIL,
-        timeZoneId: utcMinus3.id,
+        regionId: regionList.find((r) => r.name === "Brazil")?.id,
+        timezone: "America/Recife",
       },
       {
-        name: "Campo Grande",
+        name: "Igreja Campo Grande",
         city: "Campo Grande",
         country: "Brazil",
-        region: Region.BRAZIL,
-        timeZoneId: utcMinus3.id,
+        regionId: regionList.find((r) => r.name === "Brazil")?.id,
+        timezone: "America/Campo_Grande",
       },
       {
-        name: "Lisboa",
+        name: "Igreja Lisboa",
         city: "Lisboa",
         country: "Portugal",
-        region: Region.EUROPE,
-        timeZoneId: utc0.id,
+        regionId: regionList.find((r) => r.name === "Europe")?.id,
+        timezone: "Europe/Lisbon",
       },
       {
-        name: "Porto",
+        name: "Igreja Porto",
         city: "Porto",
         country: "Portugal",
-        region: Region.EUROPE,
-        timeZoneId: utc0.id,
+        regionId: regionList.find((r) => r.name === "Europe")?.id,
+        timezone: "Europe/Lisbon",
       },
       {
-        name: "Miami",
+        name: "Igreja Miami",
         city: "Miami",
         country: "USA",
-        region: Region.NORTH_AMERICA,
-        timeZoneId: utcMinus5.id,
+        regionId: regionList.find((r) => r.name === "North America")?.id,
+        timezone: "America/New_York",
       },
       {
-        name: "Santiago",
+        name: "Igreja Santiago",
         city: "Santiago",
         country: "Chile",
-        region: Region.LATIN_AMERICA,
-        timeZoneId: utcMinus3.id,
+        regionId: regionList.find((r) => r.name === "Latin America")?.id,
+        timezone: "America/Santiago",
       },
       {
-        name: "Online Global",
+        name: "Igreja Online Global",
         city: "Online",
         country: "World",
-        region: Region.GLOBAL,
-        timeZoneId: utc0.id,
+        regionId: regionList.find((r) => r.name === "Global")?.id,
+        timezone: "UTC",
       },
     ],
   });
 
-  console.log("✅ Zions created!");
+  console.log("✅ Churches created!");
 
-  // Get Zions to associate languages
-  const zionList = await prisma.zion.findMany();
+  // Obtendo as igrejas para referência
+  const churchList = await prisma.church.findMany();
 
-  // Create Languages
-  await prisma.language.createMany({
+  // Criando Usuários (Users)
+  await prisma.user.createMany({
     data: [
-      { code: "en", label: "English", region: Region.GLOBAL, zionId: null },
       {
-        code: "pt",
-        label: "Português",
-        region: Region.BRAZIL,
-        zionId: zionList.find((z) => z.name === "São Paulo")?.id,
+        name: "Admin User",
+        whatsapp: "+5511999999999",
+        email: "admin@example.com",
+        role: Role.ADMIN,
+        churchId: churchList.find((c) => c.name === "Igreja São Paulo")?.id,
       },
       {
-        code: "es",
-        label: "Español",
-        region: Region.LATIN_AMERICA,
-        zionId: zionList.find((z) => z.name === "Santiago")?.id,
-      },
-      {
-        code: "fr",
-        label: "Français",
-        region: Region.EUROPE,
-        zionId: zionList.find((z) => z.name === "Lisboa")?.id,
+        name: "Líder Recife",
+        whatsapp: "+5581999999999",
+        email: "leader@example.com",
+        role: Role.USER,
+        churchId: churchList.find((c) => c.name === "Igreja Recife")?.id,
       },
     ],
   });
 
-  console.log("✅ Languages created!");
+  console.log("✅ Users created!");
+
+  // Criando Eventos (Events)
+  const events = await prisma.event.createMany({
+    data: [
+      {
+        name: "40 Dias de Oração",
+        startDate: new Date("2024-04-01"),
+        endDate: new Date("2024-05-10"),
+        description: "Um evento de 40 dias de oração contínua.",
+        churchId: churchList.find((c) => c.name === "Igreja São Paulo")?.id,
+      },
+      {
+        name: "Semana de Intercessão",
+        startDate: new Date("2024-06-01"),
+        endDate: new Date("2024-06-07"),
+        description: "Uma semana intensa de intercessão pela igreja.",
+        churchId: churchList.find((c) => c.name === "Igreja Lisboa")?.id,
+      },
+    ],
+  });
+
+  console.log("✅ Events created!");
+
+  // Obtendo os eventos para referência
+  const eventList = await prisma.event.findMany();
+
+  // Criando Turnos de Oração (Prayer Turns)
+  const prayerTurns = await prisma.prayerTurn.createMany({
+    data: [
+      {
+        eventId: eventList.find((e) => e.name === "40 Dias de Oração")?.id,
+        type: PrayerTurnType.SHIFT,
+        startTime: new Date("2024-04-01T06:00:00.000Z"),
+        endTime: new Date("2024-04-01T08:00:00.000Z"),
+        duration: 120,
+        maxParticipants: 5,
+      },
+      {
+        eventId: eventList.find((e) => e.name === "Semana de Intercessão")?.id,
+        type: PrayerTurnType.CLOCK,
+        startTime: new Date("2024-06-01T12:00:00.000Z"),
+        endTime: new Date("2024-06-01T12:30:00.000Z"),
+        duration: 30,
+        maxParticipants: 3,
+      },
+    ],
+  });
+
+  console.log("✅ Prayer Turns created!");
 
   console.log("✅ Seeding complete!");
 }
