@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@p40/lib/utils";
 import {
   Card,
@@ -15,16 +15,22 @@ import { Input } from "../../ui/input";
 import { useActionState } from "react";
 import { loginAction } from "@p40/services/actions/auth";
 import { useFormStatus } from "react-dom";
+import { redirect } from "@p40/i18n/routing";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const locale = useLocale();
   const t = useTranslations("login");
   const [state, formAction] = useActionState(loginAction, {});
   const { pending } = useFormStatus();
 
-  console.log(state);
+  if (state)
+    return redirect({
+      href: "schedule",
+      locale,
+    });
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -34,6 +40,7 @@ export function LoginForm({
           <CardDescription>{t("login_with_provider")}</CardDescription>
         </CardHeader>
         <CardContent>
+          <>{JSON.stringify(state)}</>
           <form action={formAction}>
             <div className="grid gap-6">
               <div className="grid gap-6">

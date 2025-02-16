@@ -17,13 +17,7 @@ export default async function middleware(req: NextRequest) {
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
   const session = await auth();
 
-  console.log(
-    "🔹 Sessão recuperada no middleware:",
-    JSON.stringify(session, null, 2)
-  ); // 🔹 Log da sessão
-
   if (!session && !isPublicPage) {
-    console.log("❌ Usuário não autenticado. Redirecionando para /welcome");
     return NextResponse.redirect(new URL("/welcome", req.url));
   }
 
@@ -31,7 +25,6 @@ export default async function middleware(req: NextRequest) {
     session &&
     (req.nextUrl.pathname === "/welcome" || req.nextUrl.pathname === "/")
   ) {
-    console.log("✅ Usuário autenticado. Redirecionando para /schedule");
     return NextResponse.redirect(new URL("/schedule", req.url));
   }
 

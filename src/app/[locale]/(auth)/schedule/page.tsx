@@ -1,8 +1,7 @@
-"use client";
-import { useSession } from "next-auth/react";
 import React from "react";
+import { auth } from "../../../../../auth";
 
-export default function ScheulePage() {
-  const user = useSession();
-  return <div>{JSON.stringify(user)}</div>;
+export default async function ScheulePage() {
+  const session = await auth();
+  return <div>{JSON.stringify(session)}</div>;
 }

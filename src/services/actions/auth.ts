@@ -20,5 +20,5 @@ export async function loginAction(prevState: any, formData: FormData) {
     return { error: result.error };
   }
 
-  return { success: "Login bem-sucedido!" };
+  return true;
 }
