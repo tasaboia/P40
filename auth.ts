@@ -2,8 +2,6 @@ import { authProver } from "@p40/services/prover";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-const prover = process.env.PROVER_BASE_URL;
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
@@ -16,36 +14,50 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("Preencha todos os campos corretamente.");
         }
 
-        const response = await authProver(
-          credentials?.username as string,
-          credentials?.password as string
-        );
+        try {
+          const response = await authProver(
+            credentials.username as string,
+            credentials.password as string
+          );
 
-        if (!response.ok) {
-          return { error: "Usuário ou senha incorretos." };
+          if (!response || response.error) {
+            return null;
+          }
+
+          return {
+            id: response.user.id || null,
+            name: response.user.nome || null,
+            email: response.user.login || null,
+            role: response.user.type || "user",
+          };
+        } catch (error) {
+          throw new Error("Erro interno na autenticação.");
         }
-
-        const user = await response.json();
-
-        return user;
       },
     }),
   ],
   callbacks: {
-    async session({ session, token }) {
-      if (token.user) {
-        session.user = token.user as typeof session.user;
-      }
-      return session;
-    },
-
     async jwt({ token, user }) {
       if (user) {
-        token.user = user;
+        token.id = user.id || "";
+        token.name = user.name || null;
+        token.email = user.email || null;
+        token.role = user.role || "user";
       }
+
       return token;
     },
+    async session({ session, token }) {
+      session.user = {
+        name: token.name,
+        email: token.email,
+        address: null,
+        emailVerified: null,
+        id: token.id as string,
+        image: null,
+      };
+      return session;
+    },
   },
-
   secret: process.env.NEXTAUTH_SECRET,
 });

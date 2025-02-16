@@ -25,6 +25,7 @@ export function LoginForm({
   const { pending } = useFormStatus();
 
   console.log(state);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>

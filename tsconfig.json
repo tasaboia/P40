@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false, // 🔥 Desativa verificações estritas do TypeScript
@@ -21,9 +17,7 @@
     "noUnusedParameters": false, // 🔥 Permite parâmetros não usados
     "noImplicitAny": false, // 🔥 Permite variáveis sem tipo definido
     "paths": {
-      "@p40/*": [
-        "./src/*"
-      ]
+      "@p40/*": ["./src/*"]
     },
     "plugins": [
       {
@@ -35,9 +29,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "next-auth.d.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
