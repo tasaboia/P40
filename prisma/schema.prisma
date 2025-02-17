@@ -42,18 +42,20 @@ model Church {
 }
 
 model Event {
-  id          String   @id @default(uuid())
-  churchId    String
-  church      Church     @relation(fields: [churchId], references: [id])
-  name        String
-  startDate   DateTime
-  type        PrayerTurnType @default(SHIFT)
-  endDate     DateTime
-  description String?
-  prayerTurns PrayerTurn[]
-  prayerTopics DailyPrayerTopic[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                        String   @id @default(uuid())
+  churchId                  String
+  church                    Church     @relation(fields: [churchId], references: [id])
+  name                      String
+  startDate                 DateTime
+  type                      PrayerTurnType @default(SHIFT)
+  endDate                   DateTime
+  description               String?
+  prayerTurns               PrayerTurn[]
+  prayerTopics              DailyPrayerTopic[]
+  maxParticipantsPerTurn    Int?    @default(2)     
+  shiftDuration             Int?    @default(60) //em minutos  
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
 }
 
 model PrayerTurn {
@@ -63,9 +65,9 @@ model PrayerTurn {
   type            PrayerTurnType
   startTime       DateTime
   endTime         DateTime
-  duration        Int      
-  maxParticipants Int
+  duration        Int      @default(60) 
   userShifts      UserShift[]
+  weekday         Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }

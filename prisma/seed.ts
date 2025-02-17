@@ -149,28 +149,6 @@ async function main() {
   // Obtendo os eventos para referência
   const eventList = await prisma.event.findMany();
 
-  // Criando Turnos de Oração (Prayer Turns)
-  const prayerTurns = await prisma.prayerTurn.createMany({
-    data: [
-      {
-        eventId: eventList.find((e) => e.name === "40 Dias de Oração")?.id,
-        type: PrayerTurnType.SHIFT,
-        startTime: new Date("2024-04-01T06:00:00.000Z"),
-        endTime: new Date("2024-04-01T08:00:00.000Z"),
-        duration: 120,
-        maxParticipants: 5,
-      },
-      {
-        eventId: eventList.find((e) => e.name === "Semana de Intercessão")?.id,
-        type: PrayerTurnType.CLOCK,
-        startTime: new Date("2024-06-01T12:00:00.000Z"),
-        endTime: new Date("2024-06-01T12:30:00.000Z"),
-        duration: 30,
-        maxParticipants: 3,
-      },
-    ],
-  });
-
   console.log("✅ Prayer Turns created!");
 
   console.log("✅ Seeding complete!");

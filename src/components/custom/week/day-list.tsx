@@ -1,0 +1,35 @@
+import React from "react";
+import { createTurns } from "@p40/common/utils/schedule";
+import { TurnItem } from "../turn/turn-item";
+import { EventResponse } from "@p40/common/contracts/event/event";
+import { turnByWeekday } from "@p40/services/event/turn-weekday";
+
+export default async function DayList({
+  weekday,
+  event,
+  weekAbbr,
+}: {
+  weekday: number;
+  weekAbbr: string;
+  event: EventResponse | null;
+}) {
+  const shift = createTurns(event?.shiftDuration);
+  const turnItens = await turnByWeekday(weekday, event.id);
+  return (
+    <div>
+      {shift.map((turn) => {
+        return (
+          <TurnItem
+            key={turn.startTime}
+            startTime={turn.startTime}
+            weekday={weekAbbr}
+            turnLeaders={
+              turnItens?.find((item) => item.startTime == turn.startTime)
+                ?.leaders ?? null
+            }
+          />
+        );
+      })}
+    </div>
+  );
+}

@@ -1,5 +1,8 @@
-import { ChangeLanguage } from "@p40/components/custom/menu-language/menu-language";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ReactNode } from "react";
 import { routing } from "@p40/i18n/routing";
@@ -37,11 +40,12 @@ export default async function LocaleLayout({ children, params }: Props) {
   if (!locale) {
     notFound();
   }
+  const messages = await getMessages({ locale });
 
   setRequestLocale(locale);
 
   return (
-    <BaseLayout locale={locale}>
+    <BaseLayout locale={locale} messages={messages}>
       {children}
       <Toaster />
     </BaseLayout>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import Log from "@p40/services/logging";
-import { prisma } from "../prisma";
+import { prisma } from "../../prisma";
 import { FailException } from "@p40/common/contracts/exceptions/exception";
 import { errorHandler } from "@p40/common/utils/erro-handler";
 

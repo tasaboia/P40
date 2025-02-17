@@ -1,14 +1,14 @@
 import React, { Suspense } from "react";
 import Loading from "./loading";
 import { auth } from "../../../../../auth";
-import UserDetails from "@p40/components/custom/user-details/user-details";
+import Schedule from "@p40/components/custom/schedule/schedule";
 
 export default async function ScheulePage() {
   const session = await auth();
 
   return (
     <Suspense fallback={<Loading />}>
-      <UserDetails
+      <Schedule
         email={session.user.email}
         imageUrl={session.user.imageUrl}
         name={session.user.name}

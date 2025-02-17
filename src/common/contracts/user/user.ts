@@ -8,3 +8,16 @@ export interface User {
   role: string;
   churchId: string;
 }
+
+export interface TurnLeader {
+  id: string;
+  name: string;
+  whatsapp: string;
+  imageUrl: string;
+}
+
+export interface PrayerTurnResponse {
+  startTime: string;
+  endTime: string;
+  leaders: TurnLeader[];
+}

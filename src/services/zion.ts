@@ -3,7 +3,7 @@ import { FailException } from "@p40/common/contracts/exceptions/exception";
 import api from "@p40/lib/axios";
 
 export async function getChurchList(): Promise<ZionApiResponse[]> {
-  const res = await api.get("/api/church");
+  const res = await api.get("/api/list/church");
 
   if (res.status >= 400) {
     throw new FailException({
