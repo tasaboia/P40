@@ -1,3 +1,4 @@
+import Log from "@p40/services/logging";
 import { authProver } from "@p40/services/prover";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
@@ -11,7 +12,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         zionId: { label: "zionId" },
       },
       authorize: async (credentials) => {
-        if (!credentials?.username || !credentials?.password) {
+        if (
+          !credentials?.username ||
+          !credentials?.password ||
+          !credentials?.zionId
+        ) {
           throw new Error("Preencha todos os campos corretamente.");
         }
 
@@ -28,6 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           return response;
         } catch (error) {
+          Log(error);
           throw new Error("Erro interno na autenticação.");
         }
       },
@@ -43,6 +49,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.imageUrl = user.imageUrl || null;
         token.phone = user.phone || "";
         token.idProver = user.idProver || "";
+        token.churchId = user.churchId || "";
       }
 
       return token;
@@ -57,6 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         imageUrl: (token.imageUrl as string) || "",
         phone: (token.phone as string) || "",
         role: (token.role as string) || "user",
+        churchId: (token.churchId as string) || "",
       };
 
       return session;

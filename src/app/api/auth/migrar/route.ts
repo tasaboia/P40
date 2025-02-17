@@ -11,6 +11,14 @@ export async function POST(req: Request) {
   try {
     const { username, password, zionId } = await req.json();
 
+    console.log(zionId);
+    if (!zionId || !username || !password) {
+      throw new FailException({
+        message: "Dados inválidos",
+        statusCode: 400,
+      });
+    }
+
     const authResponse = await axios.post(`${proverUrl}/login/user`, {
       usuario: username,
       senha: password,
@@ -60,7 +68,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { user, message: "Login bem-sucedido" },
+      { user: { ...user, churchId: zionId }, message: "Login bem-sucedido" },
       { status: 200 }
     );
   } catch (error) {

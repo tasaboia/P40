@@ -6,7 +6,7 @@ export async function authProver(
   username: string,
   password: string,
   zionId: string
-): Promise<AuthProverResponse | null> {
+) {
   try {
     const response = await api.post("/api/auth/migrar", {
       username,

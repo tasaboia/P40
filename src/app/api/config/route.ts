@@ -6,9 +6,9 @@ import { errorHandler } from "@p40/common/utils/erro-handler";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const zionId = searchParams.get("zionId");
+    const id = searchParams.get("id");
 
-    if (!zionId) {
+    if (!id) {
       throw new FailException({
         message: "Nenhuma Zion selecionada",
         statusCode: 400,
@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     }
 
     const configs = await prisma.church.findUnique({
-      where: { id: zionId },
+      where: { id: id },
       include: {
         events: {
           include: {

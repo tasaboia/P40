@@ -2,14 +2,13 @@
 
 import { signIn } from "next-auth/react";
 
-export async function loginAction(prevState: any, formData: FormData) {
+export async function loginAction(
+  prevState: any,
+  formData: FormData
+): Promise<{ error: boolean; message?: string }> {
   const username = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const zionId = formData.get("zionId")?.toString();
-
-  if (!username || !password) {
-    return { error: "Preencha todos os campos corretamente." };
-  }
 
   const result = await signIn("credentials", {
     username,
@@ -19,8 +18,13 @@ export async function loginAction(prevState: any, formData: FormData) {
   });
 
   if (result?.error) {
-    return { error: result.error };
+    return {
+      error: true,
+      message: result.error,
+    };
   }
 
-  return true;
+  return {
+    error: false,
+  };
 }

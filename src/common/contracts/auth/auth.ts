@@ -18,4 +18,5 @@ export interface AuthProverResponse {
   imageUrl: string;
   phone: string;
   role: string;
+  churchId: string;
 }

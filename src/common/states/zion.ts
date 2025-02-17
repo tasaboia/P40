@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { getZions } from "@p40/services/zion";
-import { Church, ZionApiResponse } from "../contracts/zions/zions";
+import { Church, ZionApiResponse } from "../contracts/church/zions";
 
 interface SettingStore {
   zions: ZionApiResponse[] | null;

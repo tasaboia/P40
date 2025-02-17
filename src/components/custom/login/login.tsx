@@ -12,11 +12,12 @@ import {
 import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { loginAction } from "@p40/services/actions/auth";
 import { useFormStatus } from "react-dom";
 import { redirect } from "@p40/i18n/routing";
 import { useSettingStore } from "@p40/common/states/zion";
+import { toast } from "@p40/hooks/use-toast";
 
 export function LoginForm({
   className,
@@ -24,11 +25,13 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const locale = useLocale();
   const t = useTranslations("login");
-  const [state, formAction] = useActionState(loginAction, false);
+  const [state, formAction] = useActionState(loginAction, {
+    error: true,
+  });
   const { pending } = useFormStatus();
   const { selectedZion } = useSettingStore();
 
-  if (state)
+  if (!state.error)
     return redirect({
       href: "schedule",
       locale,

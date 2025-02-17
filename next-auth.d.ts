@@ -10,6 +10,7 @@ declare module "next-auth" {
     imageUrl: string;
     phone: string;
     role: string;
+    churchId: string;
   }
 
   interface Session extends DefaultSession {

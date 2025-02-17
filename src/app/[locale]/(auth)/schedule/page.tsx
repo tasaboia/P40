@@ -1,11 +1,18 @@
-import React from "react";
+import React, { Suspense } from "react";
+import Loading from "./loading";
 import { auth } from "../../../../../auth";
+import UserDetails from "@p40/components/custom/user-details/user-details";
 
 export default async function ScheulePage() {
   const session = await auth();
-  return <div>{JSON.stringify(session)}</div>;
-}
 
-//primeiro apoós login, fazer o reconhecimento se o usuario ja existe no nosso banco
-//  se sim, buscar o usuario do banco
-// se nao, buscar o usuari ono prover com os dados extrar. e cadastrar ele no nosso banco.
+  return (
+    <Suspense fallback={<Loading />}>
+      <UserDetails
+        email={session.user.email}
+        imageUrl={session.user.imageUrl}
+        name={session.user.name}
+      />
+    </Suspense>
+  );
+}
