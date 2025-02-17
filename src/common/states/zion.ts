@@ -30,6 +30,7 @@ export const useSettingStore = create(
           set({ zions: fetchedZions });
         } catch (error) {
           console.error("Erro ao buscar as Zions:", error);
+          set({ zions: [] });
         }
       },
     }),
