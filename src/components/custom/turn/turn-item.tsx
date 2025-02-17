@@ -47,8 +47,11 @@ export function TurnItem({
               turnItens
                 ?.find((item) => item.startTime == turn.startTime)
                 ?.leaders.map((leader) => (
-                  <div className="flex max-w-60 gap-2 px-4 pt-4 text-sm">
-                    <Avatar key={leader.id} className="h-12 w-12 rounded-full">
+                  <div
+                    key={leader.id}
+                    className="flex max-w-60 gap-2 px-4 pt-4 text-sm"
+                  >
+                    <Avatar className="h-12 w-12 rounded-full">
                       <AvatarImage
                         src={leader.imageUrl}
                         alt="Imagem de perfil"
