@@ -9,7 +9,7 @@ interface ScheduleProps {
 }
 export default function Schedule(props: ScheduleProps) {
   return (
-    <div>
+    <div className="flex  flex-col gap-4">
       <NavUser
         email={props.email}
         imageUrl={props.imageUrl}

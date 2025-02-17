@@ -20,7 +20,7 @@ export async function WeekTab() {
 
   return (
     <Tabs defaultValue={today}>
-      <TabsList>
+      <TabsList className="sticky top-0 z-10 w-full">
         {Object.keys(Weekday).map((key) => {
           const dayAbbr = key as keyof typeof Weekday;
           return (
