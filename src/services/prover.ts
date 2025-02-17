@@ -1,6 +1,5 @@
 import api from "@p40/lib/axios";
 import { FailException } from "@p40/common/contracts/exceptions/exception";
-import { AuthProverResponse } from "@p40/common/contracts/auth/auth";
 
 export async function authProver(
   username: string,
