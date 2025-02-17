@@ -167,7 +167,6 @@ export function TurnItem({
                     {turn.startTime}
                   </p>
                 </div>
-                <switch />
               </div>
               <div>
                 {leaders?.length > 0 &&
