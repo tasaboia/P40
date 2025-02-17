@@ -15,21 +15,5 @@ export default async function DayList({
 }) {
   const shift = createTurns(event?.shiftDuration);
   const turnItens = await turnByWeekday(weekday, event.id);
-  return (
-    <div>
-      {shift.map((turn) => {
-        return (
-          <TurnItem
-            key={turn.startTime}
-            startTime={turn.startTime}
-            weekday={weekAbbr}
-            turnLeaders={
-              turnItens?.find((item) => item.startTime == turn.startTime)
-                ?.leaders ?? null
-            }
-          />
-        );
-      })}
-    </div>
-  );
+  return <TurnItem shift={shift} weekday={weekAbbr} turnItens={turnItens} />;
 }

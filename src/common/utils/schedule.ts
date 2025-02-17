@@ -2,7 +2,12 @@ export const today = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][
   new Date().getDay()
 ];
 
-export const createTurns = (shiftDuration: number) => {
+export const createTurns = (
+  shiftDuration: number
+): {
+  startTime: string;
+  endTime: string;
+}[] => {
   const endHour = 23;
   const turns = [];
   let currentHour = 0;
