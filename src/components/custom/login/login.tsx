@@ -12,11 +12,13 @@ import {
 import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { loginAction } from "@p40/services/actions/auth";
 import { useFormStatus } from "react-dom";
 import { redirect } from "@p40/i18n/routing";
 import { useSettingStore } from "@p40/common/states/zion";
+import { Checkbox } from "@p40/components/ui/checkbox";
+import { Loader2 } from "lucide-react";
 
 export function LoginForm({
   className,
@@ -24,11 +26,12 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const locale = useLocale();
   const t = useTranslations("login");
-  const [state, formAction] = useActionState(loginAction, {
+  const [state, formAction, isPending] = useActionState(loginAction, {
     error: true,
   });
   const { pending } = useFormStatus();
   const { selectedZion } = useSettingStore();
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!state.error)
     return redirect({
@@ -75,11 +78,22 @@ export function LoginForm({
                   <Input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                   />
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="show-password-checkbox"
+                      checked={showPassword}
+                      onCheckedChange={() => setShowPassword(!showPassword)}
+                    />
+                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      {t("show_password")}
+                    </label>
+                  </div>
                 </div>
-                <Button type="submit" className="w-full" disabled={pending}>
+                <Button type="submit" className="w-full" disabled={isPending}>
+                  {isPending && <Loader2 className="animate-spin" />}
                   {t("login_button")}
                 </Button>
               </div>

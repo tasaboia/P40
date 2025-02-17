@@ -19,7 +19,8 @@
     "create_account": "Create an account on Prover",
     "terms": "By clicking continue, you agree to our {terms} and {privacy}.",
     "terms_of_service": "Terms of Service",
-    "privacy_policy": "Privacy Policy"
+    "privacy_policy": "Privacy Policy",
+    "show_password": "Show password"
   },
   "error": {
     "title": "An error occurred",

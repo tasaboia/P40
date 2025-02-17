@@ -18,7 +18,8 @@
     "create_account": "Criar conta no Prover",
     "terms": "Ao clicar em continuar, você concorda com nossos {terms} e {privacy}.",
     "terms_of_service": "Termos de Serviço",
-    "privacy_policy": "Política de Privacidade"
+    "privacy_policy": "Política de Privacidade",
+    "show_password": "Mostrar senha"
   },
   "error": {
     "title": "Ocorreu um erro",
