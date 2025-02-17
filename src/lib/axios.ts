@@ -2,7 +2,7 @@ import Log from "@p40/services/logging";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.PUBLIC_NEXT_BASE_URL,
+  baseURL: process.env.BASE_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
