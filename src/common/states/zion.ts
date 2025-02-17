@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { getZions } from "@p40/services/zion";
+import { getChurchList } from "@p40/services/zion";
 import { Church, ZionApiResponse } from "../contracts/church/zions";
 
 interface SettingStore {
@@ -26,7 +26,7 @@ export const useSettingStore = create(
       fetchZions: async () => {
         if (get().zions) return;
         try {
-          const fetchedZions: ZionApiResponse[] = await getZions();
+          const fetchedZions: ZionApiResponse[] = await getChurchList();
           set({ zions: fetchedZions });
         } catch (error) {
           console.error("Erro ao buscar as Zions:", error);

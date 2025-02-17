@@ -1,7 +1,7 @@
 import { ZionApiResponse } from "@p40/common/contracts/church/zions";
 
-export async function getZions(): Promise<ZionApiResponse[]> {
-  const res = await fetch(`/api/zions`, {
+export async function getChurchList(): Promise<ZionApiResponse[]> {
+  const res = await fetch(`/api/church`, {
     cache: "no-store",
   });
 
