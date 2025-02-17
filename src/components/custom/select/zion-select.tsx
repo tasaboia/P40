@@ -37,7 +37,7 @@ export default function ZionSelect() {
       <SelectTrigger>
         <SelectValue placeholder={t("title")} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="max-h-[200px]">
         {zions.map((zion) => (
           <SelectGroup key={zion.region.id}>
             <SelectLabel>{t(`regions.${zion.region.code}`)}</SelectLabel>
