@@ -42,7 +42,6 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <BaseLayout locale={locale}>
-      <ChangeLanguage />
       {children}
       <Toaster />
     </BaseLayout>
