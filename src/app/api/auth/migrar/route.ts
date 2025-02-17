@@ -11,7 +11,6 @@ export async function POST(req: Request) {
   try {
     const { username, password, zionId } = await req.json();
 
-    console.log(zionId);
     if (!zionId || !username || !password) {
       throw new FailException({
         message: "Dados inválidos",
