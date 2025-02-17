@@ -12,8 +12,6 @@ import {
 } from "@p40/components/ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from "@p40/components/ui/avatar";
 import { useState } from "react";
-
-// turnLeaders={turnItens?.find((item) => item.startTime == turn.startTime)?.leaders}
 export function TurnItem({
   weekday,
   shift,

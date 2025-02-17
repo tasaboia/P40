@@ -12,7 +12,7 @@ export default function NavUser({
   email: string;
 }) {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between sticky top-0 z-10 bg-white">
       <div className="flex max-w-60 gap-2 px-4 pt-4 text-sm">
         <Avatar className="h-12 w-12 rounded-full">
           <AvatarImage src={imageUrl} alt="Imagem de perfil" />

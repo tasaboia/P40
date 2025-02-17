@@ -10,7 +10,7 @@ export function SetUp() {
   const { activeTab, setActiveTab } = useSettingStore();
   const t = useTranslations("setup");
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-[400px]">
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="zion">{t("choose_zion")}</TabsTrigger>
         <TabsTrigger value="login">{t("enter_schedules")}</TabsTrigger>

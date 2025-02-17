@@ -12,12 +12,11 @@ import {
 import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
 import { loginAction } from "@p40/services/actions/auth";
 import { useFormStatus } from "react-dom";
 import { redirect } from "@p40/i18n/routing";
 import { useSettingStore } from "@p40/common/states/zion";
-import { toast } from "@p40/hooks/use-toast";
 
 export function LoginForm({
   className,
