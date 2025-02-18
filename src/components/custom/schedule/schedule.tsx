@@ -6,14 +6,15 @@ interface ScheduleProps {
   imageUrl: string;
   name: string;
   email: string;
+  churchId: string;
 }
 export default function Schedule(props: ScheduleProps) {
   return (
-    <div className="flex  flex-col gap-4">
+    <div className="flex  flex-col gap-4 bg-muted">
       <NavUser
-        email={props.email}
         imageUrl={props.imageUrl}
         name={props.name}
+        churchId={props.churchId}
       />
       <WeekTab />
     </div>

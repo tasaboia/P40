@@ -12,6 +12,7 @@ export default async function ScheulePage() {
         email={session.user.email}
         imageUrl={session.user.imageUrl}
         name={session.user.name}
+        churchId={session.user.churchId}
       />
     </Suspense>
   );

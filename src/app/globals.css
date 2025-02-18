@@ -42,6 +42,8 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --success: 176.1 69.4% 21.8%;
+    --success-foreground: 178.6 84.3% 10%;
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -76,6 +78,8 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --success: 176.1 69.4% 21.8%;
+    --success-foreground: 178.6 84.3% 10%;
   }
 }
 

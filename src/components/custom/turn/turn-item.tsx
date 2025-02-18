@@ -3,7 +3,7 @@
 import { Helpers } from "@p40/common/utils/helpers";
 import { Avatar, AvatarImage } from "@p40/components/ui/avatar";
 import { PrayerTurnResponse } from "@p40/common/contracts/user/user";
-import { Loader2, MessageCircle, Plus } from "lucide-react";
+import { BellRing, Clock, Loader2, MessageCircle, Plus } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -66,7 +66,6 @@ export function TurnItem({
         });
       }
     } catch (error) {
-      console.log(error);
       toast({
         variant: "destructive",
         title: t("subscribe_error"),
@@ -91,13 +90,12 @@ export function TurnItem({
 
       if (!response?.error) {
         toast({
-          variant: "success",
+          variant: "warning",
           title: t("unsubscribe_success"),
           description: t("unsubscribe_success_desc"),
         });
       }
     } catch (error) {
-      console.log(error);
       toast({
         variant: "destructive",
         title: t("unsubscribe_error"),
@@ -124,14 +122,23 @@ export function TurnItem({
         return (
           <Card key={turn.endTime} className="m-3">
             <CardHeader>
-              <CardTitle>{turn.startTime}</CardTitle>
-              <CardDescription>
-                {leaders
-                  ? t("max_leaders", {
-                      count: event?.maxParticipantsPerTurn || 0,
-                    })
-                  : t("empty_schedule")}
-              </CardDescription>
+              <CardTitle>
+                <div className=" flex items-center space-x-4 rounded-md border p-4">
+                  <Clock />
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {turn.startTime}
+                    </p>
+                    {/* <p className="text-sm text-muted-foreground">
+                      {leaders
+                        ? t("max_leaders", {
+                            count: event?.maxParticipantsPerTurn || 0,
+                          })
+                        : t("empty_schedule")}
+                    </p> */}
+                  </div>
+                </div>
+              </CardTitle>
             </CardHeader>
 
             {leaders?.length > 0 &&
