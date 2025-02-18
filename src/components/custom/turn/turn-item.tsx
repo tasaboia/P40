@@ -169,8 +169,8 @@ export function TurnItem({
               {leaders?.length > 0 &&
               leaders.find((leader) => leader.id == userId) ? (
                 <Button
-                  className="w-full"
-                  variant="destructive"
+                  className="w-full text-destructive"
+                  variant="secondary"
                   disabled={loading}
                   onClick={() => {
                     const turn = turnItens.find((item) =>
@@ -187,7 +187,7 @@ export function TurnItem({
                 </Button>
               ) : (
                 <Button
-                  className="w-full"
+                  className="w-full text-primary"
                   variant="secondary"
                   disabled={loading}
                   onClick={() => {
