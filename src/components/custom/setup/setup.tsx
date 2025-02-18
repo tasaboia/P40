@@ -15,7 +15,7 @@ export function SetUp() {
       onValueChange={setActiveTab}
       className="w-full sm:w-auto "
     >
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className="grid w-full grid-cols-2 bg-muted">
         <TabsTrigger value="zion">{t("choose_zion")}</TabsTrigger>
         <TabsTrigger disabled={selectedZion == null} value="login">
           {t("enter_schedules")}
