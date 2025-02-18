@@ -7,13 +7,15 @@ import { useSettingStore } from "@p40/common/states/zion";
 import { useTranslations } from "next-intl";
 
 export function SetUp() {
-  const { activeTab, setActiveTab } = useSettingStore();
+  const { activeTab, setActiveTab, selectedZion } = useSettingStore();
   const t = useTranslations("setup");
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="zion">{t("choose_zion")}</TabsTrigger>
-        <TabsTrigger value="login">{t("enter_schedules")}</TabsTrigger>
+        <TabsTrigger disabled={selectedZion == null} value="login">
+          {t("enter_schedules")}
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="zion">
         <ZionSelect />

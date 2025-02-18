@@ -18,7 +18,7 @@ export async function WeekTab() {
 
   if (!session.user.churchId) notFound();
   const event = await eventByChurchId(session.user.churchId);
-  const t = await getTranslations(); // 🔥 Obtém as traduções no Server Component
+  const t = await getTranslations();
 
   return (
     <Tabs defaultValue={today}>
