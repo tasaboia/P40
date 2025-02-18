@@ -32,7 +32,6 @@ export async function WeekTab() {
           );
         })}
       </TabsList>
-      ;
       {Object.keys(Weekday).map((key) => {
         const dayAbbr = key as keyof typeof Weekday;
         return (
