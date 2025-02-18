@@ -63,8 +63,8 @@ model PrayerTurn {
   eventId         String
   event           Event    @relation(fields: [eventId], references: [id])
   type            PrayerTurnType
-  startTime       DateTime
-  endTime         DateTime
+  startTime       String   
+  endTime         String   
   duration        Int      @default(60) 
   userShifts      UserShift[]
   weekday         Int?
@@ -80,6 +80,8 @@ model UserShift {
   prayerTurn   PrayerTurn @relation(fields: [prayerTurnId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@unique([userId, prayerTurnId], name: "user_prayerTurn_unique")
 }
 
 model User {
