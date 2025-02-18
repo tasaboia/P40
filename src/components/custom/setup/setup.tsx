@@ -10,7 +10,11 @@ export function SetUp() {
   const { activeTab, setActiveTab, selectedZion } = useSettingStore();
   const t = useTranslations("setup");
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab}>
+    <Tabs
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className="w-full sm:w-auto "
+    >
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="zion">{t("choose_zion")}</TabsTrigger>
         <TabsTrigger disabled={selectedZion == null} value="login">

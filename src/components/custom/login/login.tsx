@@ -40,9 +40,9 @@ export function LoginForm({
     });
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex  flex-col gap-6", className)} {...props}>
       <Card>
-        <CardHeader className="text-center">
+        <CardHeader className="text-center ">
           <CardTitle className="text-xl">{t("title")}</CardTitle>
           <CardDescription>{t("login_with_provider")}</CardDescription>
         </CardHeader>
