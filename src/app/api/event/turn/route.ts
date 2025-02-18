@@ -39,23 +39,10 @@ export async function GET(req: Request) {
       return NextResponse.json(null, { status: 200 });
     }
 
-    const uniqueTurns = prayerTurns.reduce((acc: any[], current: any) => {
-      const existing = acc.find(
-        (turn) => turn.startTime.getTime() === current.startTime.getTime()
-      );
-      if (!existing) acc.push(current);
-      return acc;
-    }, []);
-
-    const formatTime = (date: Date) => {
-      const hours = date.getHours().toString().padStart(2, "0");
-      const minutes = date.getMinutes().toString().padStart(2, "0");
-      return `${hours}:${minutes}`;
-    };
-    const formattedResponse = uniqueTurns.map((turn) => ({
+    const formattedResponse = prayerTurns.map((turn) => ({
       id: turn.id,
-      startTime: formatTime(turn.startTime),
-      endTime: formatTime(turn.endTime),
+      startTime: turn.startTime,
+      endTime: turn.endTime,
       leaders: turn.userShifts.map((shift) => ({
         id: shift.user.id,
         name: shift.user.name,
@@ -106,7 +93,6 @@ export async function POST(req: Request) {
       include: { userShifts: true },
     });
 
-    // Se já existe um turno, adicionamos o usuário como líder
     if (prayerTurn) {
       if (
         event.maxParticipantsPerTurn &&
@@ -118,20 +104,21 @@ export async function POST(req: Request) {
         });
       }
 
-      // 🔥 Adiciona o usuário ao turno existente (se ainda não estiver inscrito)
-      await prisma.userShift.upsert({
+      const existingUserShift = await prisma.userShift.findFirst({
         where: {
-          userId_prayerTurnId: {
-            userId,
-            prayerTurnId: prayerTurn.id,
-          },
-        },
-        update: {},
-        create: {
           userId,
           prayerTurnId: prayerTurn.id,
         },
       });
+
+      if (!existingUserShift) {
+        await prisma.userShift.create({
+          data: {
+            userId,
+            prayerTurnId: prayerTurn.id,
+          },
+        });
+      }
 
       return NextResponse.json({
         status: 200,
@@ -139,15 +126,29 @@ export async function POST(req: Request) {
       });
     }
 
-    // 🔥 Se o turno não existir, criamos um novo e adicionamos o usuário como líder
+    const [hours, minutes] = startTime.split(":").map(Number);
+
+    const startDate = new Date();
+    startDate.setHours(hours);
+    startDate.setMinutes(minutes);
+    startDate.setSeconds(0);
+    startDate.setMilliseconds(0);
+
+    const endDate = new Date(
+      startDate.getTime() + (event.shiftDuration || 60) * 60000
+    );
+
+    const endTime = `${endDate.getHours().toString().padStart(2, "0")}:${endDate
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
+
     const result = await prisma.$transaction(async (prisma) => {
       const newPrayerTurn = await prisma.prayerTurn.create({
         data: {
           eventId,
           startTime: startTime,
-          endTime: new Date(
-            new Date(startTime).getTime() + event.shiftDuration * 60000
-          ),
+          endTime: endTime,
           duration: event.shiftDuration,
           weekday: parseInt(weekday),
           type: event.type,
