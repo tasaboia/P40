@@ -51,5 +51,14 @@
     "unsubscribe_error_desc": "An error occurred while trying to leave the shift. Please try again later.",
     "leave_schedule": "Leave the shift",
     "join_schedule": "Join the shift"
+  },
+  "weekdays": {
+    "Sun": "Sun",
+    "Mon": "Mon",
+    "Tue": "Tue",
+    "Wed": "Wed",
+    "Thu": "Thu",
+    "Fri": "Fri",
+    "Sat": "Sat"
   }
 }

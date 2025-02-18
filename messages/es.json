@@ -51,5 +51,14 @@
     "unsubscribe_error_desc": "Ocurrió un error al intentar salir del turno. Intenta más tarde.",
     "leave_schedule": "Salir del turno",
     "join_schedule": "Inscribirse en el turno"
+  },
+  "weekdays": {
+    "Sun": "Dom",
+    "Mon": "Lun",
+    "Tue": "Mar",
+    "Wed": "Mié",
+    "Thu": "Jue",
+    "Fri": "Vie",
+    "Sat": "Sáb"
   }
 }

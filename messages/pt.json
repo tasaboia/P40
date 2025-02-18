@@ -51,5 +51,14 @@
     "unsubscribe_error_desc": "Houve um erro ao tentar sair do turno, tente mais tarde",
     "leave_schedule": "Sair do horário",
     "join_schedule": "Se inscrever no horário"
+  },
+  "weekdays": {
+    "Sun": "Dom",
+    "Mon": "Seg",
+    "Tue": "Ter",
+    "Wed": "Qua",
+    "Thu": "Qui",
+    "Fri": "Sex",
+    "Sat": "Sáb"
   }
 }

@@ -11,12 +11,14 @@ import { today } from "@p40/common/utils/schedule";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { auth } from "../../../../auth";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 export async function WeekTab() {
   const session = await auth();
 
   if (!session.user.churchId) notFound();
   const event = await eventByChurchId(session.user.churchId);
+  const t = await getTranslations(); // 🔥 Obtém as traduções no Server Component
 
   return (
     <Tabs defaultValue={today}>
@@ -25,11 +27,12 @@ export async function WeekTab() {
           const dayAbbr = key as keyof typeof Weekday;
           return (
             <TabsTrigger key={dayAbbr} value={dayAbbr}>
-              {Weekday[dayAbbr]}
+              {t(`weekdays.${dayAbbr}`)}
             </TabsTrigger>
           );
         })}
       </TabsList>
+      ;
       {Object.keys(Weekday).map((key) => {
         const dayAbbr = key as keyof typeof Weekday;
         return (

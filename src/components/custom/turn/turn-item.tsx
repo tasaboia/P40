@@ -124,7 +124,11 @@ export function TurnItem({
             <CardHeader>
               <CardTitle>{turn.startTime}</CardTitle>
               <CardDescription>
-                {leaders ? t("max_leaders") : t("empty_schedule")}
+                {leaders
+                  ? t("max_leaders", {
+                      count: event?.maxParticipantsPerTurn || 0,
+                    })
+                  : t("empty_schedule")}
               </CardDescription>
             </CardHeader>
 
