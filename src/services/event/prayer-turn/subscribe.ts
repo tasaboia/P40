@@ -6,17 +6,12 @@ export async function subscribe(
   userId: string,
   eventId: string,
   startTime: string,
-  weekday: string
-): Promise<EventResponse | null> {
+  weekday: number
+) {
   try {
-    const response = await api.post(`/api/event/turn`, null, {
-      params: {
-        userId,
-        eventId,
-        startTime,
-        weekday,
-      },
-    });
+    const response = await api.post(
+      `/api/event/turn?userId=${userId}&eventId=${eventId}&startTime=${startTime}&weekday=${weekday}`
+    );
 
     return response.data;
   } catch (error) {

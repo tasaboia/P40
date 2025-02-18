@@ -63,6 +63,7 @@ export async function POST(req: Request) {
     const eventId = searchParams.get("eventId");
     const startTime = searchParams.get("startTime");
     const weekday = searchParams.get("weekday");
+    console.log(weekday, startTime, eventId, userId);
 
     if (!userId || !eventId || !startTime || !weekday) {
       throw new FailException({
@@ -121,7 +122,7 @@ export async function POST(req: Request) {
       }
 
       return NextResponse.json({
-        status: 200,
+        error: false,
         message: "Usuário adicionado ao turno existente.",
       });
     }
@@ -167,7 +168,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
-      status: 200,
+      error: 200,
       message: "Novo turno criado e usuário adicionado.",
     });
   } catch (error) {

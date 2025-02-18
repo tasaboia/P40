@@ -17,6 +17,7 @@ export interface TurnLeader {
 }
 
 export interface PrayerTurnResponse {
+  id: string;
   startTime: string;
   endTime: string;
   leaders: TurnLeader[];
