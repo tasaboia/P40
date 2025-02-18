@@ -60,6 +60,7 @@ export function TurnItem({
 
       if (!response?.error) {
         toast({
+          variant: "success",
           title: t("subscribe_success"),
           description: t("subscribe_success_desc"),
         });
@@ -90,6 +91,7 @@ export function TurnItem({
 
       if (!response?.error) {
         toast({
+          variant: "success",
           title: t("unsubscribe_success"),
           description: t("unsubscribe_success_desc"),
         });
@@ -110,7 +112,7 @@ export function TurnItem({
   return (
     <div>
       {loading && (
-        <div className="w-full flex justify-center items-center">
+        <div className="w-full flex  justify-center items-center">
           <Loader2 className="animate-spin items-center" />
         </div>
       )}
