@@ -85,7 +85,7 @@ export async function POST(req: Request) {
       });
     }
 
-    let prayerTurn = await prisma.prayerTurn.findFirst({
+    const prayerTurn = await prisma.prayerTurn.findFirst({
       where: {
         eventId,
         startTime: startTime,

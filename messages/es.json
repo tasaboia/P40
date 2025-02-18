@@ -1,15 +1,15 @@
 {
   "setup": {
     "choose_zion": "Elige tu Zion",
-    "enter_schedules": "Ingresar a los horarios"
+    "enter_schedules": "Entrar en los horarios"
   },
   "geral": {
-    "title": "40 Días de oración"
+    "title": "40 Días de Oración"
   },
   "login": {
-    "title": "40 días de oración",
+    "title": "40 Días de Oración",
     "choose_zion": "Elige tu Zion",
-    "login_with_provider": "Inicia sesión con tus datos de Prover",
+    "login_with_provider": "Inicia sesión con tu cuenta de Prover",
     "email": "Correo electrónico",
     "email_placeholder": "ejemplo@email.com",
     "password": "Contraseña",
@@ -23,12 +23,11 @@
   },
   "error": {
     "title": "Ocurrió un error",
-    "description": "Algo salió mal. Inténtalo de nuevo o vuelve a la página de inicio.",
+    "description": "Algo salió mal. Intenta nuevamente o regresa a la página de inicio.",
     "unknown": "Error desconocido",
     "home_button": "Volver a inicio",
-    "retry_button": "Intentar de nuevo"
+    "retry_button": "Intentar nuevamente"
   },
-
   "zionSelect": {
     "title": "Selecciona tu Zion",
     "regions": {
@@ -38,5 +37,19 @@
       "LATAM": "América Latina",
       "GLOBAL": "Global"
     }
+  },
+  "prayer_turn": {
+    "max_leaders": "Máximo {count} líderes por turno",
+    "empty_schedule": "Este horario está vacío",
+    "subscribe_success": "Inscripción realizada con éxito",
+    "subscribe_success_desc": "Serás responsable de este horario durante los próximos 40 días",
+    "subscribe_error": "Error al intentar inscribirse en el horario",
+    "subscribe_error_desc": "Ocurrió un error al intentar inscribirte. Intenta más tarde.",
+    "unsubscribe_success": "Ya no estás en el turno",
+    "unsubscribe_success_desc": "Ya no estás inscrito en el turno de oración",
+    "unsubscribe_error": "Error al intentar salir del turno",
+    "unsubscribe_error_desc": "Ocurrió un error al intentar salir del turno. Intenta más tarde.",
+    "leave_schedule": "Salir del turno",
+    "join_schedule": "Inscribirse en el turno"
   }
 }

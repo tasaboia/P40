@@ -28,7 +28,6 @@
     "home_button": "Voltar para Home",
     "retry_button": "Tentar novamente"
   },
-
   "zionSelect": {
     "title": "Selecione sua Zion",
     "regions": {
@@ -38,5 +37,19 @@
       "LATAM": "América Latina",
       "GLOBAL": "Global"
     }
+  },
+  "prayer_turn": {
+    "max_leaders": "Máximo {count} líderes por turno",
+    "empty_schedule": "Esse horário está vazio",
+    "subscribe_success": "Inscrição realizada com sucesso",
+    "subscribe_success_desc": "Você estará responsável por esse horário durante os 40 dias",
+    "subscribe_error": "Erro ao tentar se inscrever no horário",
+    "subscribe_error_desc": "Houve um erro ao tentar te inscrever, tente mais tarde",
+    "unsubscribe_success": "Você não está mais no turno",
+    "unsubscribe_success_desc": "Você não está mais inscrito no turno de oração",
+    "unsubscribe_error": "Erro ao tentar sair do horário",
+    "unsubscribe_error_desc": "Houve um erro ao tentar sair do turno, tente mais tarde",
+    "leave_schedule": "Sair do horário",
+    "join_schedule": "Se inscrever no horário"
   }
 }

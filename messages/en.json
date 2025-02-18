@@ -3,19 +3,18 @@
     "choose_zion": "Choose your Zion",
     "enter_schedules": "Enter the schedules"
   },
-
   "geral": {
     "title": "40 Days of Prayer"
   },
   "login": {
     "title": "40 Days of Prayer",
     "choose_zion": "Choose your Zion",
-    "login_with_provider": "Log in with your Prover credentials",
+    "login_with_provider": "Log in with your Prover account",
     "email": "Email",
     "email_placeholder": "example@email.com",
     "password": "Password",
     "forgot_password": "Forgot your password?",
-    "login_button": "Sign in",
+    "login_button": "Login",
     "create_account": "Create an account on Prover",
     "terms": "By clicking continue, you agree to our {terms} and {privacy}.",
     "terms_of_service": "Terms of Service",
@@ -24,12 +23,11 @@
   },
   "error": {
     "title": "An error occurred",
-    "description": "Something went wrong. Try again or return to the home page.",
+    "description": "Something went wrong. Try again or return to the homepage.",
     "unknown": "Unknown error",
-    "home_button": "Go back to Home",
+    "home_button": "Return to Home",
     "retry_button": "Try again"
   },
-
   "zionSelect": {
     "title": "Select your Zion",
     "regions": {
@@ -39,5 +37,19 @@
       "LATAM": "Latin America",
       "GLOBAL": "Global"
     }
+  },
+  "prayer_turn": {
+    "max_leaders": "Maximum {count} leaders per shift",
+    "empty_schedule": "This time slot is empty",
+    "subscribe_success": "Subscription successful",
+    "subscribe_success_desc": "You will be responsible for this time slot for the next 40 days",
+    "subscribe_error": "Error subscribing to the time slot",
+    "subscribe_error_desc": "An error occurred while trying to subscribe. Please try again later.",
+    "unsubscribe_success": "You are no longer in the shift",
+    "unsubscribe_success_desc": "You are no longer subscribed to the prayer shift",
+    "unsubscribe_error": "Error leaving the shift",
+    "unsubscribe_error_desc": "An error occurred while trying to leave the shift. Please try again later.",
+    "leave_schedule": "Leave the shift",
+    "join_schedule": "Join the shift"
   }
 }

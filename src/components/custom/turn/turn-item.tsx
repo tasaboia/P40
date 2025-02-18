@@ -21,6 +21,7 @@ import { unsubscribe } from "@p40/services/event/prayer-turn/unsubscribe";
 import { useState } from "react";
 import { Weekday } from "@p40/common/contracts/schedule/schedule";
 import { useRouter } from "@p40/i18n/routing";
+import { useTranslations } from "next-intl";
 
 export function TurnItem({
   weekday,
@@ -38,6 +39,7 @@ export function TurnItem({
     endTime: string;
   }[];
 }) {
+  const t = useTranslations("prayer_turn");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const handlePrayerTurnSubscribe = async ({
@@ -58,17 +60,16 @@ export function TurnItem({
 
       if (!response?.error) {
         toast({
-          title: "Inscrição realizada com sucesso",
-          description:
-            "Você estará responsavel por esse horário durante os 40 dias",
+          title: t("subscribe_success"),
+          description: t("subscribe_success_desc"),
         });
       }
     } catch (error) {
       console.log(error);
       toast({
         variant: "destructive",
-        title: "Erro ao tentar se inscrever no horário",
-        description: "Houve um erro ao tentar te inscrever, tente mais tarde",
+        title: t("subscribe_error"),
+        description: t("subscribe_error_desc"),
       });
     } finally {
       setLoading(false);
@@ -89,16 +90,16 @@ export function TurnItem({
 
       if (!response?.error) {
         toast({
-          title: "Você não esta mais no turno",
-          description: "Você não esta mais inscrito no turno de oração",
+          title: t("unsubscribe_success"),
+          description: t("unsubscribe_success_desc"),
         });
       }
     } catch (error) {
       console.log(error);
       toast({
         variant: "destructive",
-        title: "Erro ao tentar se inscrever no horário",
-        description: "Houve um erro ao tentar te inscrever, tente mais tarde",
+        title: t("unsubscribe_error"),
+        description: t("unsubscribe_error_desc"),
       });
     } finally {
       setLoading(false);
@@ -123,9 +124,7 @@ export function TurnItem({
             <CardHeader>
               <CardTitle>{turn.startTime}</CardTitle>
               <CardDescription>
-                {leaders
-                  ? `Máximo ${event.maxParticipantsPerTurn} líderes por turno`
-                  : "Esse horário esta vazio"}
+                {leaders ? t("max_leaders") : t("empty_schedule")}
               </CardDescription>
             </CardHeader>
 
@@ -178,7 +177,7 @@ export function TurnItem({
                   }}
                 >
                   <Plus />
-                  Sair do horário
+                  {t("leave_schedule")}
                 </Button>
               ) : (
                 <Button
@@ -194,7 +193,7 @@ export function TurnItem({
                     });
                   }}
                 >
-                  <Plus /> Se inscrever no horário
+                  <Plus /> {t("join_schedule")}
                 </Button>
               )}
             </CardFooter>
