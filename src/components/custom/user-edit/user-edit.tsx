@@ -84,14 +84,10 @@ export function UserEdit({ user }) {
             <DrawerDescription>Atualize seus dados</DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
-            <form
-              action={(e) => {
-                e.append("id", user.id);
-                formAction;
-              }}
-            >
+            <form action={formAction}>
               <div className="grid w-full items-center gap-4">
                 <div className="flex flex-col space-y-1.5">
+                  <input type="hidden" name="id" value={user.id} />
                   <Label htmlFor="name">Nome</Label>
                   <Input
                     id="name"
