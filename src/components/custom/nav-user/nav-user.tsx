@@ -5,13 +5,8 @@ import { getChurchById } from "@p40/services/zion";
 import { Settings } from "../settings/settings";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { getTranslations } from "next-intl/server";
-import { auth } from "../../../../auth";
-import { notFound } from "next/navigation";
 
-export default async function NavUser() {
-  const session = await auth();
-  if (!session.user.churchId) notFound();
-
+export default async function NavUser({ session }) {
   const church = await getChurchById(session.user.churchId);
   const event = await eventByChurchId(session.user.churchId);
   const t = await getTranslations("prayer_turn");

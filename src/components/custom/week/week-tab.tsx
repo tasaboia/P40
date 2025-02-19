@@ -9,14 +9,9 @@ import {
 import DayList from "./day-list";
 import { today } from "@p40/common/utils/schedule";
 import { eventByChurchId } from "@p40/services/event/event-byId";
-import { auth } from "../../../../auth";
-import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-export async function WeekTab() {
-  const session = await auth();
-
-  if (!session.user.churchId) notFound();
+export async function WeekTab({ session }) {
   const event = await eventByChurchId(session.user.churchId);
   const t = await getTranslations();
 

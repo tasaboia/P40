@@ -1,22 +1,19 @@
-export const updateUser = async (userData: {
-  id: string;
-  name: string;
-  email: string;
-  whatsapp?: string;
-}) => {
+import api from "@p40/lib/axios";
+
+export const updateUser = async (prevState: any, formData: FormData) => {
+  const name = formData.get("name")?.toString();
+  const id = formData.get("id")?.toString();
+  const email = formData.get("email")?.toString();
+  const whatsapp = formData.get("whatsapp")?.toString();
+
   try {
-    const response = await fetch("/api/user/update", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
+    const response = await api.post(
+      "/api/user/update",
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || "Failed to update user");
+      { name, email, whatsapp, id }
+    );
 
-    return { success: true, user: data.user };
+    return { success: true, user: response };
   } catch (error) {
     return { success: false, error: error.message };
   }
