@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@p40/components/ui/dropdown-menu";
 import {
+  Clock,
   FileText,
   Languages,
   LogOut,
@@ -49,7 +50,10 @@ export function Settings({ user }) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Ajustes</DropdownMenuLabel>
-
+          <DropdownMenuItem>
+            <Clock />
+            Meus horários
+          </DropdownMenuItem>
           <UserEdit user={user} />
 
           <DropdownMenuSub>
@@ -72,6 +76,7 @@ export function Settings({ user }) {
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
+
           <DropdownMenuSeparator />
 
           <DropdownMenuItem onClick={() => signOut()}>
