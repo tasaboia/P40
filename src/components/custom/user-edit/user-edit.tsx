@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Minus, Plus, UserCog } from "lucide-react";
+import { UserCog } from "lucide-react";
 import { Button } from "@p40/components/ui/button";
 import {
   Drawer,
@@ -17,24 +17,42 @@ import { Label } from "@p40/components/ui/label";
 import { Input } from "@p40/components/ui/input";
 
 export function UserEdit() {
-  const [goal, setGoal] = React.useState(350);
+  const [drawerHeight, setDrawerHeight] = React.useState("80%");
 
-  function onClick(adjustment: number) {
-    setGoal(Math.max(200, Math.min(400, goal + adjustment)));
-  }
+  React.useEffect(() => {
+    const updateHeight = () => {
+      const viewportHeight =
+        window.visualViewport?.height || window.innerHeight;
+      const screenHeight = window.innerHeight;
+
+      if (viewportHeight < screenHeight) {
+        setDrawerHeight("60%");
+      } else {
+        setDrawerHeight("80%");
+      }
+    };
+
+    window.visualViewport?.addEventListener("resize", updateHeight);
+    return () => {
+      window.visualViewport?.removeEventListener("resize", updateHeight);
+    };
+  }, []);
 
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <div className="flex p-[6px] rounded mb-1 transition-colors hover:bg-accent hover:text-accent-foreground  gap-2 items-center text-sm px-2 hover:">
+        <div className="flex p-[6px] rounded mb-1 transition-colors hover:bg-accent hover:text-accent-foreground gap-2 items-center text-sm px-2">
           <UserCog className="h-4 w-4" />
           <Button variant="ghost" className="font-normal text-sm p-0 h-[20px]">
             Meus dados
           </Button>
         </div>
       </DrawerTrigger>
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm h-[80%]">
+      <DrawerContent
+        className="transition-all"
+        style={{ height: drawerHeight }}
+      >
+        <div className="mx-auto w-full max-w-sm overflow-auto">
           <DrawerHeader>
             <DrawerTitle>Meu Perfil</DrawerTitle>
             <DrawerDescription>Atualize seus dados</DrawerDescription>
@@ -47,12 +65,12 @@ export function UserEdit() {
                   <Input id="name" placeholder="Seu nome" />
                 </div>
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="name">Email</Label>
-                  <Input id="name" placeholder="email@email.com" />
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" placeholder="email@email.com" />
                 </div>
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="name">Whatsapp</Label>
-                  <Input id="name" placeholder="11 99999-9999" />
+                  <Label htmlFor="whatsapp">Whatsapp</Label>
+                  <Input id="whatsapp" placeholder="11 99999-9999" />
                 </div>
               </div>
             </form>
