@@ -7,7 +7,6 @@ export async function eventByChurchId(
 ): Promise<EventResponse | null> {
   try {
     const response = await api.get(`/api/event?churchId=${churchId}`);
-
     return response.data;
   } catch (error) {
     throw new FailException({

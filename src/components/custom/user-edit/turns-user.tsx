@@ -11,12 +11,12 @@ import {
   DrawerTrigger,
 } from "@p40/components/ui/drawer";
 import { unsubscribe } from "@p40/services/event/prayer-turn/unsubscribe";
-import { toast } from "@p40/hooks/use-toast";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { User } from "@p40/common/contracts/user/user";
 import { PrayerTurn } from "@p40/common/contracts/config/config";
 import { Weekday } from "@p40/common/contracts/schedule/schedule";
+import { toast } from "@p40/hooks/use-toast";
 interface TurnsUserList {
   user: User;
   turnItens: PrayerTurn[] | null;
@@ -36,7 +36,6 @@ export function TurnsUserList({ turnItens, user }: TurnsUserList) {
     try {
       setLoading(true);
 
-      console.log(userId, prayerTurnId);
       const response = await unsubscribe(userId, prayerTurnId);
 
       if (!response?.error) {

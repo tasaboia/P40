@@ -6,13 +6,28 @@ import { Settings } from "../settings/settings";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { getTranslations } from "next-intl/server";
 import { getTurns } from "@p40/services/event/get-turn";
+import { User } from "@p40/common/contracts/user/user";
 
-export default async function NavUser({ user, churchId }) {
-  const church = await getChurchById(churchId);
-  const event = await eventByChurchId(churchId);
-  const turnItens = await getTurns({ eventId: event?.id, userId: user?.id });
+async function fetchData(churchId: string, userId: string) {
+  const [church, event, t] = await Promise.all([
+    getChurchById(churchId),
+    eventByChurchId(churchId),
+    getTranslations("prayer_turn"),
+  ]);
 
-  const t = await getTranslations("prayer_turn");
+  const turnItens = event?.id
+    ? await getTurns({ eventId: event.id, userId })
+    : [];
+
+  return { church, event, turnItens, t };
+}
+
+interface NavUserProps {
+  user: User;
+  churchId: string;
+}
+export default async function NavUser({ user, churchId }: NavUserProps) {
+  const { church, event, turnItens, t } = await fetchData(churchId, user.id);
 
   return (
     <div className="flex justify-between  bg-white">

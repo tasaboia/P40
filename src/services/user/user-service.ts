@@ -6,6 +6,7 @@ export const updateUser = async (prevState: any, formData: FormData) => {
   const id = formData.get("id")?.toString();
   const email = formData.get("email")?.toString();
   const whatsapp = formData.get("whatsapp")?.toString();
+  const zionId = formData.get("zionId")?.toString();
 
   try {
     const response = await api.post("/api/user/update", {
@@ -13,6 +14,7 @@ export const updateUser = async (prevState: any, formData: FormData) => {
       email,
       whatsapp,
       id,
+      zionId,
     });
 
     if (!response.data.success) {

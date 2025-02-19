@@ -71,17 +71,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         try {
-          // 📌 Chama a API para obter os dados atualizados do usuário
           const { data: newUser } = await api.post("/api/auth/migrar/google", {
-            id: profile.sub,
+            id: profile.id,
             name: profile.name,
             email: profile.email,
             imageUrl: profile.picture ?? profile.imageUrl,
           });
 
-          console.log("🔹 Usuário atualizado no backend:", newUser);
-
-          // 📌 **Salva os dados atualizados dentro do `user`**
           user.id = newUser.user.id;
           user.idProver = newUser.user.idProver;
           user.name = newUser.user.name;
@@ -91,8 +87,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           user.role = newUser.user.role;
           user.churchId = newUser.user.churchId;
         } catch (error) {
-          console.error("Erro ao migrar usuário:", error);
-          return false; // Impede o login se falhar
+          return false;
         }
       }
 
@@ -100,13 +95,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
 
     async jwt({ token, user }) {
-      // 📌 Se `user` existir, significa que acabamos de fazer login e temos os dados atualizados
       if (user) {
-        console.log(
-          "🟢 Atualizando token JWT com usuário atualizado do backend:",
-          user
-        );
-
         token.id = user.id || "";
         token.idProver = user.idProver || "";
         token.name = user.name || null;
@@ -121,8 +110,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
 
     async session({ session, token }) {
-      console.log("🔄 Criando sessão com os dados do token atualizado:", token);
-
       session.user = {
         id: token.id as string,
         idProver: token.idProver as string,

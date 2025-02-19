@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { id, name, email, whatsapp } = await req.json();
+    const { id, name, email, whatsapp, zionId } = await req.json();
 
     if (!id || !name || !email) {
       return NextResponse.json(
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: { name, email, whatsapp, onboarding: true },
+      data: { name, email, whatsapp, onboarding: true, churchId: zionId },
     });
 
     return NextResponse.json(

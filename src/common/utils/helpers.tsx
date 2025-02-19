@@ -28,7 +28,6 @@ export class Helpers {
 
     const now = new Date();
     const eventDate = new Date(eventStartDate);
-    console.log(now >= eventDate);
 
     return now >= eventDate;
   };

@@ -8,21 +8,25 @@ import { Onboarding } from "@p40/components/custom/user-edit/onboarding";
 
 export default async function ScheulePage() {
   const session = await auth();
-  console.log(session);
   const data = await getUser(session.user.id);
 
-  return (
-    <Suspense fallback={<Loading />}>
-      <div className="flex  flex-col gap-4 bg-muted">
-        {data?.user?.onboarding ? (
-          <React.Fragment>
-            <NavUser user={data.user} churchId={session.user.churchId} />
-            <WeekTab session={session} />
-          </React.Fragment>
-        ) : (
-          <Onboarding user={data.user} />
-        )}
-      </div>
-    </Suspense>
-  );
+  if (!data?.user?.onboarding)
+    return (
+      <Suspense fallback={<Loading />}>
+        <Onboarding user={data.user} />
+      </Suspense>
+    );
+
+  if (data.user && data.user.churchId) {
+    return (
+      <Suspense fallback={<Loading />}>
+        <div className="flex  flex-col gap-4 bg-muted">
+          <NavUser user={data?.user} churchId={data.user.churchId.toString()} />
+          <WeekTab churchId={data.user.churchId.toString()} />
+        </div>
+      </Suspense>
+    );
+  }
+
+  return null;
 }

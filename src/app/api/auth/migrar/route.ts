@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     }
 
     let user = await prisma.user.findUnique({
-      where: { idProver: String(prover.user.id) },
+      where: { email: userDetails.email },
     });
 
     if (!user) {

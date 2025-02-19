@@ -16,7 +16,7 @@ export interface Event {
   churchId: string;
   name: string;
   startDate: string;
-  type: "SHIFT" | "CLOCK"; // Enum de tipos de evento
+  type: "SHIFT" | "CLOCK";
   endDate: string;
   description: string;
   createdAt: string;
@@ -28,7 +28,7 @@ export interface Event {
 export interface PrayerTurn {
   id: string;
   eventId: string;
-  type: "SHIFT" | "CLOCK"; // Enum para tipos de turno
+  type: "SHIFT" | "CLOCK";
   startTime: string;
   endTime: string;
   duration: number;

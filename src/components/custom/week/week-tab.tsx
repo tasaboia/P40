@@ -11,8 +11,8 @@ import { today } from "@p40/common/utils/schedule";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { getTranslations } from "next-intl/server";
 
-export async function WeekTab({ session }) {
-  const event = await eventByChurchId(session.user.churchId);
+export async function WeekTab({ churchId }) {
+  const event = await eventByChurchId(churchId);
   const t = await getTranslations();
 
   return (

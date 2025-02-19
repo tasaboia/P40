@@ -16,8 +16,10 @@ import { useActionState, useEffect } from "react";
 import { updateUser } from "@p40/services/user/user-service";
 import { Loader2 } from "lucide-react";
 import { toast } from "@p40/hooks/use-toast";
+import { useSettingStore } from "@p40/common/states/zion";
 
 export function Onboarding({ user }) {
+  const { selectedZion } = useSettingStore();
   const [state, formAction, isPending] = useActionState(updateUser, {
     success: false,
     error: null,
@@ -54,6 +56,12 @@ export function Onboarding({ user }) {
 
         <form action={formAction} className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
+            <input
+              type="hidden"
+              name="zionId"
+              id="zionId"
+              value={selectedZion.id}
+            />
             <Label htmlFor="name" className="text-right">
               Nome
             </Label>
