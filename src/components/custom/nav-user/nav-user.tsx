@@ -1,7 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@p40/components/ui/avatar";
 import { Helpers } from "@p40/common/utils/helpers";
-import { Logout } from "../logout/menu-logout";
+
 import { getChurchById } from "@p40/services/zion";
+import { Settings } from "../settings/settings";
 
 export default async function NavUser({
   imageUrl,
@@ -29,7 +30,7 @@ export default async function NavUser({
           <span className="truncate text-xs">{church.name}</span>
         </div>
       </div>
-      <Logout />
+      <Settings />
     </div>
   );
 }

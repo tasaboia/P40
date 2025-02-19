@@ -7,10 +7,10 @@
     "title": "40 Dias de oração"
   },
   "login": {
-    "title": "40 dias de oração",
+    "title": "Entrar",
     "choose_zion": "Escolha sua Zion",
-    "login_with_provider": "Faça login com seus dados do Prover",
-    "email": "Email",
+    "login_with_provider": "Bem vindo ao 40 dias de oração",
+    "email": "Usuário",
     "email_placeholder": "exemplo@email.com",
     "password": "Senha",
     "forgot_password": "Esqueceu sua senha?",

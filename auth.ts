@@ -2,6 +2,7 @@ import Log from "@p40/services/logging";
 import { authProver } from "@p40/services/prover";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -36,6 +37,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           Log(error);
           throw new Error("Erro interno na autenticação.");
         }
+      },
+    }),
+    Google({
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
       },
     }),
   ],
