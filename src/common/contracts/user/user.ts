@@ -7,6 +7,7 @@ export interface User {
   whatsapp: string;
   role: string;
   churchId: string;
+  onboarding: boolean;
 }
 export interface TurnLeader {
   id: string;

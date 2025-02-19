@@ -94,6 +94,7 @@ model User {
   imageUrl   String?  
   role       Role     @default(USER)
   userShifts UserShift[]
+  onboarding  Boolean @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   churchId   String?   

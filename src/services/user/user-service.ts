@@ -1,3 +1,4 @@
+import { User } from "@p40/common/contracts/user/user";
 import api from "@p40/lib/axios";
 
 export const updateUser = async (prevState: any, formData: FormData) => {
@@ -12,6 +13,7 @@ export const updateUser = async (prevState: any, formData: FormData) => {
       email,
       whatsapp,
       id,
+      onboarding: true,
     });
 
     if (!response.data.success) {
@@ -24,7 +26,9 @@ export const updateUser = async (prevState: any, formData: FormData) => {
   }
 };
 
-export const getUser = async (userId: string) => {
+export const getUser = async (
+  userId: string
+): Promise<{ success: boolean; user?: User | null; error?: string }> => {
   try {
     const response = await api.get(`/api/user?userId=${userId}`);
 
