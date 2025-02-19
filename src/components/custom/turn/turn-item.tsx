@@ -3,11 +3,10 @@
 import { Helpers } from "@p40/common/utils/helpers";
 import { Avatar, AvatarImage } from "@p40/components/ui/avatar";
 import { PrayerTurnResponse } from "@p40/common/contracts/user/user";
-import { BellRing, Clock, Loader2, MessageCircle, Plus } from "lucide-react";
+import { Clock, Loader2, MessageCircle, Plus } from "lucide-react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -42,6 +41,7 @@ export function TurnItem({
   const t = useTranslations("prayer_turn");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
   const handlePrayerTurnSubscribe = async ({
     userId,
     eventId,
@@ -115,11 +115,11 @@ export function TurnItem({
         </div>
       )}
       {shift.map((turn) => {
-        const leaders = turnItens?.find(
+        const turnItem = turnItens?.find(
           (item) => item.startTime == turn.startTime
-        )?.leaders;
+        );
 
-        const canChangeLeaderTurn = Helpers.isEventStarted(event.startDate);
+        const weekdayIndex = Object.values(Weekday).indexOf(Weekday[weekday]);
 
         return (
           <Card key={turn.endTime} className="m-3">
@@ -132,12 +132,22 @@ export function TurnItem({
                       {turn.startTime}
                     </p>
                   </div>
+                  {Helpers.isCurrentTurn(
+                    turn?.startTime,
+                    event?.shiftDuration,
+                    weekdayIndex
+                  ) && (
+                    <div className="flex  gap-2 text-xs text-green-600">
+                      <span className="flex h-2 w-2 translate-y-1 rounded-full bg-green-400" />
+                      Turno em andamento
+                    </div>
+                  )}
                 </div>
               </CardTitle>
             </CardHeader>
 
-            {leaders?.length > 0 &&
-              leaders.map((leader) => (
+            {turnItem?.leaders?.length > 0 &&
+              turnItem?.leaders.map((leader) => (
                 <CardContent key={leader.id} className="grid gap-4 ">
                   <div key={leader.id} className="flex gap-3 items-center">
                     <Avatar className="h-10 w-10 rounded-full">
@@ -168,54 +178,51 @@ export function TurnItem({
                 </CardContent>
               ))}
 
-            {!canChangeLeaderTurn && (
-              <CardFooter>
-                {leaders?.length > 0 &&
-                leaders.find((leader) => leader.id == userId) ? (
-                  <Button
-                    className="w-full text-destructive"
-                    variant="secondary"
-                    disabled={loading}
-                    onClick={() => {
-                      const turn = turnItens.find((item) =>
-                        item.leaders.some((leader) => leader.id === userId)
-                      );
-                      handlePrayerTurnUnsubscribe({
-                        userId,
-                        prayerTurnId: turn.id,
-                      });
-                    }}
-                  >
-                    <Plus />
-                    {t("leave_schedule")}
-                  </Button>
-                ) : (
-                  <React.Fragment>
-                    {" "}
-                    {(!leaders ||
-                      leaders.length < event.maxParticipantsPerTurn) && (
-                      <Button
-                        className="w-full text-primary"
-                        variant="secondary"
-                        disabled={loading}
-                        onClick={() => {
-                          handlePrayerTurnSubscribe({
-                            userId,
-                            weekday: Object.values(Weekday).indexOf(
-                              Weekday[weekday]
-                            ),
-                            eventId: event.id,
-                            startTime: turn.startTime,
-                          });
-                        }}
-                      >
-                        <Plus /> {t("join_schedule")}
-                      </Button>
-                    )}
-                  </React.Fragment>
-                )}
-              </CardFooter>
-            )}
+            <CardFooter>
+              {turnItem?.leaders?.length > 0 &&
+              turnItem?.leaders.find((leader) => leader.id == userId) ? (
+                <Button
+                  className="w-full text-destructive"
+                  variant="secondary"
+                  disabled={loading}
+                  onClick={() => {
+                    const turn = turnItens.find((item) =>
+                      item.leaders.some((leader) => leader.id === userId)
+                    );
+                    handlePrayerTurnUnsubscribe({
+                      userId,
+                      prayerTurnId: turn.id,
+                    });
+                  }}
+                >
+                  <Plus />
+                  {t("leave_schedule")}
+                </Button>
+              ) : (
+                <React.Fragment>
+                  {" "}
+                  {(!turnItem?.leaders ||
+                    turnItem?.leaders.length <
+                      event.maxParticipantsPerTurn) && (
+                    <Button
+                      className="w-full text-primary"
+                      variant="secondary"
+                      disabled={loading}
+                      onClick={() => {
+                        handlePrayerTurnSubscribe({
+                          userId,
+                          weekday: weekdayIndex,
+                          eventId: event.id,
+                          startTime: turn.startTime,
+                        });
+                      }}
+                    >
+                      <Plus /> {t("join_schedule")}
+                    </Button>
+                  )}
+                </React.Fragment>
+              )}
+            </CardFooter>
           </Card>
         );
       })}

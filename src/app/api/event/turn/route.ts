@@ -34,6 +34,11 @@ export async function GET(req: Request) {
         },
       },
     });
+    const event = await prisma.event.findFirst({
+      where: {
+        id: eventId,
+      },
+    });
 
     if (!prayerTurns || prayerTurns.length === 0) {
       return NextResponse.json(null, { status: 200 });
@@ -43,6 +48,8 @@ export async function GET(req: Request) {
       id: turn.id,
       startTime: turn.startTime,
       endTime: turn.endTime,
+      duration: event.shiftDuration,
+      allowChangeAfterStart: turn.allowChangeAfterStart,
       leaders: turn.userShifts.map((shift) => ({
         id: shift.user.id,
         name: shift.user.name,

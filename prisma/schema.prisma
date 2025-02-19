@@ -68,7 +68,7 @@ model PrayerTurn {
   duration              Int      @default(60) 
   userShifts            UserShift[]
   weekday               Int?
-  allowChangeAfterStart Boolean @default(false)
+  allowChangeAfterStart Boolean @default(true)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 }

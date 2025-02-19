@@ -27,6 +27,7 @@ import {
 import { signOut } from "next-auth/react";
 import { useChangeLanguage } from "@p40/common/hook/useChangeLanguage";
 import { routing } from "@p40/i18n/routing";
+import { UserEdit } from "../user-edit/user-edit";
 
 export function Settings() {
   const { locale, isPending, handleLanguageChange } = useChangeLanguage();
@@ -48,10 +49,8 @@ export function Settings() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Ajustes</DropdownMenuLabel>
-          <DropdownMenuItem>
-            <UserCog />
-            Meu dados
-          </DropdownMenuItem>
+
+          <UserEdit />
 
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>

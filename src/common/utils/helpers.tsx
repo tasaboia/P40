@@ -23,7 +23,33 @@ export class Helpers {
 
     const now = new Date();
     const eventDate = new Date(eventStartDate);
+    console.log(now >= eventDate);
 
     return now >= eventDate;
+  };
+
+  static isCurrentTurn = (
+    turnStartTime: string | undefined,
+    duration: number | undefined,
+    weekday: number
+  ) => {
+    if (!turnStartTime || !duration || !weekday) return false;
+
+    const now = new Date();
+    const todayWeekday = now.getDay();
+
+    if (todayWeekday !== weekday) return false;
+
+    const [turnStartHour, turnStartMinute] = turnStartTime
+      .split(":")
+      .map(Number);
+
+    const turnStart = new Date();
+    turnStart.setHours(turnStartHour, turnStartMinute, 0, 0);
+
+    const turnEnd = new Date(turnStart);
+    turnEnd.setMinutes(turnEnd.getMinutes() + duration);
+
+    return now >= turnStart && now <= turnEnd;
   };
 }

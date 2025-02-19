@@ -20,5 +20,7 @@ export interface PrayerTurnResponse {
   id: string;
   startTime: string;
   endTime: string;
+  duration: number;
+  allowChangeAfterStart: boolean;
   leaders: TurnLeader[];
 }
