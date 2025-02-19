@@ -29,7 +29,7 @@ import { useChangeLanguage } from "@p40/common/hook/useChangeLanguage";
 import { routing } from "@p40/i18n/routing";
 import { UserEdit } from "../user-edit/user-edit";
 
-export function Settings() {
+export function Settings({ user }) {
   const { locale, isPending, handleLanguageChange } = useChangeLanguage();
 
   return (
@@ -50,7 +50,7 @@ export function Settings() {
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Ajustes</DropdownMenuLabel>
 
-          <UserEdit />
+          <UserEdit user={user} />
 
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
