@@ -22,7 +22,7 @@ async function main() {
   const regionList = await prisma.region.findMany();
 
   // Criando Zions (Churches)
-  const churches = await prisma.church.createMany({
+  await prisma.church.createMany({
     data: [
       {
         name: "Zion São Paulo",

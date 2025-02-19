@@ -119,6 +119,8 @@ export function TurnItem({
           (item) => item.startTime == turn.startTime
         )?.leaders;
 
+        const canChangeLeaderTurn = Helpers.isEventStarted(event.startDate);
+
         return (
           <Card key={turn.endTime} className="m-3">
             <CardHeader>
@@ -166,52 +168,54 @@ export function TurnItem({
                 </CardContent>
               ))}
 
-            <CardFooter>
-              {leaders?.length > 0 &&
-              leaders.find((leader) => leader.id == userId) ? (
-                <Button
-                  className="w-full text-destructive"
-                  variant="secondary"
-                  disabled={loading}
-                  onClick={() => {
-                    const turn = turnItens.find((item) =>
-                      item.leaders.some((leader) => leader.id === userId)
-                    );
-                    handlePrayerTurnUnsubscribe({
-                      userId,
-                      prayerTurnId: turn.id,
-                    });
-                  }}
-                >
-                  <Plus />
-                  {t("leave_schedule")}
-                </Button>
-              ) : (
-                <React.Fragment>
-                  {" "}
-                  {(!leaders ||
-                    leaders.length < event.maxParticipantsPerTurn) && (
-                    <Button
-                      className="w-full text-primary"
-                      variant="secondary"
-                      disabled={loading}
-                      onClick={() => {
-                        handlePrayerTurnSubscribe({
-                          userId,
-                          weekday: Object.values(Weekday).indexOf(
-                            Weekday[weekday]
-                          ),
-                          eventId: event.id,
-                          startTime: turn.startTime,
-                        });
-                      }}
-                    >
-                      <Plus /> {t("join_schedule")}
-                    </Button>
-                  )}
-                </React.Fragment>
-              )}
-            </CardFooter>
+            {!canChangeLeaderTurn && (
+              <CardFooter>
+                {leaders?.length > 0 &&
+                leaders.find((leader) => leader.id == userId) ? (
+                  <Button
+                    className="w-full text-destructive"
+                    variant="secondary"
+                    disabled={loading}
+                    onClick={() => {
+                      const turn = turnItens.find((item) =>
+                        item.leaders.some((leader) => leader.id === userId)
+                      );
+                      handlePrayerTurnUnsubscribe({
+                        userId,
+                        prayerTurnId: turn.id,
+                      });
+                    }}
+                  >
+                    <Plus />
+                    {t("leave_schedule")}
+                  </Button>
+                ) : (
+                  <React.Fragment>
+                    {" "}
+                    {(!leaders ||
+                      leaders.length < event.maxParticipantsPerTurn) && (
+                      <Button
+                        className="w-full text-primary"
+                        variant="secondary"
+                        disabled={loading}
+                        onClick={() => {
+                          handlePrayerTurnSubscribe({
+                            userId,
+                            weekday: Object.values(Weekday).indexOf(
+                              Weekday[weekday]
+                            ),
+                            eventId: event.id,
+                            startTime: turn.startTime,
+                          });
+                        }}
+                      >
+                        <Plus /> {t("join_schedule")}
+                      </Button>
+                    )}
+                  </React.Fragment>
+                )}
+              </CardFooter>
+            )}
           </Card>
         );
       })}

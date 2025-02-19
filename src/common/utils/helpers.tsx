@@ -18,4 +18,12 @@ export class Helpers {
 
     return `${firstName} ${lastName}`;
   };
+  static isEventStarted = (eventStartDate: string) => {
+    if (!eventStartDate) return false;
+
+    const now = new Date();
+    const eventDate = new Date(eventStartDate);
+
+    return now >= eventDate;
+  };
 }
