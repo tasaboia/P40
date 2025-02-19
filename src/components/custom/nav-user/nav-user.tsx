@@ -10,7 +10,7 @@ import { getTurns } from "@p40/services/event/get-turn";
 export default async function NavUser({ user, churchId }) {
   const church = await getChurchById(churchId);
   const event = await eventByChurchId(churchId);
-  const turnItens = await getTurns({ eventId: event.id, userId: user.id });
+  const turnItens = await getTurns({ eventId: event?.id, userId: user?.id });
 
   const t = await getTranslations("prayer_turn");
 

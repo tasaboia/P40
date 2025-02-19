@@ -1,6 +1,5 @@
 import { clsx } from "clsx";
 import { Inter } from "next/font/google";
-import { getMessages } from "next-intl/server";
 import { ReactNode } from "react";
 import { SessionProvider } from "next-auth/react";
 import IntlProvider from "@p40/common/provider/IntlProvider";

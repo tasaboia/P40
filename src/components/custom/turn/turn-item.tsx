@@ -222,7 +222,7 @@ export function TurnItem({
                         handlePrayerTurnSubscribe({
                           userId,
                           weekday: weekdayIndex,
-                          eventId: event.id,
+                          eventId: event?.id,
                           startTime: turn.startTime,
                         });
                       }}

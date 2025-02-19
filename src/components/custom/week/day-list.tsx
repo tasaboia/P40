@@ -17,7 +17,7 @@ export default async function DayList({
 }) {
   const session = await auth();
   const shift = createTurns(event?.shiftDuration);
-  const turnItens = await getTurns({ eventId: event.id, weekday });
+  const turnItens = await getTurns({ eventId: event?.id, weekday });
   return (
     <TurnItem
       userId={session.user.id}

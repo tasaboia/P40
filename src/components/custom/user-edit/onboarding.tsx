@@ -61,7 +61,7 @@ export function Onboarding({ user }) {
               name="name"
               type="text"
               id="name"
-              defaultValue={user.name}
+              defaultValue={user?.name}
               className="col-span-3"
             />
           </div>
@@ -73,7 +73,7 @@ export function Onboarding({ user }) {
               id="email"
               name="email"
               type="email"
-              defaultValue={user.email}
+              defaultValue={user?.email}
               className="col-span-3"
             />
           </div>
@@ -85,11 +85,11 @@ export function Onboarding({ user }) {
               id="whatsapp"
               name="whatsapp"
               type="text"
-              defaultValue={user.whatsapp}
+              defaultValue={user?.whatsapp}
               className="col-span-3"
             />
           </div>
-          <input type="hidden" name="id" value={user.id} />
+          <input type="hidden" name="id" value={user?.id} />
           <DialogFooter>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="animate-spin" />}

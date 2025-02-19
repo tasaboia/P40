@@ -21,10 +21,10 @@ import { updateUser } from "@p40/services/user/user-service";
 
 export function UserEdit({ user }) {
   const [formData, setFormData] = React.useState({
-    id: user.id,
-    name: user.name || "",
-    email: user.email || "",
-    whatsapp: user.whatsapp || "",
+    id: user?.id,
+    name: user?.name || "",
+    email: user?.email || "",
+    whatsapp: user?.whatsapp || "",
   });
 
   const [state, formAction, isPending] = useActionState(updateUser, {

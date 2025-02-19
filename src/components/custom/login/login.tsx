@@ -20,6 +20,7 @@ import { useSettingStore } from "@p40/common/states/zion";
 import { Checkbox } from "@p40/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import GoogleLogin from "./google-login";
 
 export function LoginForm({
   className,
@@ -47,6 +48,17 @@ export function LoginForm({
           <CardDescription>{t("login_with_provider")}</CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="grid gap-6 pb-6">
+            <div className="flex flex-col gap-4">
+              <GoogleLogin />
+            </div>
+            <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+              <span className="relative z-10 bg-background px-2 text-muted-foreground">
+                Ou faça login com dados do prover
+              </span>
+            </div>
+          </div>
+
           <form action={formAction}>
             <div className="grid gap-6">
               <div className="grid gap-6">

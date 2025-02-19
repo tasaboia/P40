@@ -13,7 +13,6 @@ export const updateUser = async (prevState: any, formData: FormData) => {
       email,
       whatsapp,
       id,
-      onboarding: true,
     });
 
     if (!response.data.success) {
