@@ -50,7 +50,9 @@
     "unsubscribe_error": "Error leaving the shift",
     "unsubscribe_error_desc": "An error occurred while trying to leave the shift. Please try again later.",
     "leave_schedule": "Leave the shift",
-    "join_schedule": "Join the shift"
+    "join_schedule": "Join the shift",
+    "SHIFT": "Prayer Shifts",
+    "CLOCK": "Prayer Clock"
   },
   "weekdays": {
     "Sun": "Sun",

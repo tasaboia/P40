@@ -50,7 +50,9 @@
     "unsubscribe_error": "Error al intentar salir del turno",
     "unsubscribe_error_desc": "Ocurrió un error al intentar salir del turno. Intenta más tarde.",
     "leave_schedule": "Salir del turno",
-    "join_schedule": "Inscribirse en el turno"
+    "join_schedule": "Inscribirse en el turno",
+    "SHIFT": "Turnos de oración",
+    "CLOCK": "Reloj de oración"
   },
   "weekdays": {
     "Sun": "Dom",

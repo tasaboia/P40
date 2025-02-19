@@ -18,7 +18,7 @@ import { EventResponse } from "@p40/common/contracts/event/event";
 import { subscribe } from "@p40/services/event/prayer-turn/subscribe";
 import { toast } from "@p40/hooks/use-toast";
 import { unsubscribe } from "@p40/services/event/prayer-turn/unsubscribe";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Weekday } from "@p40/common/contracts/schedule/schedule";
 import { useRouter } from "@p40/i18n/routing";
 import { useTranslations } from "next-intl";
@@ -129,13 +129,6 @@ export function TurnItem({
                     <p className="text-sm font-medium leading-none">
                       {turn.startTime}
                     </p>
-                    {/* <p className="text-sm text-muted-foreground">
-                      {leaders
-                        ? t("max_leaders", {
-                            count: event?.maxParticipantsPerTurn || 0,
-                          })
-                        : t("empty_schedule")}
-                    </p> */}
                   </div>
                 </div>
               </CardTitle>
@@ -172,6 +165,7 @@ export function TurnItem({
                   </div>
                 </CardContent>
               ))}
+
             <CardFooter>
               {leaders?.length > 0 &&
               leaders.find((leader) => leader.id == userId) ? (
@@ -193,21 +187,29 @@ export function TurnItem({
                   {t("leave_schedule")}
                 </Button>
               ) : (
-                <Button
-                  className="w-full text-primary"
-                  variant="secondary"
-                  disabled={loading}
-                  onClick={() => {
-                    handlePrayerTurnSubscribe({
-                      userId,
-                      weekday: Object.values(Weekday).indexOf(Weekday[weekday]),
-                      eventId: event.id,
-                      startTime: turn.startTime,
-                    });
-                  }}
-                >
-                  <Plus /> {t("join_schedule")}
-                </Button>
+                <React.Fragment>
+                  {" "}
+                  {(!leaders ||
+                    leaders.length < event.maxParticipantsPerTurn) && (
+                    <Button
+                      className="w-full text-primary"
+                      variant="secondary"
+                      disabled={loading}
+                      onClick={() => {
+                        handlePrayerTurnSubscribe({
+                          userId,
+                          weekday: Object.values(Weekday).indexOf(
+                            Weekday[weekday]
+                          ),
+                          eventId: event.id,
+                          startTime: turn.startTime,
+                        });
+                      }}
+                    >
+                      <Plus /> {t("join_schedule")}
+                    </Button>
+                  )}
+                </React.Fragment>
               )}
             </CardFooter>
           </Card>

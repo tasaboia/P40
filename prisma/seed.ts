@@ -21,74 +21,74 @@ async function main() {
   // Obtendo as regiões para referência
   const regionList = await prisma.region.findMany();
 
-  // Criando Igrejas (Churches)
+  // Criando Zions (Churches)
   const churches = await prisma.church.createMany({
     data: [
       {
-        name: "Igreja São Paulo",
+        name: "Zion São Paulo",
         city: "São Paulo",
         country: "Brazil",
         regionId: regionList.find((r) => r.name === "Brazil")?.id,
         timezone: "America/Sao_Paulo",
       },
       {
-        name: "Igreja Santos",
+        name: "Zion Santos",
         city: "Santos",
         country: "Brazil",
         regionId: regionList.find((r) => r.name === "Brazil")?.id,
         timezone: "America/Sao_Paulo",
       },
       {
-        name: "Igreja Campinas",
+        name: "Zion Campinas",
         city: "Campinas",
         country: "Brazil",
         regionId: regionList.find((r) => r.name === "Brazil")?.id,
         timezone: "America/Sao_Paulo",
       },
       {
-        name: "Igreja Recife",
+        name: "Zion Recife",
         city: "Recife",
         country: "Brazil",
         regionId: regionList.find((r) => r.name === "Brazil")?.id,
         timezone: "America/Recife",
       },
       {
-        name: "Igreja Campo Grande",
+        name: "Zion Campo Grande",
         city: "Campo Grande",
         country: "Brazil",
         regionId: regionList.find((r) => r.name === "Brazil")?.id,
         timezone: "America/Campo_Grande",
       },
       {
-        name: "Igreja Lisboa",
+        name: "Zion Lisboa",
         city: "Lisboa",
         country: "Portugal",
         regionId: regionList.find((r) => r.name === "Europe")?.id,
         timezone: "Europe/Lisbon",
       },
       {
-        name: "Igreja Porto",
+        name: "Zion Porto",
         city: "Porto",
         country: "Portugal",
         regionId: regionList.find((r) => r.name === "Europe")?.id,
         timezone: "Europe/Lisbon",
       },
       {
-        name: "Igreja Miami",
+        name: "Zion Miami",
         city: "Miami",
         country: "USA",
         regionId: regionList.find((r) => r.name === "North America")?.id,
         timezone: "America/New_York",
       },
       {
-        name: "Igreja Santiago",
+        name: "Zion Santiago",
         city: "Santiago",
         country: "Chile",
         regionId: regionList.find((r) => r.name === "Latin America")?.id,
         timezone: "America/Santiago",
       },
       {
-        name: "Igreja Online Global",
+        name: "Zion Online Global",
         city: "Online",
         country: "World",
         regionId: regionList.find((r) => r.name === "Global")?.id,
@@ -99,7 +99,7 @@ async function main() {
 
   console.log("✅ Churches created!");
 
-  // Obtendo as igrejas para referência
+  // Obtendo as Zions para referência
   const churchList = await prisma.church.findMany();
 
   // Criando Usuários (Users)
@@ -110,14 +110,14 @@ async function main() {
         whatsapp: "+5511999999999",
         email: "admin@example.com",
         role: Role.ADMIN,
-        churchId: churchList.find((c) => c.name === "Igreja São Paulo")?.id,
+        churchId: churchList.find((c) => c.name === "Zion São Paulo")?.id,
       },
       {
         name: "Líder Recife",
         whatsapp: "+5581999999999",
         email: "leader@example.com",
         role: Role.USER,
-        churchId: churchList.find((c) => c.name === "Igreja Recife")?.id,
+        churchId: churchList.find((c) => c.name === "Zion Recife")?.id,
       },
     ],
   });
@@ -132,14 +132,14 @@ async function main() {
         startDate: new Date("2024-04-01"),
         endDate: new Date("2024-05-10"),
         description: "Um evento de 40 dias de oração contínua.",
-        churchId: churchList.find((c) => c.name === "Igreja São Paulo")?.id,
+        churchId: churchList.find((c) => c.name === "Zion São Paulo")?.id,
       },
       {
         name: "Semana de Intercessão",
         startDate: new Date("2024-06-01"),
         endDate: new Date("2024-06-07"),
-        description: "Uma semana intensa de intercessão pela igreja.",
-        churchId: churchList.find((c) => c.name === "Igreja Lisboa")?.id,
+        description: "Uma semana intensa de intercessão pela Zion.",
+        churchId: churchList.find((c) => c.name === "Zion Lisboa")?.id,
       },
     ],
   });

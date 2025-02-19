@@ -3,6 +3,8 @@ import { Helpers } from "@p40/common/utils/helpers";
 
 import { getChurchById } from "@p40/services/zion";
 import { Settings } from "../settings/settings";
+import { eventByChurchId } from "@p40/services/event/event-byId";
+import { getTranslations } from "next-intl/server";
 
 export default async function NavUser({
   imageUrl,
@@ -14,6 +16,9 @@ export default async function NavUser({
   churchId: string;
 }) {
   const church = await getChurchById(churchId);
+  const event = await eventByChurchId(churchId);
+  const t = await getTranslations("prayer_turn");
+
   return (
     <div className="flex justify-between  bg-white">
       <div className="flex max-w-60 gap-2 p-4 text-sm">
@@ -23,11 +28,13 @@ export default async function NavUser({
             {Helpers.getInitials(name)}
           </AvatarFallback>
         </Avatar>
-        <div className="grid flex-1 text-left text-sm leading-tight">
-          <span className="truncate font-semibold">
+        <div className="flex flex-col text-left text-sm leading-tight h-full justify-center">
+          <p className="truncate font-semibold">
             Olá, {Helpers.getFirstAndLastName(name)}
-          </span>
-          <span className="truncate text-xs">{church.name}</span>
+          </p>
+          <p className="truncate text-xs">
+            {church.name} | {t(event.type)}
+          </p>
         </div>
       </div>
       <Settings />

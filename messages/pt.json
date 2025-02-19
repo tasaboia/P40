@@ -1,6 +1,6 @@
 {
   "setup": {
-    "choose_zion": "Escolher sua Zion",
+    "choose_zion": "Escolha sua Zion",
     "enter_schedules": "Entrar nos horários"
   },
   "geral": {
@@ -50,7 +50,9 @@
     "unsubscribe_error": "Erro ao tentar sair do horário",
     "unsubscribe_error_desc": "Houve um erro ao tentar sair do turno, tente mais tarde",
     "leave_schedule": "Sair do horário",
-    "join_schedule": "Se inscrever no horário"
+    "join_schedule": "Se inscrever no horário",
+    "SHIFT": "Turnos de Oração",
+    "CLOCK": "Relógio de Oração"
   },
   "weekdays": {
     "Sun": "Dom",
