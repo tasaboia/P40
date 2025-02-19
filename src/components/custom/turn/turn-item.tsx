@@ -125,7 +125,17 @@ export function TurnItem({
           <Card key={turn.endTime} className="m-3">
             <CardHeader>
               <CardTitle>
-                <div className=" flex items-center space-x-4 rounded-md border p-4">
+                <div
+                  className={`flex items-center space-x-4 rounded-md border p-4 ${
+                    Helpers.isCurrentTurn(
+                      turn?.startTime,
+                      event?.shiftDuration,
+                      weekdayIndex
+                    )
+                      ? "text-green-600 animate-pulse"
+                      : ""
+                  }`}
+                >
                   <Clock />
                   <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium leading-none">
@@ -137,7 +147,7 @@ export function TurnItem({
                     event?.shiftDuration,
                     weekdayIndex
                   ) && (
-                    <div className="flex  gap-2 text-xs text-green-600">
+                    <div className="flex  gap-2 text-xs">
                       <span className="flex h-2 w-2 translate-y-1 rounded-full bg-green-400" />
                       Turno em andamento
                     </div>
@@ -170,7 +180,7 @@ export function TurnItem({
                         rel="noopener noreferrer"
                         className="text-sm text-muted-foreground flex items-center gap-1 hover:text-green-600 transition"
                       >
-                        {leader.whatsapp}
+                        Chamar no whatsApp
                         <MessageCircle size={16} className="text-green-500" />
                       </Link>
                     </div>
