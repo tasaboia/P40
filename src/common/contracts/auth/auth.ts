@@ -16,7 +16,7 @@ export interface AuthProverResponse {
   name: string;
   email: string;
   imageUrl: string;
-  phone: string;
+  whatsapp: string;
   role: string;
   churchId: string;
 }

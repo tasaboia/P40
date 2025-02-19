@@ -4,11 +4,10 @@ export interface User {
   name: string;
   email: string;
   imageUrl: string;
-  phone: string;
+  whatsapp: string;
   role: string;
   churchId: string;
 }
-
 export interface TurnLeader {
   id: string;
   name: string;

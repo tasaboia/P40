@@ -18,14 +18,18 @@ import { Input } from "@p40/components/ui/input";
 import { toast } from "@p40/hooks/use-toast";
 import { useActionState } from "react";
 import { updateUser } from "@p40/services/user/user-service";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export function UserEdit({ user }) {
+  const { data: session, update } = useSession();
   const [drawerHeight, setDrawerHeight] = React.useState("80%");
+  const router = useRouter();
   const [formData, setFormData] = React.useState({
     id: user.id,
     name: user.name || "",
     email: user.email || "",
-    whatsapp: user.phone || "",
+    whatsapp: user.whatsapp || "",
   });
 
   React.useEffect(() => {
@@ -52,9 +56,12 @@ export function UserEdit({ user }) {
     if (state.success) {
       toast({
         variant: "success",
-        title: "Sucesso!",
-        description: "Seus dados foram atualizados com sucesso.",
+        title: "Sucesso",
+        description: "Suas informações foram atualiadas",
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 400);
     } else if (state.error) {
       toast({
         variant: "destructive",

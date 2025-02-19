@@ -7,13 +7,32 @@ export const updateUser = async (prevState: any, formData: FormData) => {
   const whatsapp = formData.get("whatsapp")?.toString();
 
   try {
-    const response = await api.post(
-      "/api/user/update",
+    const response = await api.post("/api/user/update", {
+      name,
+      email,
+      whatsapp,
+      id,
+    });
 
-      { name, email, whatsapp, id }
-    );
+    if (!response.data.success) {
+      throw new Error("Erro ao atualizar usuário.");
+    }
 
-    return { success: true, user: response };
+    return { success: true, user: response.data.user };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const getUser = async (userId: string) => {
+  try {
+    const response = await api.get(`/api/user?userId=${userId}`);
+
+    if (!response.data.success) {
+      throw new Error("Erro ao atualizar usuário.");
+    }
+
+    return { success: true, user: response.data.user };
   } catch (error) {
     return { success: false, error: error.message };
   }

@@ -57,7 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.email = user.email || null;
         token.role = user.role || "user";
         token.imageUrl = user.imageUrl || null;
-        token.phone = user.whatsapp || "";
+        token.whatsapp = user.whatsapp || "";
         token.idProver = user.idProver || "";
         token.churchId = user.churchId || "";
       }
@@ -72,7 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         emailVerified: null,
         id: (token.id as string) || "",
         imageUrl: (token.imageUrl as string) || "",
-        phone: (token.phone as string) || "",
+        whatsapp: (token.whatsapp as string) || "",
         role: (token.role as string) || "user",
         churchId: (token.churchId as string) || "",
       };

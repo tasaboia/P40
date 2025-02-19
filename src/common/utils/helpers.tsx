@@ -7,10 +7,14 @@ export class Helpers {
     return `${firstInitial}${lastInitial}`;
   }
   static getFirstAndLastName = (fullName: string): string => {
-    const nameParts = fullName.split(" ");
+    const nameParts = fullName.trim().split(/\s+/);
     const firstName = nameParts[0]
       .toLowerCase()
       .replace(/\b\w/g, (char) => char.toUpperCase());
+
+    if (nameParts.length === 1) {
+      return firstName;
+    }
 
     const lastName = nameParts[nameParts.length - 1]
       .toLowerCase()
@@ -18,6 +22,7 @@ export class Helpers {
 
     return `${firstName} ${lastName}`;
   };
+
   static isEventStarted = (eventStartDate: string) => {
     if (!eventStartDate) return false;
 
