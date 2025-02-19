@@ -29,8 +29,14 @@ import { signOut } from "next-auth/react";
 import { useChangeLanguage } from "@p40/common/hook/useChangeLanguage";
 import { routing } from "@p40/i18n/routing";
 import { UserEdit } from "../user-edit/user-edit";
+import { TurnsUserList } from "../user-edit/turns-user";
+import { User } from "@p40/common/contracts/user/user";
 
-export function Settings({ user }) {
+interface SettingsProps {
+  user: User;
+  turnItens: any[] | null;
+}
+export function Settings({ user, turnItens }: SettingsProps) {
   const { locale, isPending, handleLanguageChange } = useChangeLanguage();
 
   return (
@@ -50,10 +56,7 @@ export function Settings({ user }) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Ajustes</DropdownMenuLabel>
-          <DropdownMenuItem>
-            <Clock />
-            Meus horários
-          </DropdownMenuItem>
+          <TurnsUserList turnItens={turnItens} user={user} />
           <UserEdit user={user} />
 
           <DropdownMenuSub>

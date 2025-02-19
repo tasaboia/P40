@@ -5,10 +5,13 @@ import { getChurchById } from "@p40/services/zion";
 import { Settings } from "../settings/settings";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { getTranslations } from "next-intl/server";
+import { getTurns } from "@p40/services/event/get-turn";
 
 export default async function NavUser({ user, churchId }) {
   const church = await getChurchById(churchId);
   const event = await eventByChurchId(churchId);
+  const turnItens = await getTurns({ eventId: event.id, userId: user.id });
+
   const t = await getTranslations("prayer_turn");
 
   return (
@@ -29,7 +32,7 @@ export default async function NavUser({ user, churchId }) {
           </p>
         </div>
       </div>
-      <Settings user={user} />
+      <Settings user={user} turnItens={turnItens} />
     </div>
   );
 }

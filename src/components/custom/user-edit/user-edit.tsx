@@ -66,7 +66,7 @@ export function UserEdit({ user }) {
           <SheetTitle>Meu Perfil</SheetTitle>
           <SheetDescription>Atualize seus dados</SheetDescription>
         </SheetHeader>
-        <div className="p-4">
+        <div className="p-3">
           <form action={formAction}>
             <div className="grid gap-4">
               <input type="hidden" name="id" value={user.id} />
@@ -109,14 +109,14 @@ export function UserEdit({ user }) {
                 />
               </div>
             </div>
-            <SheetFooter className="flex flex-col py-4">
-              <SheetClose asChild>
-                <Button variant="outline">Cancelar</Button>
-              </SheetClose>
+            <SheetFooter className="flex flex-col py-4 gap-4">
               <Button type="submit" disabled={isPending}>
                 {isPending && <Loader2 className="animate-spin" />}
                 Atualizar
               </Button>
+              <SheetClose asChild>
+                <Button variant="outline">Cancelar</Button>
+              </SheetClose>
             </SheetFooter>
           </form>
         </div>

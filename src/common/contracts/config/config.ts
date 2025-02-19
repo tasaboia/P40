@@ -32,6 +32,7 @@ export interface PrayerTurn {
   startTime: string;
   endTime: string;
   duration: number;
+  weekday: number;
   maxParticipants: number;
   createdAt: string;
   updatedAt: string;
