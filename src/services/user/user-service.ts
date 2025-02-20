@@ -5,7 +5,7 @@ export const updateUser = async (prevState: any, formData: FormData) => {
   const name = formData.get("name")?.toString();
   const id = formData.get("id")?.toString();
   const email = formData.get("email")?.toString();
-  let whatsapp = formData.get("whatsapp")?.toString();
+  const whatsapp = formData.get("whatsapp")?.toString();
   const zionId = formData.get("zionId")?.toString();
 
   try {
