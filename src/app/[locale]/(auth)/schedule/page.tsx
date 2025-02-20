@@ -8,7 +8,7 @@ import { Onboarding } from "@p40/components/custom/user-edit/onboarding";
 
 export default async function ScheulePage() {
   const session = await auth();
-  const data = await getUser(session.user.id);
+  const data = await getUser(session?.user?.id);
 
   if (!data?.user?.onboarding)
     return (

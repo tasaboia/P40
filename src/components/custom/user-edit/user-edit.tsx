@@ -18,15 +18,9 @@ import { Input } from "@p40/components/ui/input";
 import { toast } from "@p40/hooks/use-toast";
 import { useActionState } from "react";
 import { updateUser } from "@p40/services/user/user-service";
+import { PhoneInput } from "../input-phone/input-phone";
 
 export function UserEdit({ user }) {
-  const [formData, setFormData] = React.useState({
-    id: user?.id,
-    name: user?.name || "",
-    email: user?.email || "",
-    whatsapp: user?.whatsapp || "",
-  });
-
   const [state, formAction, isPending] = useActionState(updateUser, {
     success: false,
     error: null,
@@ -68,44 +62,38 @@ export function UserEdit({ user }) {
         </SheetHeader>
         <div className="p-3">
           <form action={formAction}>
-            <div className="grid gap-4">
+            <div className="flex flex-col gap-4">
               <input type="hidden" name="id" value={user.id} />
 
-              <div className="flex flex-col space-y-1.5">
+              <div className="flex  flex-col  gap-1 space-y-1.5">
                 <Label htmlFor="name">Nome</Label>
                 <Input
-                  id="name"
                   name="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Seu nome"
-                  required
+                  type="text"
+                  id="name"
+                  defaultValue={user?.name}
+                  className="col-span-3"
                 />
               </div>
-              <div className="flex flex-col space-y-1.5">
+
+              <div className="flex  flex-col  gap-1 space-y-1.5">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   name="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  placeholder="email@email.com"
-                  required
+                  type="email"
+                  defaultValue={user?.email}
+                  className="col-span-3"
                 />
               </div>
-              <div className="flex flex-col space-y-1.5">
+
+              <div className="flex flex-col  gap-1 space-y-1.5">
                 <Label htmlFor="whatsapp">Whatsapp</Label>
-                <Input
+                <PhoneInput
                   id="whatsapp"
                   name="whatsapp"
-                  value={formData.whatsapp}
-                  onChange={(e) =>
-                    setFormData({ ...formData, whatsapp: e.target.value })
-                  }
+                  value={`+${user?.whatsapp}`}
+                  international
                   placeholder="11 99999-9999"
                 />
               </div>

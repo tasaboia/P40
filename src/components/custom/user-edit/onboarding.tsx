@@ -17,6 +17,7 @@ import { updateUser } from "@p40/services/user/user-service";
 import { Loader2 } from "lucide-react";
 import { toast } from "@p40/hooks/use-toast";
 import { useSettingStore } from "@p40/common/states/zion";
+import { PhoneInput } from "../input-phone/input-phone";
 
 export function Onboarding({ user }) {
   const { selectedZion } = useSettingStore();
@@ -54,49 +55,50 @@ export function Onboarding({ user }) {
           </DialogDescription>
         </DialogHeader>
 
-        <form action={formAction} className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <input
-              type="hidden"
-              name="zionId"
-              id="zionId"
-              value={selectedZion.id}
-            />
-            <Label htmlFor="name" className="text-right">
-              Nome
-            </Label>
-            <Input
-              name="name"
-              type="text"
-              id="name"
-              defaultValue={user?.name}
-              className="col-span-3"
-            />
+        <form action={formAction}>
+          <input
+            type="hidden"
+            name="zionId"
+            id="zionId"
+            value={selectedZion?.id}
+          />
+          <div className="flex flex-col gap-4 py-6">
+            <input type="hidden" name="id" value={user.id} />
+
+            <div className="flex  flex-col  gap-1 space-y-1.5">
+              <Label htmlFor="name">Nome</Label>
+              <Input
+                name="name"
+                type="text"
+                id="name"
+                defaultValue={user?.name}
+                className="col-span-3"
+              />
+            </div>
+
+            <div className="flex  flex-col  gap-1 space-y-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                defaultValue={user?.email}
+                className="col-span-3"
+              />
+            </div>
+
+            <div className="flex flex-col  gap-1 space-y-1.5">
+              <Label htmlFor="whatsapp">Whatsapp</Label>
+              <PhoneInput
+                id="whatsapp"
+                name="whatsapp"
+                value={`+${user?.whatsapp}`}
+                international
+                placeholder="11 99999-9999"
+              />
+            </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
-              Email
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              defaultValue={user?.email}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="whatsapp" className="text-right">
-              WhatsApp
-            </Label>
-            <Input
-              id="whatsapp"
-              name="whatsapp"
-              type="text"
-              defaultValue={user?.whatsapp}
-              className="col-span-3"
-            />
-          </div>
+
           <input type="hidden" name="id" value={user?.id} />
           <DialogFooter>
             <Button type="submit" disabled={isPending}>

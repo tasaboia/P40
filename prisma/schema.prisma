@@ -89,7 +89,7 @@ model User {
   id         String   @id @default(uuid())
   idProver   String?   @unique
   name       String
-  whatsapp   String?  @unique
+  whatsapp   String?  
   email      String   @unique 
   imageUrl   String?  
   role       Role     @default(USER)

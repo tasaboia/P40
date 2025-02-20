@@ -13,10 +13,21 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+    let whatsappFormatted;
+
+    if (whatsapp) {
+      whatsappFormatted = whatsapp.replace(/\s+/g, "").replace(/\+/g, "");
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: { name, email, whatsapp, onboarding: true, churchId: zionId },
+      data: {
+        name,
+        email,
+        whatsapp: whatsappFormatted,
+        onboarding: true,
+        churchId: zionId,
+      },
     });
 
     return NextResponse.json(
