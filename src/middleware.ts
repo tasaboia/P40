@@ -35,6 +35,9 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (session && req.nextUrl.pathname === `/${locale}/welcome`) {
+    if (session.user.role == "ADMIN") {
+      return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
+    }
     return NextResponse.redirect(new URL(`/${locale}/schedule`, req.url));
   }
 

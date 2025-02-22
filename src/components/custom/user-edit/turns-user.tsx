@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CircleX, Clock, Loader2, UserCog, X } from "lucide-react";
+import { Clock, X } from "lucide-react";
 import { Button } from "@p40/components/ui/button";
 import {
   Drawer,
@@ -15,7 +15,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { User } from "@p40/common/contracts/user/user";
 import { PrayerTurn } from "@p40/common/contracts/config/config";
-import { Weekday } from "@p40/common/contracts/schedule/schedule";
+import { Weekday } from "@p40/common/contracts/week/schedule";
 import { toast } from "@p40/hooks/use-toast";
 interface TurnsUserList {
   user: User;

@@ -1,4 +1,4 @@
-import { Weekday } from "@p40/common/contracts/schedule/schedule";
+import { Weekday } from "@p40/common/contracts/week/schedule";
 
 import {
   Tabs,
@@ -11,8 +11,7 @@ import { today } from "@p40/common/utils/schedule";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { getTranslations } from "next-intl/server";
 
-export async function WeekTab({ churchId }) {
-  const event = await eventByChurchId(churchId);
+export async function WeekTab() {
   const t = await getTranslations();
 
   return (
@@ -32,7 +31,6 @@ export async function WeekTab({ churchId }) {
         return (
           <TabsContent key={dayAbbr} value={dayAbbr}>
             <DayList
-              event={event}
               weekAbbr={Weekday[dayAbbr]}
               weekday={Object.values(Weekday).indexOf(Weekday[dayAbbr])}
             />

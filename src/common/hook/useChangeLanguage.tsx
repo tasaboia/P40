@@ -1,7 +1,8 @@
-import { useParams } from "next/navigation";
-import { useLocale } from "next-intl";
-import { usePathname, useRouter } from "@p40/i18n/routing";
 import * as React from "react";
+
+import { useLocale } from "next-intl";
+import { useParams } from "next/navigation";
+import { usePathname, useRouter } from "@p40/i18n/routing";
 
 export function useChangeLanguage() {
   const router = useRouter();

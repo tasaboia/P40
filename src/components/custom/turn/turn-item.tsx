@@ -1,9 +1,9 @@
 "use client";
 
-import { Helpers } from "@p40/common/utils/helpers";
 import { Avatar, AvatarImage } from "@p40/components/ui/avatar";
-import { PrayerTurnResponse } from "@p40/common/contracts/user/user";
 import { Clock, Loader2, MessageCircle, Plus } from "lucide-react";
+import { Helpers } from "@p40/common/utils/helpers";
+import { PrayerTurnResponse } from "@p40/common/contracts/user/user";
 import {
   Card,
   CardContent,
@@ -12,15 +12,15 @@ import {
   CardTitle,
 } from "@p40/components/ui/card";
 import { Button } from "@p40/components/ui/button";
-import Link from "next/link";
 import { EventResponse } from "@p40/common/contracts/event/event";
 import { subscribe } from "@p40/services/event/prayer-turn/subscribe";
 import { toast } from "@p40/hooks/use-toast";
 import { unsubscribe } from "@p40/services/event/prayer-turn/unsubscribe";
-import React, { useState } from "react";
-import { Weekday } from "@p40/common/contracts/schedule/schedule";
 import { useRouter } from "@p40/i18n/routing";
 import { useTranslations } from "next-intl";
+import { Weekday } from "@p40/common/contracts/week/schedule";
+import Link from "next/link";
+import React, { useState } from "react";
 
 export function TurnItem({
   weekday,
@@ -39,6 +39,7 @@ export function TurnItem({
   }[];
 }) {
   const t = useTranslations("prayer_turn");
+
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 

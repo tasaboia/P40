@@ -17,7 +17,6 @@ import {
   DropdownMenuTrigger,
 } from "@p40/components/ui/dropdown-menu";
 import {
-  Clock,
   FileText,
   Languages,
   LogOut,

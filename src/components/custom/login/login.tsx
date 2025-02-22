@@ -14,13 +14,14 @@ import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
 import { useActionState, useState } from "react";
 import { loginAction } from "@p40/services/actions/auth";
-import { useFormStatus } from "react-dom";
+
 import { redirect } from "@p40/i18n/routing";
 import { useSettingStore } from "@p40/common/states/zion";
 import { Checkbox } from "@p40/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import GoogleLogin from "./google-login";
+import { useSession } from "next-auth/react";
 
 export function LoginForm({
   className,
@@ -33,12 +34,21 @@ export function LoginForm({
   });
   const { selectedZion } = useSettingStore();
   const [showPassword, setShowPassword] = useState(false);
+  const { data: session } = useSession();
 
-  if (!state.error)
-    return redirect({
-      href: "schedule",
-      locale,
-    });
+  if (!state.error) {
+    if (session?.user?.role === "ADMIN") {
+      redirect({
+        href: "dashboard",
+        locale,
+      });
+    } else {
+      redirect({
+        href: "schedule",
+        locale,
+      });
+    }
+  }
 
   return (
     <div className={cn("flex  flex-col gap-6", className)} {...props}>

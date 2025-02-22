@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
-import Loading from "./loading";
-import NavUser from "@p40/components/custom/nav-user/nav-user";
+import Loading from "../loading";
 import { WeekTab } from "@p40/components/custom/week/week-tab";
 import { auth } from "../../../../../auth";
 import { getUser } from "@p40/services/user/user-service";
@@ -19,12 +18,9 @@ export default async function ScheulePage() {
 
   if (data.user && data.user.churchId) {
     return (
-      <Suspense fallback={<Loading />}>
-        <div className="flex  flex-col gap-4 bg-muted">
-          <NavUser user={data?.user} churchId={data.user.churchId.toString()} />
-          <WeekTab churchId={data.user.churchId.toString()} />
-        </div>
-      </Suspense>
+      <div className="flex  flex-col gap-4 bg-muted">
+        <WeekTab />
+      </div>
     );
   }
 
