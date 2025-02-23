@@ -62,5 +62,54 @@
     "Thu": "Thu",
     "Fri": "Fri",
     "Sat": "Sat"
+  },
+  "admin": {
+    "onboarding": {
+      "welcomeTitle": "Welcome to 40 Days of Prayer!",
+      "welcomeDescription": "We are very happy to have you with us. In this setup process, you will define the details for your local church's 40 days and customize how prayer shifts are organized for the leaders.",
+      "startDateLabel": "Start Date",
+      "startDateHelp": "Choose the event's start date.",
+      "endDateLabel": "End Date",
+      "endDateHelp": "Choose the event's end date.",
+      "eventTypeLabel": "Event Type",
+      "eventTypePlaceholder": "Select the type",
+      "shiftLabel": "Prayer Shifts",
+      "clockLabel": "Prayer Clock",
+      "eventTypeHelp": "Choose how the shifts will be organized.",
+      "maxParticipantsLabel": "Maximum Participants per Shift",
+      "maxParticipantsPlaceholder": "Ex: 2",
+      "maxParticipantsHelp": "Define how many participants can be in a shift.",
+      "shiftDurationLabel": "Shift Duration",
+      "shiftDurationPlaceholder": "Select the duration",
+      "oneHour": "1 hour",
+      "thirtyMinutes": "30 minutes",
+      "shiftDurationHelp": "Enter how long each shift should last.",
+      "configurationTitle": "Event Configuration",
+      "configurationDescription": "Fill in the fields below to configure your event.",
+      "backButton": "Back",
+      "nextButton": "Next",
+      "submitButton": "Save and Start",
+      "SHIFT": "Prayer Shifts",
+      "CLOCK": "Prayer Clock"
+    },
+    "dashboard": {
+      "tabs": {
+        "dashboard": "Dashboard",
+        "schedule": "Schedule"
+      },
+      "cards": {
+        "registeredLeaders": "Registered Leaders",
+        "singleLeaderSlots": "Time slots with only one leader",
+        "filledSlots": "Filled time slots",
+        "emptySlots": "Empty time slots"
+      },
+      "chart": {
+        "title": "People and Time Slots by Shifts",
+        "description": "Days of the Week"
+      },
+      "datatable": {
+        "searchPlaceholder": "Filter by name..."
+      }
+    }
   }
 }

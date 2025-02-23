@@ -25,7 +25,7 @@ const chartConfig = {
   },
   emptySlots: {
     label: "Horários Vazios",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(var(--chart-3))",
   },
   label: {
     color: "hsl(var(--background))",
@@ -85,7 +85,7 @@ export function EventChart({ chartData }) {
           <span>Pessoas por dia</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-full bg-[hsl(var(--chart-1))]" />
+          <div className="w-4 h-4 rounded-full bg-[hsl(var(--chart-3))]" />
           <span>Horários vazios</span>
         </div>
       </CardFooter>

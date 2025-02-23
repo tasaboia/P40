@@ -55,7 +55,9 @@ export function Settings({ user, turnItens }: SettingsProps) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuLabel>Ajustes</DropdownMenuLabel>
-          <TurnsUserList turnItens={turnItens} user={user} />
+          {turnItens?.length > 0 && (
+            <TurnsUserList turnItens={turnItens} user={user} />
+          )}
           <UserEdit user={user} />
 
           <DropdownMenuSub>

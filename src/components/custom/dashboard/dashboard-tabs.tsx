@@ -30,81 +30,97 @@ import { DataTableWithSearch } from "@p40/app/[locale]/(auth)/dashboard/componen
 import { getChartEventData } from "@p40/services/event/chart-event-data";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { EventChart } from "./chart-event";
+import { getTranslations } from "next-intl/server";
+import { use } from "react";
+import { Dashboard } from "@p40/common/contracts/dashboard/dashboard";
+import { dashboardData } from "@p40/services/dashboard/dashboard.service";
 
 export async function DashboardTabs() {
   const session = await auth();
   const users = await getUserByChurchId(session.user.churchId);
+  const t = await getTranslations("admin.dashboard");
+
   const event = await eventByChurchId(session.user.churchId);
   if (!event) return null;
 
+  const data = await dashboardData(event.id);
   const chart = await getChartEventData(event.id);
 
   if (!users.success) return null;
-
   return (
     <Tabs defaultValue="dashboard" className="p-3">
-      <TabsList className="grid w-full grid-cols-2 max-w-lg ">
-        <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-        <TabsTrigger value="schedule">Schedule</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-2 max-w-lg">
+        <TabsTrigger value="dashboard">{t("tabs.dashboard")}</TabsTrigger>
+        <TabsTrigger value="schedule">{t("tabs.schedule")}</TabsTrigger>
       </TabsList>
       <TabsContent value="dashboard" className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-2 flex-wrap justify-around">
           <Card>
             <CardHeader className="px-6 pb-2">
-              <CardTitle className=" bg-muted rounded p-3 max-w-12">
+              <CardTitle className="bg-muted rounded p-3 max-w-12">
                 <Users className="h-6 w-6" />
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col">
-              <span className="text-4xl font-semibold">120</span>
+              <span className="text-4xl font-semibold">
+                {data.stats.distinctLeaders}
+              </span>
               <span className="text-muted-foreground text-xs">
-                Líderes inscritos
+                {t("cards.registeredLeaders")}
               </span>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="px-6 pb-2">
-              <CardTitle className=" bg-muted rounded p-3 max-w-12">
+              <CardTitle className="bg-muted rounded p-3 max-w-12">
                 <User className="h-6 w-6" />
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col">
-              <span className="text-4xl font-semibold">34</span>
+              <span className="text-4xl font-semibold">
+                {data.stats.singleLeaderSlots}
+              </span>
               <span className="text-muted-foreground text-xs max-w-[120px]">
-                Horários com só um líder
+                {t("cards.singleLeaderSlots")}
               </span>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="px-6 pb-2">
-              <CardTitle className=" bg-muted rounded p-3 max-w-12">
+              <CardTitle className="bg-muted rounded p-3 max-w-12">
                 <ClockArrowUp className="h-6 w-6" />
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col">
-              <span className="text-4xl font-semibold">79</span>
+              <span className="text-4xl font-semibold">
+                {data.stats.filledTimeSlots}
+              </span>
               <span className="text-muted-foreground text-xs">
-                Horários preenchidos
+                {t("cards.filledSlots")}
               </span>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="px-6 pb-2">
-              <CardTitle className=" bg-muted rounded p-3 max-w-12">
+              <CardTitle className="bg-muted rounded p-3 max-w-12">
                 <ClockArrowDown className="h-6 w-6" />
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col">
-              <span className="text-4xl font-semibold">28</span>
+              <span className="text-4xl font-semibold">
+                {data.stats.emptyTimeSlots}
+              </span>
               <span className="text-muted-foreground text-xs">
-                Horários vazios
+                {t("cards.emptySlots")}
               </span>
             </CardContent>
           </Card>
         </div>
         <EventChart chartData={chart.data} />
-        <DataTableWithSearch columns={columns} data={users.users as IUser[]} />
+        <DataTableWithSearch columns={columns} data={users.users} />
       </TabsContent>
       <TabsContent value="schedule">
         <WeekTab />

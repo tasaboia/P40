@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useActionState } from "react";
-import { use } from "react";
-import { AppResponse } from "@p40/common/contracts/config/config";
 import { appConfigAction } from "@p40/services/actions/app-config";
 import { Button } from "@p40/components/ui/button";
 import {
@@ -23,8 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@p40/components/ui/select";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 export default function ConfigEventOnboarding({ event, church }) {
+  const t = useTranslations("admin.onboarding");
   const [formState, setFormState] = useState({
     startDate: "",
     endDate: "",
@@ -33,10 +34,17 @@ export default function ConfigEventOnboarding({ event, church }) {
     shiftDuration: "",
   });
 
+  const route = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
 
-  const [_, formAction, isPending] = useActionState(appConfigAction, {});
+  const [state, formAction, isPending] = useActionState(appConfigAction, {});
+
+  useEffect(() => {
+    if (!state.error) {
+      route.refresh();
+    }
+  }, [state]);
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -44,7 +52,6 @@ export default function ConfigEventOnboarding({ event, church }) {
     }
   };
 
-  // Função para voltar ao passo anterior
   const handlePrev = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
@@ -64,22 +71,15 @@ export default function ConfigEventOnboarding({ event, church }) {
       case 1:
         return (
           <div className="space-y-4 text-center">
-            <p className="text-xl font-bold">
-              Bem-vindo(a) ao 40 Dias de Oração!
-            </p>
-            <p className="text-sm text-gray-600">
-              Estamos muito felizes por tê-lo(a) conosco. Neste processo de
-              configuração, você definirá os detalhes dos 40 dias da sua igreja
-              local e personalizará a forma como os turnos de oração serão
-              organizados para os líderes.
-            </p>
+            <p className="text-xl font-bold">{t("welcomeTitle")}</p>
+            <p className="text-sm text-gray-600">{t("welcomeDescription")}</p>
           </div>
         );
       case 2:
         return (
           <div className="space-y-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="startDate">Data de Início</Label>
+              <Label htmlFor="startDate">{t("startDateLabel")}</Label>
               <Input
                 id="startDate"
                 name="startDate"
@@ -88,11 +88,11 @@ export default function ConfigEventOnboarding({ event, church }) {
                 onChange={handleChange}
               />
               <small className="text-xs text-gray-400">
-                Escolha a data de início do evento.
+                {t("startDateHelp")}
               </small>
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="endDate">Data de Término</Label>
+              <Label htmlFor="endDate">{t("endDateLabel")}</Label>
               <Input
                 id="endDate"
                 name="endDate"
@@ -101,7 +101,7 @@ export default function ConfigEventOnboarding({ event, church }) {
                 onChange={handleChange}
               />
               <small className="text-xs text-gray-400">
-                Escolha a data de término do evento.
+                {t("endDateHelp")}
               </small>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function ConfigEventOnboarding({ event, church }) {
         return (
           <div className="space-y-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="type">Tipo do Evento</Label>
+              <Label htmlFor="type">{t("eventTypeLabel")}</Label>
               <Select
                 onValueChange={(value) =>
                   setFormState((prev) => ({ ...prev, type: value }))
@@ -118,35 +118,35 @@ export default function ConfigEventOnboarding({ event, church }) {
                 value={formState.type}
               >
                 <SelectTrigger id="type">
-                  <SelectValue placeholder="Selecione o tipo" />
+                  <SelectValue placeholder={t("eventTypePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="SHIFT">Turnos de Oração</SelectItem>
-                  <SelectItem value="CLOCK">Relógio de Oração</SelectItem>
+                  <SelectItem value="SHIFT">{t("SHIFT")}</SelectItem>
+                  <SelectItem value="CLOCK">{t("CLOCK")}</SelectItem>
                 </SelectContent>
               </Select>
               <small className="text-xs text-gray-400">
-                Escolha como os turnos serão organizados.
+                {t("eventTypeHelp")}
               </small>
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="maxParticipantsPerTurn">
-                Máximo de Participantes por Turno
+                {t("maxParticipantsLabel")}
               </Label>
               <Input
                 id="maxParticipantsPerTurn"
                 name="maxParticipantsPerTurn"
                 type="number"
-                placeholder="Ex: 2"
+                placeholder={t("maxParticipantsPlaceholder")}
                 value={formState.maxParticipantsPerTurn}
                 onChange={handleChange}
               />
               <small className="text-xs text-gray-400">
-                Defina quantos participantes podem estar em um turno.
+                {t("maxParticipantsHelp")}
               </small>
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="shiftDuration">Duração do Turno</Label>
+              <Label htmlFor="shiftDuration">{t("shiftDurationLabel")}</Label>
               <Select
                 onValueChange={(value) =>
                   setFormState((prev) => ({ ...prev, shiftDuration: value }))
@@ -154,15 +154,15 @@ export default function ConfigEventOnboarding({ event, church }) {
                 value={formState.shiftDuration}
               >
                 <SelectTrigger id="shiftDuration">
-                  <SelectValue placeholder="Selecione a duração" />
+                  <SelectValue placeholder={t("shiftDurationPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="60">1 hora</SelectItem>
-                  <SelectItem value="30">30 minutos</SelectItem>
+                  <SelectItem value="60">{t("oneHour")}</SelectItem>
+                  <SelectItem value="30">{t("thirtyMinutes")}</SelectItem>
                 </SelectContent>
               </Select>
               <small className="text-xs text-gray-400">
-                Informe quanto tempo cada turno deverá durar.
+                {t("shiftDurationHelp")}
               </small>
             </div>
           </div>
@@ -173,67 +173,67 @@ export default function ConfigEventOnboarding({ event, church }) {
   };
 
   return (
-    <Card className="w-[350px] mx-auto">
-      <CardHeader>
-        <CardTitle className="text-lg">
-          {currentStep === 1 ? "" : "Configuração do Evento"}
-        </CardTitle>
-        <CardDescription>
-          {currentStep === 1
-            ? ""
-            : "Preencha os campos abaixo para configurar seu evento."}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form action={formAction} className="grid gap-8">
-          <input type="hidden" name="eventId" value={event?.id || ""} />
-          <input type="hidden" name="churchId" value={church?.id || ""} />
+    <div className="bg-muted h-full flex justify-center items-center">
+      <Card className="w-[350px] mx-auto ">
+        <CardHeader>
+          <CardTitle className="text-lg">
+            {currentStep === 1 ? "" : t("configurationTitle")}
+          </CardTitle>
+          <CardDescription>
+            {currentStep === 1 ? "" : t("configurationDescription")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form action={formAction} className="grid gap-8">
+            <input type="hidden" name="eventId" value={event?.id || ""} />
+            <input type="hidden" name="churchId" value={church?.id || ""} />
 
-          {renderStepContent()}
+            {renderStepContent()}
 
-          {currentStep === totalSteps && (
-            <>
-              <input
-                type="hidden"
-                name="startDate"
-                value={formState.startDate}
-              />
-              <input type="hidden" name="endDate" value={formState.endDate} />
-              <input type="hidden" name="type" value={formState.type} />
-              <input
-                type="hidden"
-                name="maxParticipantsPerTurn"
-                value={formState.maxParticipantsPerTurn}
-              />
-              <input
-                type="hidden"
-                name="shiftDuration"
-                value={formState.shiftDuration}
-              />
-            </>
-          )}
-
-          <CardFooter className="flex justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handlePrev}
-              disabled={currentStep === 1}
-            >
-              Voltar
-            </Button>
-            {currentStep < totalSteps ? (
-              <Button type="button" onClick={handleNext}>
-                Avançar
-              </Button>
-            ) : (
-              <Button type="submit" disabled={isPending}>
-                Salvar e Iniciar
-              </Button>
+            {currentStep === totalSteps && (
+              <>
+                <input
+                  type="hidden"
+                  name="startDate"
+                  value={formState.startDate}
+                />
+                <input type="hidden" name="endDate" value={formState.endDate} />
+                <input type="hidden" name="type" value={formState.type} />
+                <input
+                  type="hidden"
+                  name="maxParticipantsPerTurn"
+                  value={formState.maxParticipantsPerTurn}
+                />
+                <input
+                  type="hidden"
+                  name="shiftDuration"
+                  value={formState.shiftDuration}
+                />
+              </>
             )}
-          </CardFooter>
-        </form>
-      </CardContent>
-    </Card>
+
+            <CardFooter className="flex justify-between">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePrev}
+                disabled={currentStep === 1}
+              >
+                {t("backButton")}
+              </Button>
+              {currentStep < totalSteps ? (
+                <Button type="button" onClick={handleNext}>
+                  {t("nextButton")}
+                </Button>
+              ) : (
+                <Button type="submit" disabled={isPending}>
+                  {t("submitButton")}
+                </Button>
+              )}
+            </CardFooter>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

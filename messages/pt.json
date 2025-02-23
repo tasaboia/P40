@@ -62,5 +62,54 @@
     "Thu": "Qui",
     "Fri": "Sex",
     "Sat": "Sáb"
+  },
+  "admin": {
+    "onboarding": {
+      "welcomeTitle": "Bem-vindo(a) ao 40 Dias de Oração!",
+      "welcomeDescription": "Estamos muito felizes por tê-lo(a) conosco. Neste processo de configuração, você definirá os detalhes dos 40 dias da sua igreja local e personalizará a forma como os turnos de oração serão organizados para os líderes.",
+      "startDateLabel": "Data de Início",
+      "startDateHelp": "Escolha a data de início do evento.",
+      "endDateLabel": "Data de Término",
+      "endDateHelp": "Escolha a data de término do evento.",
+      "eventTypeLabel": "Tipo do Evento",
+      "eventTypePlaceholder": "Selecione o tipo",
+      "shiftLabel": "Turnos de Oração",
+      "clockLabel": "Relógio de Oração",
+      "eventTypeHelp": "Escolha como os turnos serão organizados.",
+      "maxParticipantsLabel": "Máximo de Participantes por Turno",
+      "maxParticipantsPlaceholder": "Ex: 2",
+      "maxParticipantsHelp": "Defina quantos participantes podem estar em um turno.",
+      "shiftDurationLabel": "Duração do Turno",
+      "shiftDurationPlaceholder": "Selecione a duração",
+      "oneHour": "1 hora",
+      "thirtyMinutes": "30 minutos",
+      "shiftDurationHelp": "Informe quanto tempo cada turno deverá durar.",
+      "configurationTitle": "Configuração do Evento",
+      "configurationDescription": "Preencha os campos abaixo para configurar seu evento.",
+      "backButton": "Voltar",
+      "nextButton": "Avançar",
+      "submitButton": "Salvar e Iniciar",
+      "SHIFT": "Turnos de Oração",
+      "CLOCK": "Relógio de Oração"
+    },
+    "dashboard": {
+      "tabs": {
+        "dashboard": "Painel",
+        "schedule": "Agenda"
+      },
+      "cards": {
+        "registeredLeaders": "Líderes inscritos",
+        "singleLeaderSlots": "Horários com só um líder",
+        "filledSlots": "Horários preenchidos",
+        "emptySlots": "Horários vazios"
+      },
+      "chart": {
+        "title": "Pessoas e Horários por Turnos",
+        "description": "Dias da Semana"
+      },
+      "datatable": {
+        "searchPlaceholder": "Filtrar por nome..."
+      }
+    }
   }
 }

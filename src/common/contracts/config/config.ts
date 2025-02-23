@@ -62,6 +62,6 @@ export interface PrayerTopic {
 
 export interface AppResponse {
   user: User | null;
-  event: EventResponse | null;
+  event: EventResponse | any[] | null;
   church: Church | null;
 }

@@ -60,7 +60,7 @@ export const columns: ColumnDef<User>[] = [
               Gerenciar horários
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Turno flexível</DropdownMenuItem>
+            <DropdownMenuItem>Permitir sair do turno</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

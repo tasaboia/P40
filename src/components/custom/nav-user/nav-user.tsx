@@ -24,10 +24,8 @@ export default async function NavUser() {
     getTranslations("prayer_turn"),
   ]);
 
-  if (!church || !event) return notFound();
-
-  const turnItems = event.id
-    ? await getTurns({ eventId: event.id, userId })
+  const turnItems = event?.id
+    ? await getTurns({ eventId: event?.id, userId })
     : [];
 
   return (
@@ -39,15 +37,19 @@ export default async function NavUser() {
             {Helpers.getInitials(name)}
           </AvatarFallback>
         </Avatar>
+
         <div className="flex flex-col text-left text-sm leading-tight h-full justify-center">
           <p className="truncate font-semibold">
             Olá, {Helpers.getFirstAndLastName(name)}
           </p>
-          <p className="truncate text-xs">
-            {church.name} | {t(event.type)}
-          </p>
+          {event && church && (
+            <p className="truncate text-xs">
+              {church.name} | {t(event.type)}
+            </p>
+          )}
         </div>
       </div>
+
       <Settings user={userData.user} turnItens={turnItems} />
     </div>
   );
