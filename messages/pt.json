@@ -63,6 +63,13 @@
     "Fri": "Sex",
     "Sat": "Sáb"
   },
+
+  "not_found": {
+    "title": "Página não encontrada",
+    "description": "O recurso solicitado não foi encontrado.",
+    "message": "Desculpe, a página que você está procurando não existe.",
+    "homeButton": "Voltar para a página inicial"
+  },
   "admin": {
     "onboarding": {
       "welcomeTitle": "Bem-vindo(a) ao 40 Dias de Oração!",
@@ -92,6 +99,7 @@
       "SHIFT": "Turnos de Oração",
       "CLOCK": "Relógio de Oração"
     },
+
     "dashboard": {
       "tabs": {
         "dashboard": "Painel",

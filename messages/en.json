@@ -63,6 +63,12 @@
     "Fri": "Fri",
     "Sat": "Sat"
   },
+  "not_found": {
+    "title": "Page Not Found",
+    "description": "The requested resource could not be found.",
+    "message": "Sorry, the page you are looking for does not exist.",
+    "homeButton": "Go back to Home"
+  },
   "admin": {
     "onboarding": {
       "welcomeTitle": "Welcome to 40 Days of Prayer!",

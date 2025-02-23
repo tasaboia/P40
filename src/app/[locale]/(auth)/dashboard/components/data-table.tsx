@@ -24,8 +24,6 @@ import {
 } from "@p40/components/ui/table";
 import { Input } from "@p40/components/ui/input";
 import { Button } from "@p40/components/ui/button";
-import { Search } from "lucide-react";
-import { Label } from "@p40/components/ui/label";
 
 export function DataTableWithSearch<TData, TValue>({
   columns,

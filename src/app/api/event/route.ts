@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     const name = formData.get("name");
 
     const eventData = {
-      name: name ? String(name) : "Evento sem nome",
+      name: name ? String(name) : "40 dias de oração",
       churchId,
       startDate: startDate ? new Date(String(startDate)) : new Date(),
       endDate: endDate ? new Date(String(endDate)) : new Date(),

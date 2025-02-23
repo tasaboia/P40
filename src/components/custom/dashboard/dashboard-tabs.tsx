@@ -1,8 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@p40/components/ui/card";
@@ -13,13 +11,7 @@ import {
   TabsTrigger,
 } from "@p40/components/ui/tabs";
 import { WeekTab } from "../week/week-tab";
-import {
-  ClockArrowDown,
-  ClockArrowUp,
-  TrendingUp,
-  User,
-  Users,
-} from "lucide-react";
+import { ClockArrowDown, ClockArrowUp, User, Users } from "lucide-react";
 import {
   columns,
   User as IUser,
@@ -31,8 +23,6 @@ import { getChartEventData } from "@p40/services/event/chart-event-data";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { EventChart } from "./chart-event";
 import { getTranslations } from "next-intl/server";
-import { use } from "react";
-import { Dashboard } from "@p40/common/contracts/dashboard/dashboard";
 import { dashboardData } from "@p40/services/dashboard/dashboard.service";
 
 export async function DashboardTabs() {

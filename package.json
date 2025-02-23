@@ -50,6 +50,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
+    "react-hook-use-form": "^1.2.0",
     "react-phone-number-input": "^3.4.12",
     "recharts": "^2.15.1",
     "recoil": "^0.7.7",
