@@ -12,3 +12,14 @@ export interface EventResponse {
   updatedAt: string;
   church: { name: string; city: string; country: string };
 }
+
+export interface ChartEventDayData {
+  day: number;
+  people: number;
+  emptySlots: number;
+}
+
+export interface ChartEventResponse {
+  success: boolean;
+  data: ChartEventDayData[];
+}

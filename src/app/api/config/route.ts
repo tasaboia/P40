@@ -1,38 +1,52 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../prisma";
-import { FailException } from "@p40/common/contracts/exceptions/exception";
-import { errorHandler } from "@p40/common/utils/erro-handler";
 
-export async function GET(req: Request) {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get("userId");
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: "UserId não informado" },
+      { status: 400 }
+    );
+  }
+
   try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-
-    if (!id) {
-      throw new FailException({
-        message: "Nenhuma Zion selecionada",
-        statusCode: 400,
-      });
-    }
-
-    const configs = await prisma.church.findUnique({
-      where: { id: id },
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
       include: {
-        events: {
+        church: {
           include: {
-            prayerTurns: {
-              include: {
-                userShifts: true,
-              },
-            },
-            prayerTopics: true,
+            events: true,
           },
         },
       },
     });
 
-    return NextResponse.json(configs, { status: 200 });
+    if (!user) {
+      return NextResponse.json(
+        { error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
+    if (!user.church) {
+      return NextResponse.json(
+        { error: "Igreja não vinculada ao usuário" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      church: user.church,
+      event: user.church.events,
+      user: user,
+    });
   } catch (error) {
-    return errorHandler(error);
+    console.error("Erro ao buscar dados:", error);
+    return NextResponse.json(
+      { error: "Erro interno do servidor" },
+      { status: 500 }
+    );
   }
 }

@@ -36,7 +36,7 @@ interface SettingsProps {
   turnItens: any[] | null;
 }
 export function Settings({ user, turnItens }: SettingsProps) {
-  const { locale, isPending, handleLanguageChange } = useChangeLanguage();
+  const { locale, handleLanguageChange } = useChangeLanguage();
 
   return (
     <div className=" absolute top-4 right-4">

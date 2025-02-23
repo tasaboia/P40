@@ -16,6 +16,7 @@ export default async function DayList({
   weekAbbr: string;
 }) {
   //adicinoar toast quando tiver error
+
   const session = await auth();
   if (!session) return notFound();
 

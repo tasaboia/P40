@@ -24,3 +24,23 @@ export interface PrayerTurnResponse {
   allowChangeAfterStart: boolean;
   leaders: TurnLeader[];
 }
+
+export interface UserResponse {
+  success: boolean;
+  user?: User | null;
+  error?: string;
+}
+
+export interface UsersResponse {
+  success: boolean;
+  users?:
+    | {
+        id: string;
+        name: string;
+        email: string;
+        whatsapp: string;
+        churchId: string;
+      }[]
+    | null;
+  error?: string;
+}

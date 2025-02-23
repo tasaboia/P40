@@ -1,9 +1,10 @@
 import api from "@p40/lib/axios";
 import { FailException } from "@p40/common/contracts/exceptions/exception";
+import { AppResponse } from "@p40/common/contracts/config/config";
 
-export async function getAppConfig(churchId: string) {
+export async function getAppConfig(userId: string): Promise<AppResponse> {
   try {
-    const response = await api.get(`/api/config?id=${churchId}`);
+    const response = await api.get(`/api/config?userId=${userId}`);
     return response.data;
   } catch (error) {
     throw new FailException({

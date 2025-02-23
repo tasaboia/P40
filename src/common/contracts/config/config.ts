@@ -1,3 +1,6 @@
+import { EventResponse } from "../event/event";
+import { User } from "../user/user";
+
 export interface Church {
   id: string;
   name: string;
@@ -55,4 +58,10 @@ export interface PrayerTopic {
   imageUrl?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AppResponse {
+  user: User | null;
+  event: EventResponse | null;
+  church: Church | null;
 }

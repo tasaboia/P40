@@ -1,53 +1,54 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@p40/components/ui/avatar";
 import { Helpers } from "@p40/common/utils/helpers";
-
 import { getChurchById } from "@p40/services/zion";
 import { Settings } from "../settings/settings";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { getTranslations } from "next-intl/server";
 import { getTurns } from "@p40/services/event/get-turn";
-import { User } from "@p40/common/contracts/user/user";
+import { auth } from "../../../../auth";
+import { getUser } from "@p40/services/user/user-service";
+import { notFound } from "next/navigation";
 
-async function fetchData(churchId: string, userId: string) {
+export default async function NavUser() {
+  const session = await auth();
+  if (!session) return notFound();
+
+  const userData = await getUser(session.user.id);
+  if (!userData?.user) return notFound();
+
+  const { churchId, id: userId, imageUrl, name } = userData.user;
+
   const [church, event, t] = await Promise.all([
     getChurchById(churchId),
     eventByChurchId(churchId),
     getTranslations("prayer_turn"),
   ]);
 
-  const turnItens = event?.id
+  if (!church || !event) return notFound();
+
+  const turnItems = event.id
     ? await getTurns({ eventId: event.id, userId })
     : [];
 
-  return { church, event, turnItens, t };
-}
-
-interface NavUserProps {
-  user: User;
-  churchId: string;
-}
-export default async function NavUser({ user, churchId }: NavUserProps) {
-  const { church, event, turnItens, t } = await fetchData(churchId, user.id);
-
   return (
-    <div className="flex justify-between  bg-white">
+    <div className="flex justify-between bg-white">
       <div className="flex max-w-60 gap-2 p-4 text-sm">
         <Avatar className="h-12 w-12 rounded-full">
-          <AvatarImage src={user.imageUrl} alt="Imagem de perfil" />
+          <AvatarImage src={imageUrl} alt="Imagem de perfil" />
           <AvatarFallback className="rounded-full">
-            {Helpers.getInitials(user.name)}
+            {Helpers.getInitials(name)}
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col text-left text-sm leading-tight h-full justify-center">
           <p className="truncate font-semibold">
-            Olá, {Helpers.getFirstAndLastName(user.name)}
+            Olá, {Helpers.getFirstAndLastName(name)}
           </p>
           <p className="truncate text-xs">
             {church.name} | {t(event.type)}
           </p>
         </div>
       </div>
-      <Settings user={user} turnItens={turnItens} />
+      <Settings user={userData.user} turnItens={turnItems} />
     </div>
   );
 }
