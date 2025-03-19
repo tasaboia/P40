@@ -14,13 +14,23 @@
       "daily_guidelines": "Diretrizes Diárias",
       "occurrences": "Ocorrências",
       "settings": "Configurações",
-      "language": "Idioma"
+      "language": "Idioma",
+      "save": "Salvar",
+      "close": "Fechar",
+      "search": "Buscar",
+      "filter": "Filtrar",
+      "refresh": "Atualizar",
+      "loading": "Carregando..."
     },
     "status": {
       "loading": "Carregando...",
       "error": "Erro",
       "success": "Sucesso",
-      "empty": "Nenhum resultado encontrado"
+      "empty": "Nenhum resultado encontrado",
+      "saving": "Salvando...",
+      "updating": "Atualizando...",
+      "deleting": "Excluindo...",
+      "no_data": "Nenhum dado encontrado"
     },
     "weekdays": {
       "Sun": "Dom",
@@ -46,6 +56,18 @@
       "whatsapp": "WhatsApp",
       "update_success": "Suas informações foram atualizadas",
       "update_error": "Não foi possível atualizar seus dados"
+    },
+    "validation": {
+      "required": "Este campo é obrigatório",
+      "email": "Email inválido",
+      "min_length": "Mínimo de {count} caracteres",
+      "max_length": "Máximo de {count} caracteres"
+    },
+    "messages": {
+      "success": "Operação realizada com sucesso",
+      "error": "Ocorreu um erro",
+      "confirm": "Tem certeza?",
+      "cancel": "Operação cancelada"
     }
   },
   "auth": {
@@ -60,7 +82,10 @@
       "terms": "Ao clicar em continuar, você concorda com nossos {terms} e {privacy}.",
       "login_with_provider": "Bem vindo ao 40 dias de oração",
       "or_login_with_prover": "Ou faça login com dados do prover",
-      "show_password": "Mostrar senha"
+      "show_password": "Mostrar senha",
+      "invalid_credentials": "Credenciais inválidas",
+      "server_error": "Erro no servidor",
+      "network_error": "Erro de conexão"
     },
     "terms": {
       "service": "Termos de Serviço",
@@ -109,6 +134,11 @@
           "error": "Erro ao tentar sair do horário",
           "error_desc": "Houve um erro ao tentar sair do turno, tente mais tarde"
         }
+      },
+      "validation": {
+        "max_leaders": "Número máximo de líderes excedido",
+        "invalid_time": "Horário inválido",
+        "already_subscribed": "Você já está inscrito neste turno"
       }
     }
   },
@@ -186,7 +216,10 @@
           "label": "Ajustes",
           "manage_schedules": "Gerenciar horários",
           "allow_leave": "Permitir sair do turno"
-        }
+        },
+        "no_results": "Nenhum resultado encontrado",
+        "loading": "Carregando dados...",
+        "error": "Erro ao carregar dados"
       }
     }
   },
