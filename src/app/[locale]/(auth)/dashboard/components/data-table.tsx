@@ -24,6 +24,7 @@ import {
 } from "@p40/components/ui/table";
 import { Input } from "@p40/components/ui/input";
 import { Button } from "@p40/components/ui/button";
+import { Card, CardContent, CardHeader } from "@p40/components/ui";
 
 export function DataTableWithSearch<TData, TValue>({
   columns,
@@ -60,7 +61,7 @@ export function DataTableWithSearch<TData, TValue>({
   });
 
   return (
-    <div className="w-full">
+    <>
       <div className="py-4">
         <Input
           placeholder="Buscar por nome..."
@@ -71,7 +72,6 @@ export function DataTableWithSearch<TData, TValue>({
           className="max-w-sm"
         />
       </div>
-
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -142,6 +142,6 @@ export function DataTableWithSearch<TData, TValue>({
           Próxima
         </Button>
       </div>
-    </div>
+    </>
   );
 }

@@ -25,19 +25,24 @@ import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { appConfigAction } from "@p40/services/actions/app-config";
 import { Loader2 } from "lucide-react";
+import { ErrorHandler } from "@p40/components/custom/error-handler";
+import { User } from "@p40/common/contracts/user/user";
 
 interface ConfigEventOnboardingProps {
-  event: any;
-  church: any;
+  user: User | null;
+  church: string | undefined;
 }
 
 export default function ConfigEventOnboarding({
-  event,
+  user,
   church,
 }: ConfigEventOnboardingProps) {
+  console.log("ConfigEvent - Props:", { user, church });
+
   const t = useTranslations("admin.onboarding");
   const router = useRouter();
 
+  // Inicializar os hooks primeiro, antes de qualquer retorno condicional
   const {
     control,
     handleSubmit,
@@ -46,8 +51,8 @@ export default function ConfigEventOnboarding({
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      eventId: event?.id,
-      churchId: church?.id,
+      eventId: "", // Novo evento, sem ID
+      churchId: church || "",
       startDate: "",
       endDate: "",
       eventType: "",
@@ -56,10 +61,28 @@ export default function ConfigEventOnboarding({
     },
   });
 
+  // Inicializar state hooks
   const [currentStep, setCurrentStep] = React.useState(1);
   const totalSteps = 3;
 
   const [state, formAction, isPending] = useActionState(appConfigAction, {});
+
+  // Se não tiver usuário ou igreja, mostrar erro
+  if (!user || !church) {
+    console.error("ConfigEvent - Usuário ou igreja não encontrados", {
+      user,
+      church,
+    });
+    return (
+      <ErrorHandler
+        error={{
+          title: "Dados incompletos",
+          description:
+            "Não foi possível carregar os dados do usuário ou da igreja",
+        }}
+      />
+    );
+  }
 
   const onSubmit = async (data: any) => {
     try {
@@ -235,8 +258,8 @@ export default function ConfigEventOnboarding({
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-8">
-            <input type="hidden" name="eventId" value={event?.id || ""} />
-            <input type="hidden" name="churchId" value={church?.id || ""} />
+            <input type="hidden" name="eventId" value={""} />
+            <input type="hidden" name="churchId" value={church || ""} />
             {renderStepContent()}
             <CardFooter className="flex justify-between">
               <Button

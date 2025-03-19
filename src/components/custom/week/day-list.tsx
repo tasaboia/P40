@@ -1,42 +1,44 @@
-import React, { Suspense } from "react";
-import { auth } from "../../../../auth";
+"use client";
+
+import React from "react";
 import { createTurns } from "@p40/common/utils/schedule";
-import { eventByChurchId } from "@p40/services/event/event-byId";
-import { getTurns } from "@p40/services/event/get-turn";
-import { getUser } from "@p40/services/user/user-service";
-import { notFound } from "next/navigation";
 import { TurnItem } from "../turn/turn-item";
 import { WeekSkeleton } from "./skeleton-week";
+import { EventResponse } from "@p40/common/contracts/event/event";
+import { useSession } from "next-auth/react";
 
-export default async function DayList({
-  weekday,
-  weekAbbr,
-}: {
+interface DayListProps {
   weekday: number;
   weekAbbr: string;
-}) {
-  //adicinoar toast quando tiver error
+  event: EventResponse;
+  prayerTurns: any[]; // Mantemos na interface mas não usamos diretamente
+  turns: any[];
+}
 
-  const session = await auth();
-  if (!session) return notFound();
+export default function DayList({
+  weekday,
+  weekAbbr,
+  event,
+  turns,
+}: DayListProps) {
+  // Todos os hooks devem ser chamados no topo do componente
+  const { data: session } = useSession();
 
-  const user = await getUser(session.user.id);
-  if (!user || !user.user) return notFound();
+  // Filtrar turnos para o dia da semana atual
+  const filteredTurns = turns.filter((turn) => turn.weekday === weekday);
 
-  const event = await eventByChurchId(user.user.churchId);
-  if (!event) return notFound();
-
-  const turnItens = await getTurns({ eventId: event?.id, weekday });
+  // Se não houver sessão, mostrar skeleton
+  if (!session || !session.user) {
+    return <WeekSkeleton />;
+  }
 
   return (
-    <Suspense fallback={<WeekSkeleton />}>
-      <TurnItem
-        userId={session.user.id}
-        event={event}
-        shift={createTurns(event?.shiftDuration)}
-        weekday={weekAbbr}
-        turnItens={turnItens}
-      />
-    </Suspense>
+    <TurnItem
+      userId={session.user.id}
+      event={event}
+      shift={createTurns(event?.shiftDuration)}
+      weekday={weekAbbr}
+      turnItens={filteredTurns}
+    />
   );
 }

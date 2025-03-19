@@ -1,9 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@p40/components/ui/card";
+"use client";
+
 import {
   Tabs,
   TabsContent,
@@ -11,29 +7,55 @@ import {
   TabsTrigger,
 } from "@p40/components/ui/tabs";
 import { WeekTab } from "../week/week-tab";
-import { ClockArrowDown, ClockArrowUp, User, Users } from "lucide-react";
 import { columns } from "@p40/app/[locale]/(auth)/dashboard/components/columns";
-import { auth } from "../../../../auth";
-import { getUserByChurchId } from "@p40/services/user/user-service";
 import { DataTableWithSearch } from "@p40/app/[locale]/(auth)/dashboard/components/data-table";
-import { getChartEventData } from "@p40/services/event/chart-event-data";
-import { eventByChurchId } from "@p40/services/event/event-byId";
 import { EventChart } from "./chart-event";
-import { getTranslations } from "next-intl/server";
-import { dashboardData } from "@p40/services/dashboard/dashboard.service";
+import { useTranslations } from "next-intl";
+import { StatsCards } from "./stats-cards";
+import { EventResponse } from "@p40/common/contracts/event/event";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@p40/components/ui/card";
+import { Users } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 
-export async function DashboardTabs() {
-  const session = await auth();
-  const users = await getUserByChurchId(session.user.churchId);
-  const t = await getTranslations("admin.dashboard");
+interface DashboardTabsProps {
+  event: EventResponse;
+  stats: {
+    distinctLeaders: string;
+    singleLeaderSlots: string;
+    filledTimeSlots: string;
+    emptyTimeSlots: string;
+  };
+  chartData: {
+    day: number;
+    people: number;
+    emptySlots: number;
+  }[];
+  users: any[];
+  prayerTurns: any[];
+  turns: any[];
+}
 
-  const event = await eventByChurchId(session.user.churchId);
-  if (!event) return null;
+export function DashboardTabs({
+  event,
+  stats,
+  chartData,
+  users,
+  prayerTurns,
+  turns,
+}: DashboardTabsProps) {
+  const t = useTranslations("admin.dashboard");
 
-  const data = await dashboardData(event.id);
-  const chart = await getChartEventData(event.id);
+  // Debug logs
+  console.log("ChartData:", chartData);
+  console.log("Is Array?", Array.isArray(chartData));
+  console.log("Length:", chartData?.length);
+  console.log("First item:", chartData?.[0]);
 
-  if (!users.success) return null;
   return (
     <Tabs defaultValue="dashboard" className="p-3">
       <TabsList className="grid w-full grid-cols-2 max-w-lg">
@@ -41,76 +63,33 @@ export async function DashboardTabs() {
         <TabsTrigger value="schedule">{t("tabs.schedule")}</TabsTrigger>
       </TabsList>
       <TabsContent value="dashboard" className="flex flex-col gap-4">
-        <div className="grid grid-cols-2 gap-2 flex-wrap justify-around">
-          <Card>
-            <CardHeader className="px-6 pb-2">
-              <CardTitle className="bg-muted rounded p-3 max-w-12">
-                <Users className="h-6 w-6" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col">
-              <span className="text-4xl font-semibold">
-                {data.stats.distinctLeaders}
-              </span>
-              <span className="text-muted-foreground text-xs">
-                {t("stats.registeredLeaders")}
-              </span>
-            </CardContent>
-          </Card>
+        <StatsCards stats={stats} />
 
-          <Card>
-            <CardHeader className="px-6 pb-2">
-              <CardTitle className="bg-muted rounded p-3 max-w-12">
-                <User className="h-6 w-6" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col">
-              <span className="text-4xl font-semibold">
-                {data.stats.singleLeaderSlots}
-              </span>
-              <span className="text-muted-foreground text-xs max-w-[120px]">
-                {t("stats.singleLeaderSlots")}
-              </span>
-            </CardContent>
-          </Card>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="w-full md:w-1/2">
+            {/* Removendo a verificação de Array.isArray temporariamente */}
+            {chartData?.length > 0 && <EventChart chartData={chartData} />}
+          </div>
 
-          <Card>
-            <CardHeader className="px-6 pb-2">
-              <CardTitle className="bg-muted rounded p-3 max-w-12">
-                <ClockArrowUp className="h-6 w-6" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col">
-              <span className="text-4xl font-semibold">
-                {data.stats.filledTimeSlots}
-              </span>
-              <span className="text-muted-foreground text-xs">
-                {t("stats.filledSlots")}
-              </span>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="px-6 pb-2">
-              <CardTitle className="bg-muted rounded p-3 max-w-12">
-                <ClockArrowDown className="h-6 w-6" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col">
-              <span className="text-4xl font-semibold">
-                {data.stats.emptyTimeSlots}
-              </span>
-              <span className="text-muted-foreground text-xs">
-                {t("stats.emptySlots")}
-              </span>
-            </CardContent>
-          </Card>
+          <div className="w-full md:w-1/2">
+            {users?.length > 0 && (
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    {t("stats.registeredLeaders")}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTableWithSearch columns={columns} data={users} />
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
-        <EventChart chartData={chart.data} />
-        <DataTableWithSearch columns={columns} data={users.users} />
       </TabsContent>
       <TabsContent value="schedule">
-        <WeekTab />
+        <WeekTab event={event} prayerTurns={prayerTurns} turns={turns} />
       </TabsContent>
     </Tabs>
   );

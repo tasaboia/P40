@@ -1,5 +1,6 @@
-import { Weekday } from "@p40/common/contracts/week/schedule";
+"use client";
 
+import { Weekday } from "@p40/common/contracts/week/schedule";
 import {
   Tabs,
   TabsContent,
@@ -8,11 +9,17 @@ import {
 } from "@p40/components/ui/tabs";
 import DayList from "./day-list";
 import { today } from "@p40/common/utils/schedule";
-import { eventByChurchId } from "@p40/services/event/event-byId";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import { EventResponse } from "@p40/common/contracts/event/event";
 
-export async function WeekTab() {
-  const t = await getTranslations("common");
+interface WeekTabProps {
+  event: EventResponse;
+  prayerTurns: any[];
+  turns: any[];
+}
+
+export function WeekTab({ event, prayerTurns, turns }: WeekTabProps) {
+  const t = useTranslations("common");
 
   return (
     <Tabs defaultValue={today}>
@@ -33,6 +40,9 @@ export async function WeekTab() {
             <DayList
               weekAbbr={Weekday[dayAbbr]}
               weekday={Object.values(Weekday).indexOf(Weekday[dayAbbr])}
+              event={event}
+              prayerTurns={prayerTurns}
+              turns={turns}
             />
           </TabsContent>
         );
