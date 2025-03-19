@@ -9,18 +9,69 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import { useSettingStore } from "@p40/common/states/zion";
 import { useTranslations } from "next-intl";
+import { Loader2 } from "lucide-react";
+import { useZionQueries } from "@p40/hooks/use-zion-queries";
+import { Church, ZionApiResponse } from "@p40/common/contracts/church/zions";
+
+// Componente memoizado para o item da igreja
+const ChurchItem = React.memo(({ church }: { church: Church }) => (
+  <SelectItem key={church.id} value={church.id}>
+    {church.name}
+  </SelectItem>
+));
+
+ChurchItem.displayName = "ChurchItem";
+
+// Componente memoizado para o grupo de regiões
+const RegionGroup = React.memo(
+  ({ zion, regionName }: { zion: ZionApiResponse; regionName: string }) => (
+    <SelectGroup key={zion.region.id}>
+      <SelectLabel>{regionName}</SelectLabel>
+      {zion.churches.map((church) => (
+        <ChurchItem key={church.id} church={church} />
+      ))}
+    </SelectGroup>
+  )
+);
+
+RegionGroup.displayName = "RegionGroup";
 
 export default function ZionSelect() {
-  const { zions, fetchZions, setSelectedZion } = useSettingStore();
+  const { zions, isLoading, error, setSelectedZion } = useZionQueries();
+  const t = useTranslations("zion.select");
+  const actions = useTranslations("common.actions");
 
-  React.useEffect(() => {
-    fetchZions();
-  }, [fetchZions]);
-  const t = useTranslations("zionSelect");
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        <span>{t("loading")}</span>
+      </div>
+    );
+  }
 
-  if (!zions || zions.length === 0) return <p>Carregando Igrejas...</p>;
+  if (error) {
+    return (
+      <div className="text-destructive">
+        <p>{t("error")}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="text-sm text-primary hover:underline"
+        >
+          {actions("retry")}
+        </button>
+      </div>
+    );
+  }
+
+  if (!zions || zions.length === 0) {
+    return (
+      <div className="text-muted-foreground">
+        <p>{t("empty")}</p>
+      </div>
+    );
+  }
 
   return (
     <Select
@@ -34,19 +85,16 @@ export default function ZionSelect() {
         }
       }}
     >
-      <SelectTrigger>
+      <SelectTrigger className="w-full">
         <SelectValue placeholder={t("title")} />
       </SelectTrigger>
-      <SelectContent className="max-h-[200px]">
+      <SelectContent className="max-h-[300px]">
         {zions.map((zion) => (
-          <SelectGroup key={zion.region.id}>
-            <SelectLabel>{t(`regions.${zion.region.code}`)}</SelectLabel>
-            {zion.churches.map((church) => (
-              <SelectItem key={church.id} value={church.id}>
-                {church.name}
-              </SelectItem>
-            ))}
-          </SelectGroup>
+          <RegionGroup
+            key={zion.region.id}
+            zion={zion}
+            regionName={t(`regions.${zion.region.code}`)}
+          />
         ))}
       </SelectContent>
     </Select>

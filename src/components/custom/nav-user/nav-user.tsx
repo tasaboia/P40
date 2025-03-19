@@ -21,7 +21,7 @@ export default async function NavUser() {
   const [church, event, t] = await Promise.all([
     getChurchById(churchId),
     eventByChurchId(churchId),
-    getTranslations("prayer_turn"),
+    getTranslations("common"),
   ]);
 
   const turnItems = event?.id
@@ -32,7 +32,7 @@ export default async function NavUser() {
     <div className="flex justify-between bg-white">
       <div className="flex max-w-60 gap-2 p-4 text-sm">
         <Avatar className="h-12 w-12 rounded-full">
-          <AvatarImage src={imageUrl} alt="Imagem de perfil" />
+          <AvatarImage src={imageUrl} alt={t("profile_image")} />
           <AvatarFallback className="rounded-full">
             {Helpers.getInitials(name)}
           </AvatarFallback>
@@ -40,11 +40,11 @@ export default async function NavUser() {
 
         <div className="flex flex-col text-left text-sm leading-tight h-full justify-center">
           <p className="truncate font-semibold">
-            Olá, {Helpers.getFirstAndLastName(name)}
+            {t("greeting")}, {Helpers.getFirstAndLastName(name)}
           </p>
           {event && church && (
             <p className="truncate text-xs">
-              {church.name} | {t(event.type)}
+              {church.name} | {t(`event_types.${event.type}`)}
             </p>
           )}
         </div>

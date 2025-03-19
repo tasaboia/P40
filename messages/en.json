@@ -1,121 +1,216 @@
 {
-  "setup": {
-    "choose_zion": "Choose your Zion",
-    "enter_schedules": "Enter the schedules"
-  },
-  "geral": {
-    "title": "40 Days of Prayer"
-  },
-  "login": {
-    "title": "40 Days of Prayer",
-    "choose_zion": "Choose your Zion",
-    "login_with_provider": "Log in with your Prover account",
-    "email": "Email",
-    "email_placeholder": "example@email.com",
-    "password": "Password",
-    "forgot_password": "Forgot your password?",
-    "login_button": "Login",
-    "create_account": "Create an account on Prover",
-    "terms": "By clicking continue, you agree to our {terms} and {privacy}.",
-    "terms_of_service": "Terms of Service",
-    "privacy_policy": "Privacy Policy",
-    "show_password": "Show password"
-  },
-  "error": {
-    "title": "An error occurred",
-    "description": "Something went wrong. Try again or return to the homepage.",
-    "unknown": "Unknown error",
-    "home_button": "Return to Home",
-    "retry_button": "Try again"
-  },
-  "zionSelect": {
-    "title": "Select your Zion",
-    "regions": {
-      "BR": "Brazil",
-      "EU": "Europe",
-      "NA": "North America",
-      "LATAM": "Latin America",
-      "GLOBAL": "Global"
+  "common": {
+    "actions": {
+      "retry": "Try Again",
+      "back": "Back",
+      "next": "Next",
+      "submit": "Save",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "delete": "Delete",
+      "edit": "Edit",
+      "logout": "Logout",
+      "daily_guidelines": "Daily Guidelines",
+      "occurrences": "Occurrences",
+      "settings": "Settings",
+      "language": "Language"
+    },
+    "status": {
+      "loading": "Loading...",
+      "error": "Error",
+      "success": "Success",
+      "empty": "No results found"
+    },
+    "weekdays": {
+      "Sun": "Sun",
+      "Mon": "Mon",
+      "Tue": "Tue",
+      "Wed": "Wed",
+      "Thu": "Thu",
+      "Fri": "Fri",
+      "Sat": "Sat"
+    },
+    "profile_image": "Profile image",
+    "greeting": "Hello",
+    "event_types": {
+      "SHIFT": "Prayer Shifts",
+      "CLOCK": "Prayer Clock"
+    },
+    "user": {
+      "my_data": "My Data",
+      "profile": "My Profile",
+      "update_data": "Update your data",
+      "name": "Name",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "update_success": "Your information has been updated",
+      "update_error": "Could not update your data"
     }
   },
-  "prayer_turn": {
-    "max_leaders": "Maximum {count} leaders per shift",
-    "empty_schedule": "This time slot is empty",
-    "subscribe_success": "Subscription successful",
-    "subscribe_success_desc": "You will be responsible for this time slot for the next 40 days",
-    "subscribe_error": "Error subscribing to the time slot",
-    "subscribe_error_desc": "An error occurred while trying to subscribe. Please try again later.",
-    "unsubscribe_success": "You are no longer in the shift",
-    "unsubscribe_success_desc": "You are no longer subscribed to the prayer shift",
-    "unsubscribe_error": "Error leaving the shift",
-    "unsubscribe_error_desc": "An error occurred while trying to leave the shift. Please try again later.",
-    "leave_schedule": "Leave the shift",
-    "join_schedule": "Join the shift",
-    "SHIFT": "Prayer Shifts",
-    "CLOCK": "Prayer Clock"
+  "auth": {
+    "login": {
+      "title": "Login",
+      "email": "Username",
+      "email_placeholder": "example@email.com",
+      "password": "Password",
+      "forgot_password": "Forgot your password?",
+      "login_button": "Login",
+      "create_account": "Create Prover Account",
+      "terms": "By clicking continue, you agree to our {terms} and {privacy}.",
+      "login_with_provider": "Welcome to 40 Days of Prayer",
+      "or_login_with_prover": "Or login with Prover credentials",
+      "show_password": "Show password"
+    },
+    "terms": {
+      "service": "Terms of Service",
+      "privacy": "Privacy Policy"
+    }
   },
-  "weekdays": {
-    "Sun": "Sun",
-    "Mon": "Mon",
-    "Tue": "Tue",
-    "Wed": "Wed",
-    "Thu": "Thu",
-    "Fri": "Fri",
-    "Sat": "Sat"
+  "zion": {
+    "select": {
+      "title": "Select a Church",
+      "loading": "Loading Churches...",
+      "error": "Error loading churches",
+      "empty": "No Churches Found",
+      "regions": {
+        "BR": "Brazil",
+        "EU": "Europe",
+        "NA": "North America",
+        "LATAM": "Latin America",
+        "GLOBAL": "Global"
+      }
+    }
   },
-  "not_found": {
-    "title": "Page Not Found",
-    "description": "The requested resource could not be found.",
-    "message": "Sorry, the page you are looking for does not exist.",
-    "homeButton": "Go back to Home"
+  "prayer": {
+    "turns": {
+      "title": "Prayer Shifts",
+      "clock": "Prayer Clock",
+      "max_leaders": "Maximum {count} leaders per shift",
+      "empty": "This time slot is empty",
+      "my_schedules": "My Schedules",
+      "my_prayer_turns": "My prayer shifts",
+      "no_schedules": "You don't have any schedules yet",
+      "at": "at",
+      "actions": {
+        "join": "Join time slot",
+        "leave": "Leave time slot"
+      },
+      "messages": {
+        "subscribe": {
+          "success": "Subscription successful",
+          "success_desc": "You will be responsible for this time slot during the 40 days",
+          "error": "Error trying to subscribe to time slot",
+          "error_desc": "There was an error trying to subscribe you, try again later"
+        },
+        "unsubscribe": {
+          "success": "You are no longer in the shift",
+          "success_desc": "You are no longer subscribed to the prayer shift",
+          "error": "Error trying to leave time slot",
+          "error_desc": "There was an error trying to leave the shift, try again later"
+        }
+      }
+    }
   },
   "admin": {
     "onboarding": {
-      "welcomeTitle": "Welcome to 40 Days of Prayer!",
-      "welcomeDescription": "We are very happy to have you with us. In this setup process, you will define the details for your local church's 40 days and customize how prayer shifts are organized for the leaders.",
-      "startDateLabel": "Start Date",
-      "startDateHelp": "Choose the event's start date.",
-      "endDateLabel": "End Date",
-      "endDateHelp": "Choose the event's end date.",
-      "eventTypeLabel": "Event Type",
-      "eventTypePlaceholder": "Select the type",
-      "shiftLabel": "Prayer Shifts",
-      "clockLabel": "Prayer Clock",
-      "eventTypeHelp": "Choose how the shifts will be organized.",
-      "maxParticipantsLabel": "Maximum Participants per Shift",
-      "maxParticipantsPlaceholder": "Ex: 2",
-      "maxParticipantsHelp": "Define how many participants can be in a shift.",
-      "shiftDurationLabel": "Shift Duration",
-      "shiftDurationPlaceholder": "Select the duration",
-      "oneHour": "1 hour",
-      "thirtyMinutes": "30 minutes",
-      "shiftDurationHelp": "Enter how long each shift should last.",
-      "configurationTitle": "Event Configuration",
-      "configurationDescription": "Fill in the fields below to configure your event.",
-      "backButton": "Back",
-      "nextButton": "Next",
-      "submitButton": "Save and Start",
-      "SHIFT": "Prayer Shifts",
-      "CLOCK": "Prayer Clock"
+      "welcome": {
+        "title": "Welcome to 40 Days of Prayer!",
+        "description": "We are very happy to have you with us. In this setup process, you will define the details of your local church's 40 days and customize how prayer shifts will be organized for leaders."
+      },
+      "form": {
+        "dates": {
+          "start": {
+            "label": "Start Date",
+            "help": "Choose the event start date"
+          },
+          "end": {
+            "label": "End Date",
+            "help": "Choose the event end date"
+          }
+        },
+        "eventType": {
+          "label": "Event Type",
+          "placeholder": "Select type",
+          "help": "Choose how shifts will be organized",
+          "options": {
+            "SHIFT": "Prayer Shifts",
+            "CLOCK": "Prayer Clock"
+          }
+        },
+        "maxParticipants": {
+          "label": "Maximum Participants per Shift",
+          "placeholder": "Ex: 2",
+          "help": "Set how many participants can be in a shift"
+        },
+        "shiftDuration": {
+          "label": "Shift Duration",
+          "placeholder": "Select duration",
+          "help": "Inform how long each shift should last",
+          "options": {
+            "oneHour": "1 hour",
+            "thirtyMinutes": "30 minutes"
+          }
+        }
+      },
+      "actions": {
+        "back": "Back",
+        "next": "Next",
+        "submit": "Save and Start"
+      }
     },
     "dashboard": {
       "tabs": {
         "dashboard": "Dashboard",
         "schedule": "Schedule"
       },
-      "cards": {
+      "stats": {
         "registeredLeaders": "Registered Leaders",
-        "singleLeaderSlots": "Time slots with only one leader",
-        "filledSlots": "Filled time slots",
-        "emptySlots": "Empty time slots"
+        "singleLeaderSlots": "Single Leader Slots",
+        "filledSlots": "Filled Slots",
+        "emptySlots": "Empty Slots"
       },
       "chart": {
-        "title": "People and Time Slots by Shifts",
-        "description": "Days of the Week"
+        "title": "People and Slots by Shifts",
+        "description": "Week Days"
       },
-      "datatable": {
-        "searchPlaceholder": "Filter by name..."
+      "table": {
+        "search": "Filter by name...",
+        "columns": {
+          "name": "Name",
+          "whatsapp": "WhatsApp"
+        },
+        "actions": {
+          "label": "Settings",
+          "manage_schedules": "Manage schedules",
+          "allow_leave": "Allow leaving shift"
+        }
       }
     }
+  },
+  "checkin": {
+    "title": "Check-in",
+    "description": "Great to have you here with us",
+    "status": "Check-in",
+    "actions": {
+      "back": "Back",
+      "submit": "Mark Attendance"
+    }
+  },
+  "errors": {
+    "not_found": {
+      "title": "Page not found",
+      "description": "The requested resource was not found",
+      "message": "Sorry, the page you are looking for does not exist",
+      "home_button": "Back to home page"
+    },
+    "general": {
+      "title": "An error occurred",
+      "description": "Something went wrong. Try again or go back to the home page",
+      "unknown": "Unknown error"
+    }
+  },
+  "setup": {
+    "choose_zion": "Choose Church",
+    "enter_schedules": "Enter Schedules"
   }
 }

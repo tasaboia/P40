@@ -6,8 +6,12 @@ import {
 import { notFound } from "next/navigation";
 import { ReactNode } from "react";
 import { routing } from "@p40/i18n/routing";
-import { Toaster } from "@p40/components/ui/toaster";
 import BaseLayout from "@p40/components/custom/base-layout/base-layout";
+import { Providers } from "../providers";
+import { Inter } from "next/font/google";
+import { clsx } from "clsx";
+
+const inter = Inter({ subsets: ["latin"] });
 
 type Props = {
   children: ReactNode;
@@ -28,10 +32,10 @@ export async function generateMetadata({
     notFound();
   }
 
-  const t = await getTranslations({ locale, namespace: "geral" });
+  const t = await getTranslations("auth");
 
   return {
-    title: t("title"),
+    title: t("login.title"),
   };
 }
 
@@ -45,9 +49,14 @@ export default async function LocaleLayout({ children, params }: Props) {
   setRequestLocale(locale);
 
   return (
-    <BaseLayout locale={locale} messages={messages}>
-      {children}
-      <Toaster />
-    </BaseLayout>
+    <html lang={locale} className="h-full">
+      <body className={clsx(inter.className, "h-full")}>
+        <Providers>
+          <BaseLayout locale={locale} messages={messages}>
+            {children}
+          </BaseLayout>
+        </Providers>
+      </body>
+    </html>
   );
 }

@@ -18,6 +18,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "@p40/hooks/use-toast";
 import { useSettingStore } from "@p40/common/states/zion";
 import { PhoneInput } from "../input-phone/input-phone";
+import { useTranslations } from "next-intl";
 
 export function Onboarding({ user }) {
   const { selectedZion } = useSettingStore();
@@ -25,13 +26,14 @@ export function Onboarding({ user }) {
     success: false,
     error: null,
   });
+  const t = useTranslations("common");
 
   useEffect(() => {
     if (state.success) {
       toast({
         variant: "success",
-        title: "Sucesso",
-        description: "Suas informações foram atualizadas",
+        title: t("status.success"),
+        description: t("user.update_success"),
       });
       setTimeout(() => {
         window.location.reload();
@@ -39,34 +41,29 @@ export function Onboarding({ user }) {
     } else if (state.error) {
       toast({
         variant: "destructive",
-        title: "Erro!",
-        description: state.error || "Não foi possível atualizar seus dados.",
+        title: t("status.error"),
+        description: state.error || t("user.update_error"),
       });
     }
-  }, [state]);
+  }, [state, t]);
 
   return (
-    <Dialog open>
-      <DialogContent className="sm:max-w-[425px] rounded-lg">
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">{t("user.my_data")}</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Confirme seus dados</DialogTitle>
-          <DialogDescription>
-            Atualize seus dados caso necessário
-          </DialogDescription>
+          <DialogTitle>{t("user.profile")}</DialogTitle>
+          <DialogDescription>{t("user.update_data")}</DialogDescription>
         </DialogHeader>
-
         <form action={formAction}>
-          <input
-            type="hidden"
-            name="zionId"
-            id="zionId"
-            value={selectedZion?.id}
-          />
-          <div className="flex flex-col gap-4 py-6">
+          <div className="grid gap-4 py-4">
             <input type="hidden" name="id" value={user.id} />
+            <input type="hidden" name="churchId" value={selectedZion?.id} />
 
-            <div className="flex  flex-col  gap-1 space-y-1.5">
-              <Label htmlFor="name">Nome</Label>
+            <div className="flex flex-col gap-1 space-y-1.5">
+              <Label htmlFor="name">{t("user.name")}</Label>
               <Input
                 name="name"
                 type="text"
@@ -76,8 +73,8 @@ export function Onboarding({ user }) {
               />
             </div>
 
-            <div className="flex  flex-col  gap-1 space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+            <div className="flex flex-col gap-1 space-y-1.5">
+              <Label htmlFor="email">{t("user.email")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -87,8 +84,8 @@ export function Onboarding({ user }) {
               />
             </div>
 
-            <div className="flex flex-col  gap-1 space-y-1.5">
-              <Label htmlFor="whatsapp">Whatsapp</Label>
+            <div className="flex flex-col gap-1 space-y-1.5">
+              <Label htmlFor="whatsapp">{t("user.whatsapp")}</Label>
               <PhoneInput
                 id="whatsapp"
                 name="whatsapp"
@@ -98,12 +95,10 @@ export function Onboarding({ user }) {
               />
             </div>
           </div>
-
-          <input type="hidden" name="id" value={user?.id} />
           <DialogFooter>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="animate-spin" />}
-              Confirmar
+              {t("actions.submit")}
             </Button>
           </DialogFooter>
         </form>

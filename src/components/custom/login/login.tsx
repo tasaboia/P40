@@ -1,23 +1,13 @@
 "use client";
 
+import * as React from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@p40/lib/utils";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../ui/card";
-import { Button } from "../../ui/button";
-import { Label } from "../../ui/label";
-import { Input } from "../../ui/input";
+import * as UI from "@p40/components/ui";
 import { useActionState, useState } from "react";
 import { loginAction } from "@p40/services/actions/auth";
-
 import { redirect } from "@p40/i18n/routing";
 import { useSettingStore } from "@p40/common/states/zion";
-import { Checkbox } from "@p40/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import GoogleLogin from "./google-login";
@@ -28,7 +18,7 @@ export function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const locale = useLocale();
-  const t = useTranslations("login");
+  const t = useTranslations("auth.login");
   const [state, formAction, isPending] = useActionState(loginAction, {
     error: true,
   });
@@ -51,20 +41,20 @@ export function LoginForm({
   }
 
   return (
-    <div className={cn("flex  flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader className="text-center ">
-          <CardTitle className="text-xl">{t("title")}</CardTitle>
-          <CardDescription>{t("login_with_provider")}</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <UI.Card>
+        <UI.CardHeader className="text-center">
+          <UI.CardTitle className="text-xl">{t("title")}</UI.CardTitle>
+          <UI.CardDescription>{t("login_with_provider")}</UI.CardDescription>
+        </UI.CardHeader>
+        <UI.CardContent>
           <div className="grid gap-6 pb-6">
             <div className="flex flex-col gap-4">
               <GoogleLogin />
             </div>
             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
               <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                Ou faça login com dados do prover
+                {t("or_login_with_prover")}
               </span>
             </div>
           </div>
@@ -75,8 +65,8 @@ export function LoginForm({
                 <input type="hidden" name="zionId" value={selectedZion?.id} />
 
                 <div className="grid gap-2">
-                  <Label htmlFor="email">{t("email")}</Label>
-                  <Input
+                  <UI.Label htmlFor="email">{t("email")}</UI.Label>
+                  <UI.Input
                     id="email"
                     name="email"
                     type="text"
@@ -86,7 +76,7 @@ export function LoginForm({
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="password">{t("password")}</Label>
+                    <UI.Label htmlFor="password">{t("password")}</UI.Label>
                     <Link
                       target="_blank"
                       href="https://zion.prover.app/#/home-custom"
@@ -95,14 +85,14 @@ export function LoginForm({
                       {t("forgot_password")}
                     </Link>
                   </div>
-                  <Input
+                  <UI.Input
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required
                   />
                   <div className="flex items-center space-x-2">
-                    <Checkbox
+                    <UI.Checkbox
                       id="show-password-checkbox"
                       checked={showPassword}
                       onCheckedChange={() => setShowPassword(!showPassword)}
@@ -112,15 +102,19 @@ export function LoginForm({
                     </label>
                   </div>
                 </div>
-                <Button type="submit" className="w-full" disabled={isPending}>
+                <UI.Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isPending}
+                >
                   {isPending && <Loader2 className="animate-spin" />}
                   {t("login_button")}
-                </Button>
+                </UI.Button>
               </div>
             </div>
           </form>
-        </CardContent>
-      </Card>
+        </UI.CardContent>
+      </UI.Card>
     </div>
   );
 }

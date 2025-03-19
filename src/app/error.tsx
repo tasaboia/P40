@@ -20,7 +20,7 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   const router = useRouter();
-  const t = useTranslations("error");
+  const t = useTranslations("errors");
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -29,20 +29,22 @@ export default function ErrorPage({
           <div className="flex justify-center">
             <AlertCircle className="w-12 h-12 text-red-500" />
           </div>
-          <CardTitle className="text-2xl text-red-600">{t("title")}</CardTitle>
+          <CardTitle className="text-2xl text-red-600">
+            {t("general.title")}
+          </CardTitle>
           <CardDescription className="text-gray-600">
-            {t("description")}
+            {t("general.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
           <p className="text-sm text-gray-700">
-            {error?.message || t("unknown")}
+            {error?.message || t("general.unknown")}
           </p>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => router.push("/")}>
-              {t("home_button")}
+              {t("not_found.home_button")}
             </Button>
-            <Button onClick={reset}>{t("retry_button")}</Button>
+            <Button onClick={reset}>{t("not_found.home_button")}</Button>
           </div>
         </CardContent>
       </Card>

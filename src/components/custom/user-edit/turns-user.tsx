@@ -23,7 +23,8 @@ interface TurnsUserList {
 }
 export function TurnsUserList({ turnItens, user }: TurnsUserList) {
   const [loading, setLoading] = React.useState(false);
-  const t = useTranslations("prayer_turn");
+  const t = useTranslations("prayer.turns");
+  const messages = useTranslations("prayer.turns.messages");
   const router = useRouter();
 
   const handlePrayerTurnUnsubscribe = async ({
@@ -41,15 +42,15 @@ export function TurnsUserList({ turnItens, user }: TurnsUserList) {
       if (!response?.error) {
         toast({
           variant: "default",
-          title: t("unsubscribe_success"),
-          description: t("unsubscribe_success_desc"),
+          title: messages("unsubscribe.success"),
+          description: messages("unsubscribe.success_desc"),
         });
       }
     } catch (error) {
       toast({
         variant: "destructive",
-        title: t("unsubscribe_error"),
-        description: t("unsubscribe_error_desc"),
+        title: messages("unsubscribe.error"),
+        description: messages("unsubscribe.error_desc"),
       });
     } finally {
       setLoading(false);
@@ -63,18 +64,16 @@ export function TurnsUserList({ turnItens, user }: TurnsUserList) {
         <div className="flex p-[6px] rounded mb-1 transition-colors hover:bg-accent hover:text-accent-foreground gap-2 items-center text-sm px-2">
           <Clock className="h-4 w-4" />
           <Button variant="ghost" className="font-normal text-sm p-0 h-[20px]">
-            Meus Horários
+            {t("my_schedules")}
           </Button>
         </div>
       </DrawerTrigger>
       <DrawerContent className="transition-all overflow-y-auto">
         <div className="mx-auto w-full max-w-sm overflow-y-auto pb-32">
           <DrawerHeader>
-            <DrawerTitle>Meus turnos de oração</DrawerTitle>
+            <DrawerTitle>{t("my_prayer_turns")}</DrawerTitle>
             {(!turnItens || turnItens?.length == 0) && (
-              <DrawerDescription>
-                Você ainda não tem nenhum horário cadastrado{" "}
-              </DrawerDescription>
+              <DrawerDescription>{t("no_schedules")}</DrawerDescription>
             )}
           </DrawerHeader>
           <div>
@@ -93,7 +92,7 @@ export function TurnsUserList({ turnItens, user }: TurnsUserList) {
                             item.weekday
                           ] as keyof typeof Weekday
                         }`}
-                        <span className="px-1">ás</span>
+                        <span className="px-1">{t("at")}</span>
                         {item.startTime}
                       </p>
                     </div>
@@ -110,7 +109,7 @@ export function TurnsUserList({ turnItens, user }: TurnsUserList) {
                     }
                   >
                     <X />
-                    Sair do horário
+                    {t("actions.leave")}
                   </Button>
                 </div>
               ))}

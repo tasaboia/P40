@@ -10,60 +10,63 @@ import {
   DropdownMenuTrigger,
 } from "@p40/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { User } from "@p40/common/contracts/user/user";
 
-export type User = {
+type TableUser = {
   id: string;
-  whatsapp: string;
   name: string;
+  email: string;
+  whatsapp: string;
+  churchId: string;
 };
 
-export const columns: ColumnDef<User>[] = [
+const NameHeader = () => {
+  const t = useTranslations("admin.dashboard.table.columns");
+  return <div>{t("name")}</div>;
+};
+
+const EmailHeader = () => {
+  const t = useTranslations("admin.dashboard.table.columns");
+  return <div>{t("whatsapp")}</div>;
+};
+
+const ActionsCell = ({ row }: { row: { original: TableUser } }) => {
+  const t = useTranslations("admin.dashboard.table.actions");
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">{t("label")}</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem>
+          <Pencil className="mr-2 h-4 w-4" />
+          {t("manage_schedules")}
+        </DropdownMenuItem>
+        <DropdownMenuItem className="text-destructive">
+          <Trash className="mr-2 h-4 w-4" />
+          {t("allow_leave")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+export const columns: ColumnDef<TableUser>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nome
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
+    header: NameHeader,
   },
   {
-    accessorKey: "whatsapp",
-    header: "WhatsApp",
+    accessorKey: "email",
+    header: EmailHeader,
   },
   {
     id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Ajustes</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Gerenciar horários
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Permitir sair do turno</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ActionsCell,
   },
 ];

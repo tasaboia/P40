@@ -30,16 +30,19 @@ import { routing } from "@p40/i18n/routing";
 import { UserEdit } from "../user-edit/user-edit";
 import { TurnsUserList } from "../user-edit/turns-user";
 import { User } from "@p40/common/contracts/user/user";
+import { useTranslations } from "next-intl";
 
 interface SettingsProps {
   user: User;
   turnItens: any[] | null;
 }
+
 export function Settings({ user, turnItens }: SettingsProps) {
   const { locale, handleLanguageChange } = useChangeLanguage();
+  const t = useTranslations("common");
 
   return (
-    <div className=" absolute top-4 right-4">
+    <div className="absolute top-4 right-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Menu />
@@ -47,14 +50,14 @@ export function Settings({ user, turnItens }: SettingsProps) {
         <DropdownMenuContent className="w-56">
           <DropdownMenuItem>
             <FileText />
-            Pautas diárias
+            {t("actions.daily_guidelines")}
           </DropdownMenuItem>
           <DropdownMenuItem>
             <MessageCircleWarning />
-            Ocorrências
+            {t("actions.occurrences")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>Ajustes</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("actions.settings")}</DropdownMenuLabel>
           {turnItens?.length > 0 && (
             <TurnsUserList turnItens={turnItens} user={user} />
           )}
@@ -63,7 +66,7 @@ export function Settings({ user, turnItens }: SettingsProps) {
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Languages />
-              Idioma
+              {t("actions.language")}
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
@@ -84,8 +87,8 @@ export function Settings({ user, turnItens }: SettingsProps) {
           <DropdownMenuSeparator />
 
           <DropdownMenuItem onClick={() => signOut()}>
-            <LogOut className="h-6 w-6 " />
-            Sair
+            <LogOut className="h-6 w-6" />
+            {t("actions.logout")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

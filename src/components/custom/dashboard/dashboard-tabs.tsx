@@ -12,10 +12,7 @@ import {
 } from "@p40/components/ui/tabs";
 import { WeekTab } from "../week/week-tab";
 import { ClockArrowDown, ClockArrowUp, User, Users } from "lucide-react";
-import {
-  columns,
-  User as IUser,
-} from "@p40/app/[locale]/(auth)/dashboard/components/columns";
+import { columns } from "@p40/app/[locale]/(auth)/dashboard/components/columns";
 import { auth } from "../../../../auth";
 import { getUserByChurchId } from "@p40/services/user/user-service";
 import { DataTableWithSearch } from "@p40/app/[locale]/(auth)/dashboard/components/data-table";
@@ -56,7 +53,7 @@ export async function DashboardTabs() {
                 {data.stats.distinctLeaders}
               </span>
               <span className="text-muted-foreground text-xs">
-                {t("cards.registeredLeaders")}
+                {t("stats.registeredLeaders")}
               </span>
             </CardContent>
           </Card>
@@ -72,7 +69,7 @@ export async function DashboardTabs() {
                 {data.stats.singleLeaderSlots}
               </span>
               <span className="text-muted-foreground text-xs max-w-[120px]">
-                {t("cards.singleLeaderSlots")}
+                {t("stats.singleLeaderSlots")}
               </span>
             </CardContent>
           </Card>
@@ -88,7 +85,7 @@ export async function DashboardTabs() {
                 {data.stats.filledTimeSlots}
               </span>
               <span className="text-muted-foreground text-xs">
-                {t("cards.filledSlots")}
+                {t("stats.filledSlots")}
               </span>
             </CardContent>
           </Card>
@@ -104,7 +101,7 @@ export async function DashboardTabs() {
                 {data.stats.emptyTimeSlots}
               </span>
               <span className="text-muted-foreground text-xs">
-                {t("cards.emptySlots")}
+                {t("stats.emptySlots")}
               </span>
             </CardContent>
           </Card>

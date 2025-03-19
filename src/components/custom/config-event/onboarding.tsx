@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import * as React from "react";
+import { useTranslations } from "next-intl";
 import { useForm, Controller } from "react-hook-form";
-import { useActionState } from "react";
-import { appConfigAction } from "@p40/services/actions/app-config";
+import { Label } from "@p40/components/ui/label";
+import { Input } from "@p40/components/ui/input";
 import { Button } from "@p40/components/ui/button";
 import {
   Card,
@@ -13,8 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@p40/components/ui/card";
-import { Input } from "@p40/components/ui/input";
-import { Label } from "@p40/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -22,11 +21,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@p40/components/ui/select";
-import { useTranslations } from "next-intl";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useActionState } from "react";
+import { appConfigAction } from "@p40/services/actions/app-config";
+import { Loader2 } from "lucide-react";
 
-export default function ConfigEventOnboarding({ event, church }) {
+interface ConfigEventOnboardingProps {
+  event: any;
+  church: any;
+}
+
+export default function ConfigEventOnboarding({
+  event,
+  church,
+}: ConfigEventOnboardingProps) {
   const t = useTranslations("admin.onboarding");
   const router = useRouter();
 
@@ -42,18 +50,18 @@ export default function ConfigEventOnboarding({ event, church }) {
       churchId: church?.id,
       startDate: "",
       endDate: "",
-      type: "",
-      maxParticipantsPerTurn: "",
+      eventType: "",
+      maxParticipants: "",
       shiftDuration: "",
     },
   });
 
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = React.useState(1);
   const totalSteps = 3;
 
   const [state, formAction, isPending] = useActionState(appConfigAction, {});
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: any) => {
     try {
       await formAction(data);
       router.refresh();
@@ -67,11 +75,7 @@ export default function ConfigEventOnboarding({ event, church }) {
     if (currentStep === 1) {
       valid = await trigger(["startDate", "endDate"]);
     } else if (currentStep === 2) {
-      valid = await trigger([
-        "type",
-        "maxParticipantsPerTurn",
-        "shiftDuration",
-      ]);
+      valid = await trigger(["eventType", "maxParticipants", "shiftDuration"]);
     }
     if (valid) {
       setCurrentStep(currentStep + 1);
@@ -88,20 +92,22 @@ export default function ConfigEventOnboarding({ event, church }) {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-4 text-center">
-            <p className="text-xl font-bold">{t("welcomeTitle")}</p>
-            <p className="text-sm text-gray-600">{t("welcomeDescription")}</p>
+          <div className="space-y-2 text-center">
+            <h2 className="text-2xl font-bold tracking-tight">
+              {t("welcome.title")}
+            </h2>
+            <p className="text-muted-foreground">{t("welcome.description")}</p>
           </div>
         );
       case 2:
         return (
           <div className="space-y-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="startDate">{t("startDateLabel")}</Label>
+              <Label htmlFor="startDate">{t("form.dates.start.label")}</Label>
               <Controller
                 name="startDate"
                 control={control}
-                rules={{ required: t("startDateHelp") }}
+                rules={{ required: t("form.dates.start.help") }}
                 render={({ field }) => (
                   <Input id="startDate" type="date" {...field} />
                 )}
@@ -113,18 +119,13 @@ export default function ConfigEventOnboarding({ event, church }) {
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="endDate">{t("endDateLabel")}</Label>
+              <Label htmlFor="endDate">{t("form.dates.end.label")}</Label>
               <Controller
                 name="endDate"
                 control={control}
-                rules={{ required: t("endDateHelp") }}
+                rules={{ required: t("form.dates.end.help") }}
                 render={({ field }) => (
-                  <Input
-                    id="endDate"
-                    type="date"
-                    {...field}
-                    placeholder="Selecione"
-                  />
+                  <Input id="endDate" type="date" {...field} />
                 )}
               />
               {errors.endDate && (
@@ -139,63 +140,75 @@ export default function ConfigEventOnboarding({ event, church }) {
         return (
           <div className="space-y-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="type">{t("eventTypeLabel")}</Label>
+              <Label htmlFor="eventType">{t("form.eventType.label")}</Label>
               <Controller
-                name="type"
+                name="eventType"
                 control={control}
-                rules={{ required: t("eventTypeHelp") }}
+                rules={{ required: t("form.eventType.help") }}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger id="type">
-                      <SelectValue placeholder={t("eventTypePlaceholder")} />
+                    <SelectTrigger id="eventType">
+                      <SelectValue
+                        placeholder={t("form.eventType.placeholder")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="SHIFT">{t("SHIFT")}</SelectItem>
-                      <SelectItem value="CLOCK">{t("CLOCK")}</SelectItem>
+                      <SelectItem value="SHIFT">
+                        {t("form.eventType.options.SHIFT")}
+                      </SelectItem>
+                      <SelectItem value="CLOCK">
+                        {t("form.eventType.options.CLOCK")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               />
-              {errors.type && (
+              {errors.eventType && (
                 <small className="text-xs text-red-500">
-                  {errors.type.message}
+                  {errors.eventType.message}
                 </small>
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="maxParticipantsPerTurn">
-                {t("maxParticipantsLabel")}
+              <Label htmlFor="maxParticipants">
+                {t("form.maxParticipants.label")}
               </Label>
               <Controller
-                name="maxParticipantsPerTurn"
+                name="maxParticipants"
                 control={control}
-                rules={{ required: t("maxParticipantsHelp") }}
+                rules={{ required: t("form.maxParticipants.help") }}
                 render={({ field }) => (
                   <Input
-                    id="maxParticipantsPerTurn"
+                    id="maxParticipants"
                     type="number"
-                    placeholder={t("maxParticipantsPlaceholder")}
+                    placeholder={t("form.maxParticipants.placeholder")}
                     {...field}
                   />
                 )}
               />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="shiftDuration">{t("shiftDurationLabel")}</Label>
+              <Label htmlFor="shiftDuration">
+                {t("form.shiftDuration.label")}
+              </Label>
               <Controller
                 name="shiftDuration"
                 control={control}
-                rules={{ required: t("shiftDurationHelp") }}
+                rules={{ required: t("form.shiftDuration.help") }}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger id="shiftDuration">
                       <SelectValue
-                        placeholder={t("shiftDurationPlaceholder")}
+                        placeholder={t("form.shiftDuration.placeholder")}
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="60">{t("oneHour")}</SelectItem>
-                      <SelectItem value="30">{t("thirtyMinutes")}</SelectItem>
+                      <SelectItem value="60">
+                        {t("form.shiftDuration.options.oneHour")}
+                      </SelectItem>
+                      <SelectItem value="30">
+                        {t("form.shiftDuration.options.thirtyMinutes")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -217,8 +230,8 @@ export default function ConfigEventOnboarding({ event, church }) {
     <div className="bg-muted h-full flex justify-center items-center">
       <Card className="w-[350px] mx-auto">
         <CardHeader>
-          <CardTitle className="text-lg">{t("configurationTitle")}</CardTitle>
-          <CardDescription>{t("configurationDescription")}</CardDescription>
+          <CardTitle className="text-lg">{t("welcome.title")}</CardTitle>
+          <CardDescription>{t("welcome.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-8">
@@ -232,11 +245,11 @@ export default function ConfigEventOnboarding({ event, church }) {
                 onClick={handlePrev}
                 disabled={currentStep === 1}
               >
-                {t("backButton")}
+                {t("actions.back")}
               </Button>
               {currentStep < totalSteps ? (
                 <Button type="button" onClick={handleNext}>
-                  {t("nextButton")}
+                  {t("actions.next")}
                 </Button>
               ) : (
                 <Button
@@ -245,7 +258,7 @@ export default function ConfigEventOnboarding({ event, church }) {
                   className="flex gap-2"
                 >
                   {isPending && <Loader2 className="animate-spin" />}
-                  {t("submitButton")}
+                  {t("actions.submit")}
                 </Button>
               )}
             </CardFooter>

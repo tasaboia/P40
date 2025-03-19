@@ -12,7 +12,7 @@ import { eventByChurchId } from "@p40/services/event/event-byId";
 import { getTranslations } from "next-intl/server";
 
 export async function WeekTab() {
-  const t = await getTranslations();
+  const t = await getTranslations("common");
 
   return (
     <Tabs defaultValue={today}>

@@ -1,111 +1,172 @@
 {
-  "setup": {
-    "choose_zion": "Escolha sua Zion",
-    "enter_schedules": "Entrar nos horários"
-  },
-  "geral": {
-    "title": "40 Dias de oração"
-  },
-  "login": {
-    "title": "Entrar",
-    "choose_zion": "Escolha sua Zion",
-    "login_with_provider": "Bem vindo ao 40 dias de oração",
-    "email": "Usuário",
-    "email_placeholder": "exemplo@email.com",
-    "password": "Senha",
-    "forgot_password": "Esqueceu sua senha?",
-    "login_button": "Entrar",
-    "create_account": "Criar conta no Prover",
-    "terms": "Ao clicar em continuar, você concorda com nossos {terms} e {privacy}.",
-    "terms_of_service": "Termos de Serviço",
-    "privacy_policy": "Política de Privacidade",
-    "show_password": "Mostrar senha"
-  },
-  "error": {
-    "title": "Ocorreu um erro",
-    "description": "Algo deu errado. Tente novamente ou volte para a página inicial.",
-    "unknown": "Erro desconhecido",
-    "home_button": "Voltar para Home",
-    "retry_button": "Tentar novamente"
-  },
-  "zionSelect": {
-    "title": "Selecione sua Zion",
-    "regions": {
-      "BR": "Brasil",
-      "EU": "Europa",
-      "NA": "América do Norte",
-      "LATAM": "América Latina",
-      "GLOBAL": "Global"
-    }
-  },
-  "prayer_turn": {
-    "max_leaders": "Máximo {count} líderes por turno",
-    "empty_schedule": "Esse horário está vazio",
-    "subscribe_success": "Inscrição realizada com sucesso",
-    "subscribe_success_desc": "Você estará responsável por esse horário durante os 40 dias",
-    "subscribe_error": "Erro ao tentar se inscrever no horário",
-    "subscribe_error_desc": "Houve um erro ao tentar te inscrever, tente mais tarde",
-    "unsubscribe_success": "Você não está mais no turno",
-    "unsubscribe_success_desc": "Você não está mais inscrito no turno de oração",
-    "unsubscribe_error": "Erro ao tentar sair do horário",
-    "unsubscribe_error_desc": "Houve um erro ao tentar sair do turno, tente mais tarde",
-    "leave_schedule": "Sair do horário",
-    "join_schedule": "Se inscrever no horário",
-    "SHIFT": "Turnos de Oração",
-    "CLOCK": "Relógio de Oração"
-  },
-  "weekdays": {
-    "Sun": "Dom",
-    "Mon": "Seg",
-    "Tue": "Ter",
-    "Wed": "Qua",
-    "Thu": "Qui",
-    "Fri": "Sex",
-    "Sat": "Sáb"
-  },
-
-  "not_found": {
-    "title": "Página não encontrada",
-    "description": "O recurso solicitado não foi encontrado.",
-    "message": "Desculpe, a página que você está procurando não existe.",
-    "homeButton": "Voltar para a página inicial"
-  },
-  "admin": {
-    "onboarding": {
-      "welcomeTitle": "Bem-vindo(a) ao 40 Dias de Oração!",
-      "welcomeDescription": "Estamos muito felizes por tê-lo(a) conosco. Neste processo de configuração, você definirá os detalhes dos 40 dias da sua igreja local e personalizará a forma como os turnos de oração serão organizados para os líderes.",
-      "startDateLabel": "Data de Início",
-      "startDateHelp": "Escolha a data de início do evento.",
-      "endDateLabel": "Data de Término",
-      "endDateHelp": "Escolha a data de término do evento.",
-      "eventTypeLabel": "Tipo do Evento",
-      "eventTypePlaceholder": "Selecione o tipo",
-      "shiftLabel": "Turnos de Oração",
-      "clockLabel": "Relógio de Oração",
-      "eventTypeHelp": "Escolha como os turnos serão organizados.",
-      "maxParticipantsLabel": "Máximo de Participantes por Turno",
-      "maxParticipantsPlaceholder": "Ex: 2",
-      "maxParticipantsHelp": "Defina quantos participantes podem estar em um turno.",
-      "shiftDurationLabel": "Duração do Turno",
-      "shiftDurationPlaceholder": "Selecione a duração",
-      "oneHour": "1 hora",
-      "thirtyMinutes": "30 minutos",
-      "shiftDurationHelp": "Informe quanto tempo cada turno deverá durar.",
-      "configurationTitle": "Configuração do Evento",
-      "configurationDescription": "Preencha os campos abaixo para configurar seu evento.",
-      "backButton": "Voltar",
-      "nextButton": "Avançar",
-      "submitButton": "Salvar e Iniciar",
+  "common": {
+    "title": "40 Dias de Oração",
+    "actions": {
+      "retry": "Tentar Novamente",
+      "back": "Voltar",
+      "next": "Próximo",
+      "submit": "Salvar",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+      "delete": "Excluir",
+      "edit": "Editar",
+      "logout": "Sair",
+      "daily_guidelines": "Diretrizes Diárias",
+      "occurrences": "Ocorrências",
+      "settings": "Configurações",
+      "language": "Idioma"
+    },
+    "status": {
+      "loading": "Carregando...",
+      "error": "Erro",
+      "success": "Sucesso",
+      "empty": "Nenhum resultado encontrado"
+    },
+    "weekdays": {
+      "Sun": "Dom",
+      "Mon": "Seg",
+      "Tue": "Ter",
+      "Wed": "Qua",
+      "Thu": "Qui",
+      "Fri": "Sex",
+      "Sat": "Sáb"
+    },
+    "profile_image": "Imagem de perfil",
+    "greeting": "Olá",
+    "event_types": {
       "SHIFT": "Turnos de Oração",
       "CLOCK": "Relógio de Oração"
     },
-
+    "user": {
+      "my_data": "Meus dados",
+      "profile": "Meu Perfil",
+      "update_data": "Atualize seus dados",
+      "name": "Nome",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "update_success": "Suas informações foram atualizadas",
+      "update_error": "Não foi possível atualizar seus dados"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Entrar",
+      "email": "Usuário",
+      "email_placeholder": "exemplo@email.com",
+      "password": "Senha",
+      "forgot_password": "Esqueceu sua senha?",
+      "login_button": "Entrar",
+      "create_account": "Criar conta no Prover",
+      "terms": "Ao clicar em continuar, você concorda com nossos {terms} e {privacy}.",
+      "login_with_provider": "Bem vindo ao 40 dias de oração",
+      "or_login_with_prover": "Ou faça login com dados do prover",
+      "show_password": "Mostrar senha"
+    },
+    "terms": {
+      "service": "Termos de Serviço",
+      "privacy": "Política de Privacidade"
+    }
+  },
+  "zion": {
+    "select": {
+      "title": "Selecione uma Igreja",
+      "loading": "Carregando Igrejas...",
+      "error": "Erro ao carregar as igrejas",
+      "empty": "Nenhuma Igreja Encontrada",
+      "regions": {
+        "BR": "Brasil",
+        "EU": "Europa",
+        "NA": "América do Norte",
+        "LATAM": "América Latina",
+        "GLOBAL": "Global"
+      }
+    }
+  },
+  "prayer": {
+    "turns": {
+      "title": "Turnos de Oração",
+      "clock": "Relógio de Oração",
+      "max_leaders": "Máximo {count} líderes por turno",
+      "empty": "Esse horário está vazio",
+      "my_schedules": "Meus Horários",
+      "my_prayer_turns": "Meus turnos de oração",
+      "no_schedules": "Você ainda não tem nenhum horário cadastrado",
+      "at": "às",
+      "actions": {
+        "join": "Se inscrever no horário",
+        "leave": "Sair do horário"
+      },
+      "messages": {
+        "subscribe": {
+          "success": "Inscrição realizada com sucesso",
+          "success_desc": "Você estará responsável por esse horário durante os 40 dias",
+          "error": "Erro ao tentar se inscrever no horário",
+          "error_desc": "Houve um erro ao tentar te inscrever, tente mais tarde"
+        },
+        "unsubscribe": {
+          "success": "Você não está mais no turno",
+          "success_desc": "Você não está mais inscrito no turno de oração",
+          "error": "Erro ao tentar sair do horário",
+          "error_desc": "Houve um erro ao tentar sair do turno, tente mais tarde"
+        }
+      }
+    }
+  },
+  "admin": {
+    "onboarding": {
+      "welcome": {
+        "title": "Bem-vindo ao 40 Dias de Oração",
+        "description": "Vamos configurar seu evento em poucos passos"
+      },
+      "configurationTitle": "Configuração do Evento",
+      "configurationDescription": "Configure os detalhes do seu evento",
+      "form": {
+        "dates": {
+          "start": {
+            "label": "Data de Início",
+            "help": "Por favor, selecione a data de início"
+          },
+          "end": {
+            "label": "Data de Término",
+            "help": "Por favor, selecione a data de término"
+          }
+        },
+        "eventType": {
+          "label": "Tipo do Evento",
+          "placeholder": "Selecione o tipo",
+          "help": "Escolha como os turnos serão organizados",
+          "options": {
+            "SHIFT": "Turnos de Oração",
+            "CLOCK": "Relógio de Oração"
+          }
+        },
+        "maxParticipants": {
+          "label": "Máximo de Participantes por Turno",
+          "placeholder": "Ex: 2",
+          "help": "Defina quantos participantes podem estar em um turno"
+        },
+        "shiftDuration": {
+          "label": "Duração do Turno",
+          "placeholder": "Selecione a duração",
+          "help": "Informe quanto tempo cada turno deverá durar",
+          "options": {
+            "oneHour": "1 hora",
+            "thirtyMinutes": "30 minutos"
+          }
+        }
+      },
+      "actions": {
+        "back": "Voltar",
+        "next": "Avançar",
+        "submit": "Salvar e Iniciar"
+      }
+    },
     "dashboard": {
       "tabs": {
         "dashboard": "Painel",
         "schedule": "Agenda"
       },
-      "cards": {
+      "stats": {
         "registeredLeaders": "Líderes inscritos",
         "singleLeaderSlots": "Horários com só um líder",
         "filledSlots": "Horários preenchidos",
@@ -115,9 +176,44 @@
         "title": "Pessoas e Horários por Turnos",
         "description": "Dias da Semana"
       },
-      "datatable": {
-        "searchPlaceholder": "Filtrar por nome..."
+      "table": {
+        "search": "Filtrar por nome...",
+        "columns": {
+          "name": "Nome",
+          "whatsapp": "WhatsApp"
+        },
+        "actions": {
+          "label": "Ajustes",
+          "manage_schedules": "Gerenciar horários",
+          "allow_leave": "Permitir sair do turno"
+        }
       }
     }
+  },
+  "checkin": {
+    "title": "Checkin",
+    "description": "Muito bom ter você aqui conosco",
+    "status": "Checkin",
+    "actions": {
+      "back": "Voltar",
+      "submit": "Marcar Presença"
+    }
+  },
+  "errors": {
+    "not_found": {
+      "title": "Página não encontrada",
+      "description": "O recurso solicitado não foi encontrado",
+      "message": "Desculpe, a página que você está procurando não existe",
+      "home_button": "Voltar para a página inicial"
+    },
+    "general": {
+      "title": "Ocorreu um erro",
+      "description": "Algo deu errado. Tente novamente ou volte para a página inicial",
+      "unknown": "Erro desconhecido"
+    }
+  },
+  "setup": {
+    "choose_zion": "Escolher Igreja",
+    "enter_schedules": "Entrar nos Horários"
   }
 }

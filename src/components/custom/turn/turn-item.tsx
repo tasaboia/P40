@@ -22,6 +22,8 @@ import { Weekday } from "@p40/common/contracts/week/schedule";
 import Link from "next/link";
 import React, { useState } from "react";
 
+//melhoria: atualizar o valor na lista para o usuario antes mesmo de atualizar no backend
+
 export function TurnItem({
   weekday,
   shift,
@@ -38,7 +40,7 @@ export function TurnItem({
     endTime: string;
   }[];
 }) {
-  const t = useTranslations("prayer_turn");
+  const t = useTranslations("prayer.turns");
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -62,15 +64,15 @@ export function TurnItem({
       if (!response?.error) {
         toast({
           variant: "success",
-          title: t("subscribe_success"),
-          description: t("subscribe_success_desc"),
+          title: t("messages.subscribe.success"),
+          description: t("messages.subscribe.success_desc"),
         });
       }
     } catch (error) {
       toast({
         variant: "destructive",
-        title: t("subscribe_error"),
-        description: t("subscribe_error_desc"),
+        title: t("messages.subscribe.error"),
+        description: t("messages.subscribe.error_desc"),
       });
     } finally {
       setLoading(false);
@@ -92,15 +94,15 @@ export function TurnItem({
       if (!response?.error) {
         toast({
           variant: "warning",
-          title: t("unsubscribe_success"),
-          description: t("unsubscribe_success_desc"),
+          title: t("messages.unsubscribe.success"),
+          description: t("messages.unsubscribe.success_desc"),
         });
       }
     } catch (error) {
       toast({
         variant: "destructive",
-        title: t("unsubscribe_error"),
-        description: t("unsubscribe_error_desc"),
+        title: t("messages.unsubscribe.error"),
+        description: t("messages.unsubscribe.error_desc"),
       });
     } finally {
       setLoading(false);
@@ -207,7 +209,7 @@ export function TurnItem({
                   }}
                 >
                   <Plus />
-                  {t("leave_schedule")}
+                  {t("actions.leave")}
                 </Button>
               ) : (
                 <React.Fragment>
@@ -228,7 +230,7 @@ export function TurnItem({
                         });
                       }}
                     >
-                      <Plus /> {t("join_schedule")}
+                      <Plus /> {t("actions.join")}
                     </Button>
                   )}
                 </React.Fragment>

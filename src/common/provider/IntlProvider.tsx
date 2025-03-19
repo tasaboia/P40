@@ -11,7 +11,11 @@ interface Props {
 export default function IntlProvider({ children, locale, messages }: Props) {
   const methods = useForm();
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider
+      locale={locale}
+      messages={messages}
+      timeZone="America/Sao_Paulo"
+    >
       <FormProvider {...methods}>{children}</FormProvider>
     </NextIntlClientProvider>
   );

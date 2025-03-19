@@ -12,16 +12,18 @@ import {
   DropdownMenuRadioItem,
 } from "@p40/components/ui/dropdown-menu";
 import { Button } from "@p40/components/ui/button";
+import { useTranslations } from "next-intl";
 
 export function ChangeLanguage() {
   const { locale, isPending, handleLanguageChange } = useChangeLanguage();
+  const t = useTranslations("common.status");
 
   return (
-    <div className=" absolute top-4 right-4">
+    <div className="absolute top-4 right-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild disabled={isPending}>
           <Button variant="outline">
-            {locale ? locale.toUpperCase() : "Carregando..."}
+            {locale ? locale.toUpperCase() : t("loading")}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
