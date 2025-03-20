@@ -1,6 +1,5 @@
 import api from "@p40/lib/axios";
 import { FailException } from "@p40/common/contracts/exceptions/exception";
-import { EventResponse } from "@p40/common/contracts/event/event";
 
 export async function subscribe(
   userId: string,

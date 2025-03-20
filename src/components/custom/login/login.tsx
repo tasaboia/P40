@@ -13,10 +13,7 @@ import Link from "next/link";
 import GoogleLogin from "./google-login";
 import { useSession } from "next-auth/react";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export function LoginForm() {
   const locale = useLocale();
   const t = useTranslations("auth.login");
   const [state, formAction, isPending] = useActionState(loginAction, {
@@ -41,7 +38,7 @@ export function LoginForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div>
       <UI.Card>
         <UI.CardHeader className="text-center">
           <UI.CardTitle className="text-xl">{t("title")}</UI.CardTitle>

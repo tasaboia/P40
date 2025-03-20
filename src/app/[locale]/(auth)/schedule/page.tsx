@@ -1,8 +1,6 @@
-import React, { Suspense } from "react";
-import Loading from "../loading";
+import React from "react";
 import { WeekTab } from "@p40/components/custom/week/week-tab";
 import { auth } from "../../../../../auth";
-import { getDashboardAllData } from "@p40/services/dashboard/dashboard-all";
 import { ErrorHandler } from "@p40/components/custom/error-handler";
 
 export default async function SchedulePage() {

@@ -4,7 +4,6 @@ import { ReactNode } from "react";
 import { SessionProvider } from "next-auth/react";
 import IntlProvider from "@p40/common/provider/IntlProvider";
 import { AbstractIntlMessages } from "next-intl";
-import { Toaster } from "@p40/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +23,6 @@ export default async function BaseLayout({
       <SessionProvider>
         <IntlProvider locale={locale} messages={messages}>
           {children}
-          <Toaster />
         </IntlProvider>
       </SessionProvider>
     </div>

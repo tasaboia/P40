@@ -44,7 +44,6 @@ interface EventChartProps {
 export function EventChart({ chartData }: EventChartProps) {
   const t = useTranslations("admin.dashboard");
 
-  // Garantir que os dados estão no formato correto
   const formattedData = chartData.map((item) => ({
     day: Number(item.day),
     people: Number(item.people),

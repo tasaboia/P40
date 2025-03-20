@@ -1,4 +1,4 @@
-import { SetUp } from "@p40/components/custom/setup/setup";
+import { WelcomeTabs } from "@p40/components/custom/setup/setup";
 import Image from "next/image";
 
 export default async function Home() {
@@ -11,7 +11,7 @@ export default async function Home() {
           height={80}
           alt="Imagem de perfil"
         />
-        <SetUp />
+        <WelcomeTabs />
       </div>
     </div>
   );

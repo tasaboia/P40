@@ -8,13 +8,34 @@ import { getTurns } from "@p40/services/event/get-turn";
 import { auth } from "../../../../auth";
 import { getUser } from "@p40/services/user/user-service";
 import { notFound } from "next/navigation";
+import { ErrorHandler } from "../error-handler";
 
 export default async function NavUser() {
   const session = await auth();
-  if (!session) return notFound();
+  if (!session) {
+    return (
+      <ErrorHandler
+        error={{
+          title: "Erro ao carregar dados do usuário",
+          description: "Não foi possível carregar os dados do usuário",
+        }}
+      />
+    );
+  }
 
   const userData = await getUser(session.user.id);
-  if (!userData?.user) return notFound();
+
+  if (!userData.success || !userData?.user) {
+    return (
+      <ErrorHandler
+        error={{
+          title: "Erro ao carregar dados do usuário",
+          description:
+            userData.error || "Não foi possível carregar os dados do usuário",
+        }}
+      />
+    );
+  }
 
   const { churchId, id: userId, imageUrl, name } = userData.user;
 

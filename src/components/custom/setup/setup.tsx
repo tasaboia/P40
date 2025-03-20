@@ -6,14 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import { useSettingStore } from "@p40/common/states/zion";
 import { useTranslations } from "next-intl";
 
-export function SetUp() {
+export function WelcomeTabs() {
   const { activeTab, setActiveTab, selectedZion } = useSettingStore();
   const t = useTranslations("setup");
   return (
     <Tabs
       value={activeTab}
       onValueChange={setActiveTab}
-      className="w-full sm:w-auto "
+      className="w-full sm:w-auto lg:w-[380px] "
     >
       <TabsList className="grid w-full grid-cols-2 bg-muted">
         <TabsTrigger value="zion">{t("choose_zion")}</TabsTrigger>

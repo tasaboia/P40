@@ -37,12 +37,9 @@ export default function ConfigEventOnboarding({
   user,
   church,
 }: ConfigEventOnboardingProps) {
-  console.log("ConfigEvent - Props:", { user, church });
-
   const t = useTranslations("admin.onboarding");
   const router = useRouter();
 
-  // Inicializar os hooks primeiro, antes de qualquer retorno condicional
   const {
     control,
     handleSubmit,
@@ -51,7 +48,7 @@ export default function ConfigEventOnboarding({
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      eventId: "", // Novo evento, sem ID
+      eventId: "",
       churchId: church || "",
       startDate: "",
       endDate: "",
@@ -61,18 +58,12 @@ export default function ConfigEventOnboarding({
     },
   });
 
-  // Inicializar state hooks
   const [currentStep, setCurrentStep] = React.useState(1);
   const totalSteps = 3;
 
   const [state, formAction, isPending] = useActionState(appConfigAction, {});
 
-  // Se não tiver usuário ou igreja, mostrar erro
   if (!user || !church) {
-    console.error("ConfigEvent - Usuário ou igreja não encontrados", {
-      user,
-      church,
-    });
     return (
       <ErrorHandler
         error={{

@@ -8,14 +8,12 @@ import { WeekTab } from "../week/week-tab";
 import { columns } from "@p40/app/[locale]/(auth)/dashboard/components/columns";
 import { DataTableWithSearch } from "@p40/app/[locale]/(auth)/dashboard/components/data-table";
 import { EventChart } from "./chart-event";
-import { useTranslations } from "next-intl";
 import { StatsCards } from "./stats-cards";
 import { EventResponse } from "@p40/common/contracts/event/event";
 import {
   ChartData,
   Leader,
   PrayerTurn,
-  PrayerTurnStats,
 } from "@p40/common/contracts/prayer-turn/types";
 import {
   Card,
@@ -24,7 +22,6 @@ import {
   CardTitle,
 } from "@p40/components/ui/card";
 import { Users } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { User } from "@p40/common/contracts/user/user";
 import { getTranslations } from "next-intl/server";
 
@@ -54,12 +51,6 @@ export async function DashboardTabs({
   user,
 }: DashboardTabsProps) {
   const t = await getTranslations("admin.dashboard");
-
-  // Debug logs
-  console.log("ChartData:", chartData);
-  console.log("Is Array?", Array.isArray(chartData));
-  console.log("Length:", chartData?.length);
-  console.log("First item:", chartData?.[0]);
 
   return (
     <Tabs defaultValue="dashboard" className="p-3 ">

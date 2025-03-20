@@ -2,7 +2,7 @@ import { User } from "@p40/common/contracts/user/user";
 import { EventResponse } from "@p40/common/contracts/event/event";
 import api from "@p40/lib/axios";
 
-export interface DashboardAllData {
+export interface AllData {
   user: User | null;
   event: EventResponse | null;
   prayerTurns: any[];
@@ -17,16 +17,14 @@ export interface DashboardAllData {
   users: any[];
 }
 
-export interface DashboardAllResponse {
+export interface AllResponse {
   success: boolean;
-  data: DashboardAllData | null;
+  data: AllData | null;
   error?: string;
   warnings?: string[]; // Lista de avisos para serviços que falharam mas não impediram a operação
 }
 
-export const getDashboardAllData = async (
-  userId: string
-): Promise<DashboardAllResponse> => {
+export const getAllData = async (userId: string): Promise<AllResponse> => {
   try {
     const response = await api.get(`/api/dashboard/all?userId=${userId}`);
 

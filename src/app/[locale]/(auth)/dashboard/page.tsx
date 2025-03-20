@@ -2,8 +2,7 @@ import React, { Suspense } from "react";
 import Loading from "../loading";
 import { ErrorHandler } from "@p40/components/custom/error-handler";
 import { auth } from "../../../../../auth";
-import { getDashboardAllData } from "@p40/services/dashboard/dashboard-all";
-import { getTranslations } from "next-intl/server";
+import { getAllData } from "@p40/services/dashboard/dashboard-all";
 import ConfigEventOnboarding from "@p40/components/custom/config-event/onboarding";
 import { DashboardTabs } from "@p40/components/custom/dashboard/dashboard-tabs";
 
@@ -21,7 +20,7 @@ export default async function DashboardPage() {
     );
   }
 
-  const dashboardData = await getDashboardAllData(session.user.id);
+  const dashboardData = await getAllData(session.user.id);
 
   if (!dashboardData.success || !dashboardData.data) {
     return (

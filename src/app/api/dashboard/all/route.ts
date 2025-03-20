@@ -7,7 +7,7 @@ import { dashboardData } from "@p40/services/dashboard/dashboard.service";
 import { getChartEventData } from "@p40/services/event/chart-event-data";
 import { getUserByChurchId } from "@p40/services/user/user-service";
 import { UsersResponse } from "@p40/common/contracts/user/user";
-import { DashboardAllResponse } from "@p40/services/dashboard/dashboard-all";
+import { AllResponse } from "@p40/services/dashboard/dashboard-all";
 
 // Interfaces para tipar corretamente as respostas
 interface StatsResponse {
@@ -26,10 +26,9 @@ interface ChartResponse {
 }
 
 export async function GET(request: NextRequest) {
-  const warnings: string[] = []; // Lista de avisos para serviços que falharam mas não impediram a operação
+  const warnings: string[] = [];
 
   try {
-    // Obter o userId da query
     const userId = request.nextUrl.searchParams.get("userId");
 
     if (!userId) {
@@ -39,12 +38,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log(`API Dashboard All - Iniciando busca para usuário ${userId}`);
-
-    // 1. Buscar dados do usuário
     const userData = await getUser(userId);
     if (!userData?.success || !userData.user) {
-      console.error("API Dashboard All - Usuário não encontrado:", userData);
       return NextResponse.json(
         { success: false, error: "Usuário não encontrado" },
         { status: 404 }
@@ -52,12 +47,9 @@ export async function GET(request: NextRequest) {
     }
 
     const user = userData.user;
-    console.log(`API Dashboard All - Usuário encontrado: ${user.name}`);
 
-    // 2. Buscar dados do evento
     const event = await eventByChurchId(user.churchId);
     if (!event?.id) {
-      console.log("API Dashboard All - Evento não encontrado");
       // Retornar dados mesmo sem evento, para permitir onboarding
       return NextResponse.json({
         success: true,
@@ -78,9 +70,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log(`API Dashboard All - Evento encontrado: ${event.id}`);
-
-    // 3. Buscar dados com tratamento de erros individual
     let prayerTurnsData = { prayerTurn: [] };
     let turnsData = [];
     let stats: StatsResponse = {
@@ -97,17 +86,13 @@ export async function GET(request: NextRequest) {
 
     try {
       prayerTurnsData = await getPrayerTurns(event.id);
-      console.log("API Dashboard All - Prayer Turns:", prayerTurnsData);
     } catch (error) {
-      console.error("Erro ao buscar turnos de oração:", error);
       warnings.push("Não foi possível carregar os turnos de oração");
     }
 
     try {
       turnsData = await getTurns({ eventId: event.id, userId });
-      console.log("API Dashboard All - Turns:", turnsData);
     } catch (error) {
-      console.error("Erro ao buscar turnos:", error);
       warnings.push("Não foi possível carregar os turnos");
     }
 
@@ -121,51 +106,35 @@ export async function GET(request: NextRequest) {
         warnings.push("Não foi possível carregar as estatísticas do dashboard");
       } else {
         stats = statsResponse as StatsResponse;
-        console.log("API Dashboard All - Stats:", stats);
       }
     } catch (error) {
-      console.error("Erro ao buscar estatísticas:", error);
       warnings.push("Não foi possível carregar as estatísticas do dashboard");
     }
 
     try {
       const chartResponse = await getChartEventData(event.id);
-      console.log("API Dashboard All - Chart Response:", chartResponse);
       if (!chartResponse?.data) {
-        console.error(
-          "API Dashboard All - Dados do gráfico vazios:",
-          chartResponse
-        );
         warnings.push("Não foi possível carregar os dados do gráfico");
       } else {
         chartData = chartResponse as ChartResponse;
       }
     } catch (error) {
-      console.error("Erro ao buscar dados do gráfico:", error);
       warnings.push("Não foi possível carregar os dados do gráfico");
     }
 
     try {
       const usersResponse = await getUserByChurchId(event.churchId);
       if (!usersResponse?.users) {
-        console.error("API Dashboard All - Usuários vazios:", usersResponse);
         warnings.push("Não foi possível carregar os usuários");
       } else {
         usersData = usersResponse;
-        console.log("API Dashboard All - Users:", usersData);
       }
     } catch (error) {
-      console.error("Erro ao buscar usuários:", error);
       warnings.push("Não foi possível carregar os usuários");
     }
 
-    console.log(
-      "API Dashboard All - Dados carregados com " +
-        (warnings.length > 0 ? warnings.length + " avisos" : "sucesso")
-    );
-
-    // 4. Construir resposta
-    const response: DashboardAllResponse = {
+    // Construir resposta
+    const response: AllResponse = {
       success: true,
       data: {
         user,
@@ -184,16 +153,8 @@ export async function GET(request: NextRequest) {
       warnings: warnings.length > 0 ? warnings : undefined,
     };
 
-    console.log("API Dashboard All - Resposta Final:", {
-      success: response.success,
-      hasChartData: response.data.chartData.length > 0,
-      chartDataLength: response.data.chartData.length,
-      chartDataSample: response.data.chartData.slice(0, 2),
-    });
-
     return NextResponse.json(response);
   } catch (error) {
-    console.error("API Dashboard All - Erro:", error);
     return NextResponse.json(
       {
         success: false,

@@ -7,14 +7,14 @@ import {
 } from "@p40/components/ui/tabs";
 import DayList from "./day-list";
 import { today } from "@p40/common/utils/schedule";
-import { getDashboardAllData } from "@p40/services/dashboard/dashboard-all";
+import { getAllData } from "@p40/services/dashboard/dashboard-all";
 import { ErrorHandler } from "../error-handler";
 import { getTranslations } from "next-intl/server";
 
 export async function WeekTab({ userId }: { userId: string }) {
   const t = await getTranslations("common");
 
-  const dashboardData = await getDashboardAllData(userId);
+  const dashboardData = await getAllData(userId);
 
   if (!dashboardData.success || !dashboardData.data) {
     return (

@@ -24,7 +24,6 @@ import {
 } from "@p40/components/ui/table";
 import { Input } from "@p40/components/ui/input";
 import { Button } from "@p40/components/ui/button";
-import { Card, CardContent, CardHeader } from "@p40/components/ui";
 
 export function DataTableWithSearch<TData, TValue>({
   columns,
