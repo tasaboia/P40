@@ -1,0 +1,61 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+
+    # Definir permissões necessárias para o deploy
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: yarn prisma generate
+
+      - name: Build application
+        run: yarn build
+        env:
+          # Defina as variáveis de ambiente para produção
+          NODE_ENV: production
+
+      # Executar migrações do banco de dados
+      # Nota: isto requer que o banco de dados seja acessível ou usará um proxy
+      - name: Run migrations
+        run: yarn prisma migrate deploy
+        env:
+          # Use secrets para o banco de dados de produção
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      # Exemplo de deploy no Vercel (você pode alterar conforme sua plataforma de hospedagem)
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod"
+
+      # Notificação de deploy bem-sucedido
+      - name: Notify successful deployment
+        if: success()
+        # Você pode integrar com Slack, Discord, email, etc.
+        run: echo "Deploy to production was successful!"
