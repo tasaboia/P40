@@ -36,13 +36,13 @@ export const RemovePrayerTurnDTOSchema = z.object({
 });
 
 export const PrayerTurnStatsSchema = z.object({
-  distinctLeaders: z.number(),
-  singleLeaderSlots: z.number(),
-  filledTimeSlots: z.number(),
-  emptyTimeSlots: z.number(),
-  expectedSlotsWeek: z.number(),
-  filledSlotsByWeekday: z.array(z.number()),
-  emptySlotsByWeekday: z.array(z.number()),
+  distinctLeaders: z.number().min(0),
+  singleLeaderSlots: z.number().min(0),
+  filledTimeSlots: z.number().min(0),
+  emptyTimeSlots: z.number().min(0),
+  expectedSlotsWeek: z.number().min(0),
+  filledSlotsByWeekday: z.array(z.number().min(0)).length(7),
+  emptySlotsByWeekday: z.array(z.number().min(0)).length(7),
 });
 
 export const ChartDataSchema = z.object({
