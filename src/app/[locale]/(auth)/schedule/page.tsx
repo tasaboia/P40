@@ -1,7 +1,7 @@
 import React from "react";
-import { WeekTab } from "@p40/components/custom/week/week-tab";
 import { auth } from "../../../../../auth";
 import { ErrorHandler } from "@p40/components/custom/error-handler";
+import WeekTab from "@p40/components/custom/week/week-tab";
 
 export default async function SchedulePage() {
   const session = await auth();

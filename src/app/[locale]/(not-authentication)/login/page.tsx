@@ -26,7 +26,7 @@ export default function Login() {
 
   useEffect(() => {
     if (!state.error) router.refresh();
-  }, [state]);
+  }, [state, router]);
 
   useEffect(() => {
     if (!onboardingData.location.id || onboardingData.areas.length === 0) {

@@ -38,14 +38,13 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(
 );
 
 export function OnboardingProvider({ children }: { children: ReactNode }) {
-  const [isClient, setIsClient] = useState(false); // Novo estado para verificar se está no cliente
+  const [isClient, setIsClient] = useState(false);
   const [isOnboardingComplete, setIsOnboardingComplete] =
     useState<boolean>(false);
   const [onboardingData, setOnboardingData] = useState<OnboardingData>(
     defaultOnboardingData
   );
 
-  // useEffect para garantir que os dados só sejam carregados no cliente
   useEffect(() => {
     setIsClient(true); // Garantir que o código só roda no cliente
 
@@ -60,10 +59,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // useEffect para salvar os dados de onboardingData e isOnboardingComplete no localStorage
   useEffect(() => {
     if (isClient) {
-      // Apenas no cliente
       localStorage.setItem("onboardingData", JSON.stringify(onboardingData));
       localStorage.setItem(
         "isOnboardingComplete",

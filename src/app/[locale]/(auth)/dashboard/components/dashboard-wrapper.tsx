@@ -1,18 +1,18 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Moon, Sun } from "lucide-react";
-import * as UI from "../ui";
+import * as UI from "@p40/components/ui/index";
+import { useRouter } from "next/navigation";
+import { DashboardTabs } from "@p40/common/constants";
 
-const tabs = ["Geral", "Checkin", "Horários"];
-
-export default function DashboardNav() {
+export default function DashboardWrapper({ children }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoverStyle, setHoverStyle] = useState({});
   const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     if (hoveredIndex !== null) {
@@ -35,8 +35,10 @@ export default function DashboardNav() {
         left: `${offsetLeft}px`,
         width: `${offsetWidth}px`,
       });
+
+      router.push(`${DashboardTabs[activeIndex].route}`);
     }
-  }, [activeIndex]);
+  }, [activeIndex, router]);
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -51,30 +53,17 @@ export default function DashboardNav() {
     });
   }, []);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle("dark");
-  };
-
   return (
-    <div className={`flex   w-full   ${isDarkMode ? "dark bg-[#0e0f11]" : ""}`}>
+    <div
+      className={`flex flex-col  w-full   ${
+        isDarkMode ? "dark bg-[#0e0f11]" : ""
+      }`}
+    >
       <UI.Card
-        className={`w-full max-w-[1200px] h-10 border-none shadow-none relative flex ${
+        className={`w-full max-w-[1200px] h-10 px-6 border-none shadow-none relative flex ${
           isDarkMode ? "bg-transparent" : ""
         }`}
       >
-        {/* <UI.Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-4 right-4"
-          onClick={toggleDarkMode}
-        >
-          {isDarkMode ? (
-            <Sun className="h-[1.2rem] w-[1.2rem]" />
-          ) : (
-            <Moon className="h-[1.2rem] w-[1.2rem]" />
-          )}
-        </UI.Button> */}
         <UI.CardContent className="p-0">
           <div className="relative">
             {/* Hover Highlight */}
@@ -86,15 +75,13 @@ export default function DashboardNav() {
               }}
             />
 
-            {/* Active Indicator */}
             <div
               className="absolute bottom-[-6px] h-[2px] bg-[#0e0f11] dark:bg-white transition-all duration-300 ease-out"
               style={activeStyle}
             />
 
-            {/* Tabs */}
             <div className="relative flex space-x-[6px] items-center">
-              {tabs.map((tab, index) => (
+              {DashboardTabs.map((tab, index) => (
                 <div
                   key={index}
                   ref={(el) => {
@@ -110,7 +97,7 @@ export default function DashboardNav() {
                   onClick={() => setActiveIndex(index)}
                 >
                   <div className="text-sm font-[var(--www-mattmannucci-me-geist-regular-font-family)] leading-5 whitespace-nowrap flex items-center justify-center h-full">
-                    {tab}
+                    {tab.indexTitle}
                   </div>
                 </div>
               ))}
@@ -118,6 +105,10 @@ export default function DashboardNav() {
           </div>
         </UI.CardContent>
       </UI.Card>
+      <h1 className="text-2xl font-bold px-6 pt-6 ">
+        {DashboardTabs[activeIndex].title}
+      </h1>
+      <div className="p-6">{children}</div>
     </div>
   );
 }

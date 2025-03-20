@@ -18,3 +18,17 @@ export const AreasOfService = [
 ] as const;
 
 export type TAreaName = (typeof AreasOfService)[number];
+
+export const DashboardTabs = [
+  {
+    indexTitle: "Geral",
+    title: "Visão Geral",
+    route: "dashboard",
+  },
+
+  {
+    indexTitle: "Agenda",
+    title: "Todas os horários",
+    route: "schedule",
+  },
+];

@@ -4,7 +4,7 @@ import { ErrorHandler } from "@p40/components/custom/error-handler";
 import { auth } from "../../../../../auth";
 import { getAllData } from "@p40/services/dashboard/dashboard-all";
 import ConfigEventOnboarding from "@p40/components/custom/config-event/onboarding";
-import { DashboardTabs } from "@p40/components/custom/dashboard/dashboard-tabs";
+import DashboardTabs from "@p40/components/custom/dashboard/dashboard-tabs";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -45,15 +45,7 @@ export default async function DashboardPage() {
       )}
 
       {event && !Array.isArray(event) && (
-        <DashboardTabs
-          user={user}
-          event={event}
-          stats={stats}
-          chartData={chartData}
-          users={users}
-          prayerTurns={prayerTurns}
-          turns={turns}
-        />
+        <DashboardTabs chartData={chartData} stats={stats} users={users} />
       )}
     </Suspense>
   );

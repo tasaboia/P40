@@ -1,20 +1,8 @@
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@p40/components/ui/tabs";
-import { WeekTab } from "../week/week-tab";
 import { columns } from "@p40/app/[locale]/(auth)/dashboard/components/columns";
 import { DataTableWithSearch } from "@p40/app/[locale]/(auth)/dashboard/components/data-table";
 import { EventChart } from "./chart-event";
 import { StatsCards } from "./stats-cards";
-import { EventResponse } from "@p40/common/contracts/event/event";
-import {
-  ChartData,
-  Leader,
-  PrayerTurn,
-} from "@p40/common/contracts/prayer-turn/types";
+import { ChartData, Leader } from "@p40/common/contracts/prayer-turn/types";
 import {
   Card,
   CardContent,
@@ -22,12 +10,10 @@ import {
   CardTitle,
 } from "@p40/components/ui/card";
 import { Users } from "lucide-react";
-import { User } from "@p40/common/contracts/user/user";
 import { getTranslations } from "next-intl/server";
-import DashboardNav from "../dashboard-nav";
+import { memo } from "react";
 
 interface DashboardTabsProps {
-  event: EventResponse;
   stats: {
     distinctLeaders: string;
     singleLeaderSlots: string;
@@ -37,30 +23,15 @@ interface DashboardTabsProps {
     filledSlotsByWeekday?: number[];
     emptySlotsByWeekday?: number[];
   };
-  user: User;
   chartData: ChartData[];
   users: Leader[];
-  prayerTurns: PrayerTurn[];
-  turns: PrayerTurn[];
 }
+const DashboardTabs = memo(
+  async ({ stats, chartData, users }: DashboardTabsProps) => {
+    const t = await getTranslations("admin.dashboard");
 
-export async function DashboardTabs({
-  event,
-  stats,
-  chartData,
-  users,
-  user,
-}: DashboardTabsProps) {
-  const t = await getTranslations("admin.dashboard");
-
-  return (
-    <Tabs defaultValue="dashboard" className="p-3 ">
-      <DashboardNav />
-      <TabsList className="grid w-full grid-cols-2 max-w-lg">
-        <TabsTrigger value="dashboard">{t("tabs.dashboard")}</TabsTrigger>
-        <TabsTrigger value="schedule">{t("tabs.schedule")}</TabsTrigger>
-      </TabsList>
-      <TabsContent value="dashboard" className="flex flex-col gap-4">
+    return (
+      <div className="flex flex-col gap-4">
         <StatsCards stats={stats} />
 
         <div className="flex flex-col md:flex-row gap-4">
@@ -84,10 +55,10 @@ export async function DashboardTabs({
             )}
           </div>
         </div>
-      </TabsContent>
-      <TabsContent value="schedule">
-        <WeekTab userId={user.id} />
-      </TabsContent>
-    </Tabs>
-  );
-}
+      </div>
+    );
+  }
+);
+DashboardTabs.displayName = "DashboardTabs";
+
+export default DashboardTabs;

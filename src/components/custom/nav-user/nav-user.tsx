@@ -7,7 +7,6 @@ import { getTranslations } from "next-intl/server";
 import { getTurns } from "@p40/services/event/get-turn";
 import { auth } from "../../../../auth";
 import { getUser } from "@p40/services/user/user-service";
-import { notFound } from "next/navigation";
 import { ErrorHandler } from "../error-handler";
 
 export default async function NavUser() {

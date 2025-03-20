@@ -11,7 +11,7 @@ import { getAllData } from "@p40/services/dashboard/dashboard-all";
 import { ErrorHandler } from "../error-handler";
 import { getTranslations } from "next-intl/server";
 
-export async function WeekTab({ userId }: { userId: string }) {
+export default async function WeekTab({ userId }: { userId: string }) {
   const t = await getTranslations("common");
 
   const dashboardData = await getAllData(userId);
