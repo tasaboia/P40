@@ -1,0 +1,31 @@
+{
+  "errors": {
+    "general": {
+      "unknown": "Ocurrió un error inesperado",
+      "validation": "Error en el campo {field}: {message}",
+      "notFound": "{resource} no encontrado",
+      "unauthorized": "No estás autorizado para realizar esta acción",
+      "forbidden": "No tienes permiso para realizar esta acción",
+      "conflict": "Ya existe un registro con estos datos",
+      "badRequest": "Solicitud inválida",
+      "network": "Error de conexión. Verifica tu internet.",
+      "timeout": "La solicitud tardó demasiado en responder. Inténtalo de nuevo."
+    }
+  },
+  "turns": {
+    "weekday": "Día de la semana",
+    "start_time": "Hora de inicio",
+    "creating": "Creando...",
+    "create": "Crear turno",
+    "turn_created_success": "¡Turno creado con éxito!",
+    "weekdays": {
+      "0": "Domingo",
+      "1": "Lunes",
+      "2": "Martes",
+      "3": "Miércoles",
+      "4": "Jueves",
+      "5": "Viernes",
+      "6": "Sábado"
+    }
+  }
+}
