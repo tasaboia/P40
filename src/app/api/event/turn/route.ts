@@ -19,30 +19,7 @@ export async function GET(req: Request) {
 
     let prayerTurns;
 
-    if (userId) {
-      prayerTurns = await prisma.prayerTurn.findMany({
-        where: {
-          eventId: eventId,
-          userShifts: {
-            some: { userId: userId },
-          },
-        },
-        include: {
-          userShifts: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  whatsapp: true,
-                  imageUrl: true,
-                },
-              },
-            },
-          },
-        },
-      });
-    } else if (weekday) {
+    if (weekday) {
       prayerTurns = await prisma.prayerTurn.findMany({
         where: {
           eventId: eventId,
@@ -64,9 +41,24 @@ export async function GET(req: Request) {
         },
       });
     } else {
-      throw new FailException({
-        message: "O parâmetro 'weekday' ou 'userId' deve ser fornecido.",
-        statusCode: 400,
+      prayerTurns = await prisma.prayerTurn.findMany({
+        where: {
+          eventId: eventId,
+        },
+        include: {
+          userShifts: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  whatsapp: true,
+                  imageUrl: true,
+                },
+              },
+            },
+          },
+        },
       });
     }
 

@@ -3,8 +3,9 @@ import Loading from "../loading";
 import { ErrorHandler } from "@p40/components/custom/error-handler";
 import { auth } from "../../../../../auth";
 import { getDashboardAllData } from "@p40/services/dashboard/dashboard-all";
-import { ConfigEventWrapper, DashboardTabsWrapper } from "./client-components";
 import { getTranslations } from "next-intl/server";
+import ConfigEventOnboarding from "@p40/components/custom/config-event/onboarding";
+import { DashboardTabs } from "@p40/components/custom/dashboard/dashboard-tabs";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -41,11 +42,12 @@ export default async function DashboardPage() {
   return (
     <Suspense fallback={<Loading />}>
       {(!event || (Array.isArray(event) && event.length === 0)) && (
-        <ConfigEventWrapper user={user} church={user?.churchId} />
+        <ConfigEventOnboarding user={user} church={user?.churchId} />
       )}
 
       {event && !Array.isArray(event) && (
-        <DashboardTabsWrapper
+        <DashboardTabs
+          user={user}
           event={event}
           stats={stats}
           chartData={chartData}

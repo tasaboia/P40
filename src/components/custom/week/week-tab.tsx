@@ -1,5 +1,3 @@
-"use client";
-
 import { Weekday } from "@p40/common/contracts/week/schedule";
 import {
   Tabs,
@@ -9,17 +7,29 @@ import {
 } from "@p40/components/ui/tabs";
 import DayList from "./day-list";
 import { today } from "@p40/common/utils/schedule";
-import { useTranslations } from "next-intl";
-import { EventResponse } from "@p40/common/contracts/event/event";
+import { getDashboardAllData } from "@p40/services/dashboard/dashboard-all";
+import { ErrorHandler } from "../error-handler";
+import { getTranslations } from "next-intl/server";
 
-interface WeekTabProps {
-  event: EventResponse;
-  prayerTurns: any[];
-  turns: any[];
-}
+export async function WeekTab({ userId }: { userId: string }) {
+  const t = await getTranslations("common");
 
-export function WeekTab({ event, prayerTurns, turns }: WeekTabProps) {
-  const t = useTranslations("common");
+  const dashboardData = await getDashboardAllData(userId);
+
+  if (!dashboardData.success || !dashboardData.data) {
+    return (
+      <ErrorHandler
+        error={{
+          title: "Erro ao carregar dados",
+          description:
+            dashboardData.error ||
+            "Não foi possível carregar os dados da agenda",
+        }}
+      />
+    );
+  }
+
+  const { event, prayerTurns, turns, user } = dashboardData.data;
 
   return (
     <Tabs defaultValue={today}>
@@ -43,6 +53,7 @@ export function WeekTab({ event, prayerTurns, turns }: WeekTabProps) {
               event={event}
               prayerTurns={prayerTurns}
               turns={turns}
+              user={user}
             />
           </TabsContent>
         );

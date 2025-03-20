@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Tabs,
   TabsContent,
@@ -21,6 +19,9 @@ import {
 } from "@p40/components/ui/card";
 import { Users } from "lucide-react";
 import { BarChart3 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { getTranslations } from "next-intl/server";
+import { User } from "@p40/common/contracts/user/user";
 
 interface DashboardTabsProps {
   event: EventResponse;
@@ -35,29 +36,25 @@ interface DashboardTabsProps {
     people: number;
     emptySlots: number;
   }[];
+  user: User;
   users: any[];
   prayerTurns: any[];
   turns: any[];
 }
 
-export function DashboardTabs({
+export async function DashboardTabs({
   event,
   stats,
   chartData,
   users,
+  user,
   prayerTurns,
   turns,
 }: DashboardTabsProps) {
-  const t = useTranslations("admin.dashboard");
-
-  // Debug logs
-  console.log("ChartData:", chartData);
-  console.log("Is Array?", Array.isArray(chartData));
-  console.log("Length:", chartData?.length);
-  console.log("First item:", chartData?.[0]);
+  const t = await getTranslations("admin.dashboard");
 
   return (
-    <Tabs defaultValue="dashboard" className="p-3">
+    <Tabs defaultValue="dashboard" className="p-3 ">
       <TabsList className="grid w-full grid-cols-2 max-w-lg">
         <TabsTrigger value="dashboard">{t("tabs.dashboard")}</TabsTrigger>
         <TabsTrigger value="schedule">{t("tabs.schedule")}</TabsTrigger>
@@ -67,7 +64,6 @@ export function DashboardTabs({
 
         <div className="flex flex-col md:flex-row gap-4">
           <div className="w-full md:w-1/2">
-            {/* Removendo a verificação de Array.isArray temporariamente */}
             {chartData?.length > 0 && <EventChart chartData={chartData} />}
           </div>
 
@@ -89,7 +85,7 @@ export function DashboardTabs({
         </div>
       </TabsContent>
       <TabsContent value="schedule">
-        <WeekTab event={event} prayerTurns={prayerTurns} turns={turns} />
+        <WeekTab userId={user.id} />
       </TabsContent>
     </Tabs>
   );
