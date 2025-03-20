@@ -94,7 +94,7 @@ export default function AreasOfServicePage() {
                   onCheckedChange={() => toggleArea(area)}
                 />
                 <UI.Label
-                  htmlFor={`area-label-${area}`}
+                  htmlFor={`area-${area}`}
                   className="flex-1 cursor-pointer"
                 >
                   <div className="font-medium">{area}</div>

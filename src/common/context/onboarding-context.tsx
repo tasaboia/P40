@@ -92,7 +92,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   };
 
   if (!isClient) {
-    return null; // Ou algum loading state, se preferir
+    return null;
   }
 
   return (

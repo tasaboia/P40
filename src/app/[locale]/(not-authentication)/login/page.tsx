@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { startTransition, useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ChevronRight, Loader2 } from "lucide-react";
@@ -10,19 +10,15 @@ import * as UI from "@p40/components/ui/index";
 import { useOnboarding } from "@p40/common/context/onboarding-context";
 import GoogleLogin from "./login-google";
 import { loginAction } from "@p40/services/actions/auth";
-import { useSession } from "next-auth/react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 export default function Login() {
   const router = useRouter();
-  const { onboardingData, resetOnboarding, isOnboardingComplete } =
-    useOnboarding();
-
-  const { data: session } = useSession();
-  const locale = useLocale();
   const t = useTranslations("auth.login");
 
+  const { onboardingData, resetOnboarding, isOnboardingComplete } =
+    useOnboarding();
   const [state, formAction, isPending] = useActionState(loginAction, {
     error: true,
   });

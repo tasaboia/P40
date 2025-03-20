@@ -66,12 +66,8 @@ export default function Completion() {
             </motion.div>
           </motion.div>
 
-          <h2 className="text-xl font-semibold">
-            Salvando suas preferências...
-          </h2>
-          <p className="text-muted-foreground">
-            Estamos configurando sua experiência
-          </p>
+          <h2 className="text-xl font-semibold">Salvando...</h2>
+          <p className="text-muted-foreground">Estamos configurando</p>
         </>
       )}
 
