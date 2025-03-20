@@ -28,3 +28,6 @@ export * from "./toggle-group";
 export * from "./tooltip";
 export * from "./radio-group";
 export * from "./badge";
+export * from "./textarea";
+export * from "./calendar";
+export * from "./switch";

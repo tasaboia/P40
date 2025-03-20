@@ -22,6 +22,7 @@ export type TAreaName = (typeof AreasOfService)[number];
 export const DashboardTabs = [
   {
     indexTitle: "Geral",
+    describe: "",
     title: "Visão Geral",
     route: "dashboard",
   },
@@ -29,6 +30,13 @@ export const DashboardTabs = [
   {
     indexTitle: "Agenda",
     title: "Todas os horários",
+    describe: "",
     route: "schedule",
+  },
+  {
+    indexTitle: "Configuração",
+    title: "40 Dias de Oração",
+    describe: "Configure os detalhes do evento",
+    route: "event-config",
   },
 ];
