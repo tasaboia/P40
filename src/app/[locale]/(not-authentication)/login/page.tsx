@@ -2,26 +2,24 @@
 
 import * as React from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { cn } from "@p40/lib/utils";
 import * as UI from "@p40/components/ui";
 import { useActionState, useState } from "react";
 import { loginAction } from "@p40/services/actions/auth";
 import { redirect } from "@p40/i18n/routing";
-import { useSettingStore } from "@p40/common/states/zion";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import GoogleLogin from "./google-login";
 import { useSession } from "next-auth/react";
+import GoogleLogin from "./login-google";
 
-export function LoginForm() {
+export default function LoginForm() {
+  const { data: session } = useSession();
   const locale = useLocale();
   const t = useTranslations("auth.login");
+
   const [state, formAction, isPending] = useActionState(loginAction, {
     error: true,
   });
-  const { selectedZion } = useSettingStore();
   const [showPassword, setShowPassword] = useState(false);
-  const { data: session } = useSession();
 
   if (!state.error) {
     if (session?.user?.role === "ADMIN") {
@@ -38,8 +36,8 @@ export function LoginForm() {
   }
 
   return (
-    <div>
-      <UI.Card>
+    <div className="w-full h-screen flex justify-center items-center">
+      <UI.Card className=" w-full max-w-sm">
         <UI.CardHeader className="text-center">
           <UI.CardTitle className="text-xl">{t("title")}</UI.CardTitle>
           <UI.CardDescription>{t("login_with_provider")}</UI.CardDescription>
@@ -59,8 +57,6 @@ export function LoginForm() {
           <form action={formAction}>
             <div className="grid gap-6">
               <div className="grid gap-6">
-                <input type="hidden" name="zionId" value={selectedZion?.id} />
-
                 <div className="grid gap-2">
                   <UI.Label htmlFor="email">{t("email")}</UI.Label>
                   <UI.Input

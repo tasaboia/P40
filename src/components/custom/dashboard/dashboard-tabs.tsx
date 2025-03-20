@@ -24,6 +24,7 @@ import {
 import { Users } from "lucide-react";
 import { User } from "@p40/common/contracts/user/user";
 import { getTranslations } from "next-intl/server";
+import DashboardNav from "../dashboard-nav";
 
 interface DashboardTabsProps {
   event: EventResponse;
@@ -54,6 +55,7 @@ export async function DashboardTabs({
 
   return (
     <Tabs defaultValue="dashboard" className="p-3 ">
+      <DashboardNav />
       <TabsList className="grid w-full grid-cols-2 max-w-lg">
         <TabsTrigger value="dashboard">{t("tabs.dashboard")}</TabsTrigger>
         <TabsTrigger value="schedule">{t("tabs.schedule")}</TabsTrigger>
