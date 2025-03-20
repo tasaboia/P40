@@ -1,39 +1,46 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { NextResponse, type NextRequest } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
+import { auth } from "../auth";
 
 const intlMiddleware = createMiddleware(routing);
+const publicPages = ["/", "/welcome"];
 
-export async function middleware(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+const availableLocales = routing?.locales || ["en", "pt", "es"];
 
-  const { pathname } = request.nextUrl;
+export default async function middleware(req: NextRequest) {
+  const publicPathnameRegex = RegExp(
+    `^/(${availableLocales.join("|")})?(${publicPages.join("|")})/?$`,
+    "i"
+  );
 
-  // Se o usuário estiver acessando apenas a raiz do locale (ex: /pt ou /en)
-  if (pathname.match(/^\/[a-z]{2}$/)) {
-    if (!token) {
-      // Não está logado, redireciona para welcome
-      const url = new URL(`${pathname}/welcome`, request.url);
-      return NextResponse.redirect(url);
-    }
+  const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
 
-    // Está logado, verifica o role
-    const isAdmin = token.role === "admin";
-    const redirectPath = isAdmin ? "schedule" : "dashboard";
-    const url = new URL(`${pathname}/${redirectPath}`, request.url);
-    return NextResponse.redirect(url);
+  let session = null;
+  try {
+    session = await auth();
+  } catch (error) {
+    console.error("⚠ Erro ao obter a sessão:", error);
   }
 
-  // Para outras rotas, usa o middleware do next-intl
-  return intlMiddleware(request);
+  const localeMatch = req.nextUrl.pathname.match(/^\/(en|pt|es)/);
+  const locale = localeMatch ? localeMatch[1] : "pt"; // Se não achar, assume "pt"
+
+  if (!session && req.nextUrl.pathname === `/${locale}/welcome`) {
+    return NextResponse.next();
+  }
+
+  if (!session && !isPublicPage) {
+    return NextResponse.redirect(new URL(`/${locale}/welcome`, req.url));
+  }
+
+  if (session && req.nextUrl.pathname === `/${locale}/welcome`) {
+    return NextResponse.redirect(new URL(`/${locale}/schedule`, req.url));
+  }
+
+  return intlMiddleware(req);
 }
 
-// Configurar em quais caminhos o middleware será executado
 export const config = {
-  matcher: ["/((?!api|_next|.*\\..*).*)", "/:locale(pt|en|es)"],
+  matcher: ["/((?!api|_next|.*\\..*).*)"],
 };

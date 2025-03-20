@@ -14,7 +14,6 @@ export async function loginAction(
     username,
     password,
     zionId,
-    redirect: false,
   });
 
   if (result?.error) {
