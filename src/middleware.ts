@@ -4,7 +4,7 @@ import { routing } from "./i18n/routing";
 import { auth } from "../auth";
 
 const intlMiddleware = createMiddleware(routing);
-const publicPages = ["/", "/welcome"];
+const publicPages = ["/", "/login", "leaders-onboarding"];
 
 const availableLocales = routing?.locales || ["en", "pt", "es"];
 
@@ -26,15 +26,15 @@ export default async function middleware(req: NextRequest) {
   const localeMatch = req.nextUrl.pathname.match(/^\/(en|pt|es)/);
   const locale = localeMatch ? localeMatch[1] : "pt"; // Se não achar, assume "pt"
 
-  if (!session && req.nextUrl.pathname === `/${locale}/welcome`) {
+  if (!session && req.nextUrl.pathname === `/${locale}/login`) {
     return NextResponse.next();
   }
 
   if (!session && !isPublicPage) {
-    return NextResponse.redirect(new URL(`/${locale}/welcome`, req.url));
+    return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
-  if (session && req.nextUrl.pathname === `/${locale}/welcome`) {
+  if (session && req.nextUrl.pathname === `/${locale}/login`) {
     return NextResponse.redirect(new URL(`/${locale}/schedule`, req.url));
   }
 

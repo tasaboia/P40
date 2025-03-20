@@ -1,30 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Users, Loader2, Check } from "lucide-react";
+import { Users, Check } from "lucide-react";
 import * as UI from "@p40/components/ui/index";
-import { AreasOfService, IAreasOfService } from "@p40/common/constants";
+import { AreasOfService, TAreaName } from "@p40/common/constants";
+import { useOnboarding } from "@p40/common/context/onboarding-context";
 
-interface AreasProps {
-  selectedAreas: string[];
-  setSelectedAreas: (areas: string[]) => void;
-}
-
-export default function Areas({ selectedAreas, setSelectedAreas }: AreasProps) {
-  const [areas, setAreas] = useState<IAreasOfService[]>(AreasOfService);
+export default function AreasOfServicePage() {
+  const { onboardingData, setAreas } = useOnboarding();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const toggleArea = (areaId: string) => {
-    setSelectedAreas(
-      selectedAreas.includes(areaId)
-        ? selectedAreas.filter((id) => id !== areaId)
-        : [...selectedAreas, areaId]
-    );
+  const toggleArea = (areaName: TAreaName) => {
+    const newAreas = onboardingData.areas.includes(areaName)
+      ? onboardingData.areas.filter((area) => area !== areaName)
+      : [...onboardingData.areas, areaName];
+
+    setAreas(newAreas);
   };
 
-  const filteredAreas = areas.filter((area) =>
-    area.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredAreas = AreasOfService.filter((area) =>
+    area.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -80,28 +76,30 @@ export default function Areas({ selectedAreas, setSelectedAreas }: AreasProps) {
           {filteredAreas.length > 0 ? (
             filteredAreas.map((area, index) => (
               <motion.div
-                key={area.id}
+                key={area}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * index }}
                 className={`flex items-center space-x-2 border rounded-md p-3 mb-2 ${
-                  selectedAreas.includes(area.id)
+                  onboardingData.areas.includes(area)
                     ? "border-primary bg-primary/5"
                     : ""
                 }`}
               >
                 <UI.Checkbox
-                  id={`area-${area.id}`}
-                  checked={selectedAreas.includes(area.id)}
-                  onCheckedChange={() => toggleArea(area.id)}
+                  id={`area-${area}`}
+                  checked={onboardingData.areas.some(
+                    (selectedArea) => selectedArea === area
+                  )}
+                  onCheckedChange={() => toggleArea(area)}
                 />
                 <UI.Label
-                  htmlFor={`area-label-${area.id}`}
+                  htmlFor={`area-label-${area}`}
                   className="flex-1 cursor-pointer"
                 >
-                  <div className="font-medium">{area.name}</div>
+                  <div className="font-medium">{area}</div>
                 </UI.Label>
-                {selectedAreas.includes(area.id) && (
+                {onboardingData.areas.includes(area) && (
                   <Check className="h-4 w-4 text-primary" />
                 )}
               </motion.div>
@@ -113,14 +111,14 @@ export default function Areas({ selectedAreas, setSelectedAreas }: AreasProps) {
           )}
         </div>
 
-        {selectedAreas.length > 0 && (
+        {onboardingData.areas.length > 0 && (
           <motion.div
             className="mt-4 text-sm text-primary"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            {selectedAreas.length}{" "}
-            {selectedAreas.length === 1
+            {onboardingData.areas.length}{" "}
+            {onboardingData.areas.length === 1
               ? "área selecionada"
               : "áreas selecionadas"}
           </motion.div>

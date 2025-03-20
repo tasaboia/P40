@@ -7,16 +7,15 @@ import * as UI from "@p40/components/ui/index";
 import { useZionQueries } from "@p40/hooks/use-zion-queries";
 import { ErrorHandler } from "@p40/components/custom/error-handler";
 import { Church } from "@p40/common/contracts/church/zions";
+import { useOnboarding } from "@p40/common/context/onboarding-context";
 
-interface LocationProps {
-  selectedLocation: string | null;
-  setSelectedLocation: (location: string) => void;
-}
+export default function Location() {
+  const { setLocation, onboardingData } = useOnboarding();
 
-export default function Location({
-  selectedLocation,
-  setSelectedLocation,
-}: LocationProps) {
+  const handleLocationSelect = (id: string, name: string) => {
+    setLocation(id, name);
+  };
+
   const [churchesByRegion, setChurchesByRegion] = useState<
     Map<string, Church[]>
   >(new Map());
@@ -56,6 +55,7 @@ export default function Location({
       },
     });
   }
+
   return (
     <motion.div
       className="flex flex-col space-y-6"
@@ -112,8 +112,16 @@ export default function Location({
         ) : (
           <div className="max-h-[300px] overflow-y-auto pr-2">
             <UI.RadioGroup
-              value={selectedLocation || ""}
-              onValueChange={setSelectedLocation}
+              value={onboardingData.location.id || ""} // Está controlando a seleção
+              onValueChange={(id: string) => {
+                // Encontrar a igreja pelo id e passar o id e nome
+                const selectedChurch = filteredChurches.find(
+                  (church) => church.id === id
+                );
+                if (selectedChurch) {
+                  handleLocationSelect(selectedChurch.id, selectedChurch.name);
+                }
+              }}
             >
               {filteredChurches.length > 0 ? (
                 filteredChurches.map((church, index) => (

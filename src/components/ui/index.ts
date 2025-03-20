@@ -27,3 +27,4 @@ export * from "./toggle";
 export * from "./toggle-group";
 export * from "./tooltip";
 export * from "./radio-group";
+export * from "./badge";
