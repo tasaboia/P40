@@ -60,6 +60,32 @@ vercel
 
 Para conectar o banco de dados **Neon**, configure as credenciais na Vercel.
 
+## CI/CD
+
+Este projeto utiliza GitHub Actions para integração contínua e entrega contínua (CI/CD). O pipeline inclui:
+
+- **Testes automáticos**: Execução de testes unitários e de integração em cada commit/PR
+- **Verificação de lint**: Análise de qualidade de código automatizada
+- **Build contínuo**: Verificação de que o projeto compila sem erros
+- **Deploy automático**: Implantação automática em ambientes de staging e produção
+- **Análise de código**: Integração com SonarCloud para análise de qualidade
+
+### Status dos Workflows
+
+- ![CI Status](https://github.com/seu-usuario/p40/actions/workflows/ci.yml/badge.svg)
+- ![Deploy Status](https://github.com/seu-usuario/p40/actions/workflows/deploy.yml/badge.svg)
+- ![Code Quality Status](https://github.com/seu-usuario/p40/actions/workflows/code-quality.yml/badge.svg)
+
+### Fluxo de Desenvolvimento
+
+1. Crie uma branch a partir de `development` para sua feature ou correção
+2. Implemente suas mudanças e adicione testes
+3. Envie um Pull Request para `development`
+4. Após aprovação e merge, as mudanças serão automaticamente implantadas no ambiente de staging
+5. Após validação em staging, um PR pode ser enviado para `main` para deploy em produção
+
+Para mais detalhes sobre o CI/CD, consulte a [documentação de CI/CD](.github/README.md).
+
 ---
 
 ### 📌 **Contribuições**

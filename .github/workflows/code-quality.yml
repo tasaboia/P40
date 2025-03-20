@@ -1,0 +1,66 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+  schedule:
+    - cron: "0 0 * * 1" # Executar toda segunda-feira à meia-noite
+
+jobs:
+  code-quality:
+    name: 🔍 Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # Verificação de tipos TypeScript
+      - name: Check TypeScript
+        run: yarn tsc --noEmit
+
+      # SonarCloud Scan
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=p40
+            -Dsonar.organization=p40
+            -Dsonar.sources=src
+            -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+      # Verificação de dependências desatualizadas ou com problemas de segurança
+      - name: Check dependencies
+        run: yarn audit || echo "There are dependency warnings that should be addressed"
+
+      # Análise de complexidade do código
+      - name: Run complexity analysis
+        run: |
+          yarn global add complexity-report
+          complexity-report --format markdown src/ > complexity-report.md
+        continue-on-error: true
+
+      # Verificação de duplicação de código
+      - name: Check code duplication
+        uses: platisd/duplicate-code-detection-tool@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directories: src
+          min_exact_matches: 15
