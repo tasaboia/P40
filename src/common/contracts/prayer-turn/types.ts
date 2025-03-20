@@ -1,3 +1,9 @@
+import { z } from "zod";
+import {
+  CreatePrayerTurnDTOSchema,
+  RemovePrayerTurnDTOSchema,
+} from "./validation";
+
 export interface Leader {
   id: string;
   name: string;
@@ -19,17 +25,8 @@ export interface PrayerTurn {
 
 export interface PrayerTurnResponse extends PrayerTurn {}
 
-export interface CreatePrayerTurnDTO {
-  userId: string;
-  eventId: string;
-  startTime: string;
-  weekday: number;
-}
-
-export interface RemovePrayerTurnDTO {
-  userId: string;
-  prayerTurnId: string;
-}
+export type CreatePrayerTurnDTO = z.infer<typeof CreatePrayerTurnDTOSchema>;
+export type RemovePrayerTurnDTO = z.infer<typeof RemovePrayerTurnDTOSchema>;
 
 export interface PrayerTurnStats {
   distinctLeaders: number;
@@ -45,4 +42,34 @@ export interface ChartData {
   day: number;
   people: number;
   emptySlots: number;
+}
+
+export interface PrayerTurnWithRelations {
+  id: string;
+  eventId: string;
+  type: "SHIFT" | "CLOCK";
+  startTime: string;
+  endTime: string;
+  duration: number;
+  weekday: number | null;
+  allowChangeAfterStart: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  userShifts: Array<{
+    id: string;
+    userId: string;
+    prayerTurnId: string;
+    user: {
+      id: string;
+      name: string;
+      whatsapp: string | null;
+      email: string;
+      imageUrl: string | null;
+    };
+  }>;
+  event: {
+    id: string;
+    name: string;
+    churchId: string;
+  };
 }

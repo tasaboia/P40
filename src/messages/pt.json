@@ -1,0 +1,35 @@
+{
+  "errors": {
+    "general": {
+      "unknown": "Ocorreu um erro inesperado",
+      "validation": "Erro no campo {field}: {message}",
+      "notFound": "{resource} não encontrado",
+      "unauthorized": "Você não está autorizado a realizar esta ação",
+      "forbidden": "Você não tem permissão para realizar esta ação",
+      "conflict": "Já existe um registro com estes dados",
+      "badRequest": "Requisição inválida",
+      "network": "Erro de conexão. Verifique sua internet.",
+      "timeout": "A requisição demorou muito para responder. Tente novamente."
+    }
+  },
+  "prayer": {
+    "turns": {
+      "messages": {
+        "weekday": "Dia da semana",
+        "start_time": "Horário de início",
+        "creating": "Criando...",
+        "create": "Criar turno",
+        "turn_created_success": "Turno criado com sucesso!",
+        "weekdays": {
+          "0": "Domingo",
+          "1": "Segunda-feira",
+          "2": "Terça-feira",
+          "3": "Quarta-feira",
+          "4": "Quinta-feira",
+          "5": "Sexta-feira",
+          "6": "Sábado"
+        }
+      }
+    }
+  }
+}
