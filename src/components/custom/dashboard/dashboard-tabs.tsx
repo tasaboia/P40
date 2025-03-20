@@ -12,16 +12,21 @@ import { useTranslations } from "next-intl";
 import { StatsCards } from "./stats-cards";
 import { EventResponse } from "@p40/common/contracts/event/event";
 import {
+  ChartData,
+  Leader,
+  PrayerTurn,
+  PrayerTurnStats,
+} from "@p40/common/contracts/prayer-turn/types";
+import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@p40/components/ui/card";
 import { Users } from "lucide-react";
-import { BarChart3 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { getTranslations } from "next-intl/server";
 import { User } from "@p40/common/contracts/user/user";
+import { getTranslations } from "next-intl/server";
 
 interface DashboardTabsProps {
   event: EventResponse;
@@ -30,16 +35,15 @@ interface DashboardTabsProps {
     singleLeaderSlots: string;
     filledTimeSlots: string;
     emptyTimeSlots: string;
+    expectedSlotsWeek?: number;
+    filledSlotsByWeekday?: number[];
+    emptySlotsByWeekday?: number[];
   };
-  chartData: {
-    day: number;
-    people: number;
-    emptySlots: number;
-  }[];
   user: User;
-  users: any[];
-  prayerTurns: any[];
-  turns: any[];
+  chartData: ChartData[];
+  users: Leader[];
+  prayerTurns: PrayerTurn[];
+  turns: PrayerTurn[];
 }
 
 export async function DashboardTabs({
@@ -48,10 +52,14 @@ export async function DashboardTabs({
   chartData,
   users,
   user,
-  prayerTurns,
-  turns,
 }: DashboardTabsProps) {
   const t = await getTranslations("admin.dashboard");
+
+  // Debug logs
+  console.log("ChartData:", chartData);
+  console.log("Is Array?", Array.isArray(chartData));
+  console.log("Length:", chartData?.length);
+  console.log("First item:", chartData?.[0]);
 
   return (
     <Tabs defaultValue="dashboard" className="p-3 ">
