@@ -12,6 +12,19 @@ enum Role {
   LEADER
 }
 
+enum TestimonyType {
+  HEALING       // Cura espiritual ou física
+  DELIVERANCE  // Libertação ou libertação de vícios
+  TRANSFORMATION // Transformação de vida, mudança de comportamento
+  SALVATION     // Testemunho de salvação pessoal ou encontro com Deus
+  BLESSING      // Testemunhos sobre bênçãos recebidas
+  PROVISION     // Testemunhos sobre provisões divinas (financeiras, emocionais, etc.)
+  MIRACLE       // Testemunhos de milagres que aconteceram
+  ENCOURAGEMENT // Testemunhos que trazem palavras de encorajamento para outros
+  FAITH         // Testemunhos de fortalecimento na fé ou respostas a orações
+  PEACE          // Testemunhos sobre a paz espiritual em meio a adversidades
+}
+
 enum PrayerTurnType {
   SHIFT // turnos de oração
   CLOCK // relógio de oração
@@ -39,6 +52,7 @@ model Church {
   users     User[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  testimony Testimony[] 
 }
 
 model Event {
@@ -51,6 +65,8 @@ model Event {
   endDate                   DateTime
   description               String?
   prayerTurns               PrayerTurn[]
+  checkIns   CheckIn[]    
+
   prayerTopics              DailyPrayerTopic[]
   maxParticipantsPerTurn    Int?    @default(2)     
   shiftDuration             Int?    @default(60) //em minutos  
@@ -63,14 +79,18 @@ model PrayerTurn {
   eventId               String
   event                 Event    @relation(fields: [eventId], references: [id])
   type                  PrayerTurnType
+
   startTime             String   
   endTime               String   
   duration              Int      @default(60) 
   userShifts            UserShift[]
+  checkIns   CheckIn[]    
+
   weekday               Int?
   allowChangeAfterStart Boolean @default(true)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+  testimony Testimony[] 
 }
 
 model UserShift {
@@ -86,19 +106,43 @@ model UserShift {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  idProver   String?   @unique
-  name       String
-  whatsapp   String?  
-  email      String   @unique 
-  imageUrl   String?  
-  role       Role     @default(USER)
-  userShifts UserShift[]
+  id          String   @id @default(uuid())
+  idProver    String?  @unique
+  name        String
+  whatsapp    String?  
+  email       String   @unique 
+  imageUrl    String?  
+  role        Role     @default(USER)
+  userShifts  UserShift[]   
+  checkIns    CheckIn[]  
   onboarding  Boolean @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  churchId   String?   
-  church     Church?  @relation(fields: [churchId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  churchId    String?   
+  church      Church?  @relation(fields: [churchId], references: [id])
+  testimony   Testimony[] 
+  leaderLink  String?  
+  otherChurch String?  
+}
+
+
+
+
+model Testimony {
+  id        String   @id @default(uuid())  
+  userId    String   
+  user      User    @relation(fields: [userId], references: [id])  
+  churchId  String?   
+  church    Church?  @relation(fields: [churchId], references: [id])
+  date      DateTime
+  content   String
+  approved  Boolean
+  type      TestimonyType? 
+  prayerTurnId  String
+  prayerTurn   PrayerTurn @relation(fields: [prayerTurnId], references: [id])
+  createdAt DateTime @default(now())  
+  updatedAt DateTime @updatedAt       
+
 }
 
 model DailyPrayerTopic {
@@ -111,3 +155,19 @@ model DailyPrayerTopic {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model CheckIn {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  eventId      String
+  event        Event    @relation(fields: [eventId], references: [id])
+  prayerTurnId String
+  prayerTurn   PrayerTurn @relation(fields: [prayerTurnId], references: [id])
+  checkInTime  DateTime @default(now())  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+ 
+ 

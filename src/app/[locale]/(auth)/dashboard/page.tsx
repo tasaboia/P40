@@ -81,11 +81,17 @@ import {
 import { ScrollArea } from "@p40/components/ui/scroll-area";
 import { toast } from "@p40/hooks/use-toast";
 import { DashboardClient } from "@p40/services/dashboard/dashboard-client";
-import { Shift, Stats } from "@p40/common/contracts/dashboard/dashboard";
+import {
+  DashboadLeader,
+  LeadersDashboardResponse,
+  Shift,
+  Stats,
+} from "@p40/common/contracts/dashboard/dashboard";
 import { RenderShiftStatus } from "./components/render-shift-status";
 import { Weekday } from "@p40/common/contracts/week/schedule";
 import { Avatar, AvatarFallback, AvatarImage } from "@p40/components/ui";
 import { Helpers } from "@p40/common/utils/helpers";
+import { TestimonyList } from "@p40/components/custom/dashboard/testimony-list";
 
 interface Leader {
   id: string;
@@ -137,7 +143,7 @@ export default function AdminDashboard() {
 
   const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState<Stats>(null);
-  const [leaders, setLeaders] = useState([]);
+  const [leaders, setLeaders] = useState<DashboadLeader[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [singleLeaderShifts, setSingleLeaderShifts] = useState<Shift[]>([]);
   const [testimonies, setTestimonies] = useState<Testimony[]>([]);
@@ -163,6 +169,8 @@ export default function AdminDashboard() {
           activitiesData,
           shiftsData,
           singleLeaderShiftsData,
+          leadersData,
+          testemunyData,
         ] = await Promise.all([
           dashboardClient.getStats(),
           dashboardClient.getEventStats(),
@@ -170,12 +178,16 @@ export default function AdminDashboard() {
           dashboardClient.getRecentActivity(),
           dashboardClient.getEventTurns(),
           dashboardClient.getSingleLeaderAndEmptyShifts(),
+          dashboardClient.getEventLeaders(),
+          dashboardClient.getTestemuny(),
         ]);
 
         setStats(statsData.data);
         setEvents(eventsData);
         setShifts(shiftsData.data);
         setSingleLeaderShifts(singleLeaderShiftsData.data);
+        setLeaders(leadersData.data);
+        setTestimonies(testemunyData.data);
       } catch (error) {
         console.error("Erro ao carregar dados do dashboard:", error);
       } finally {
@@ -195,14 +207,17 @@ export default function AdminDashboard() {
       shift.startTime.includes(searchTerm) ||
       shift.endTime.includes(searchTerm);
 
-    const churchMatch =
-      churchFilter === "all" ||
-      shift.leaders.some((leader) => {
-        const leaderFull = leaders.find((l) => l.id === leader.id);
-        return leaderFull?.church === churchFilter;
-      });
+    // const churchMatch =
+    //   churchFilter === "all" ||
+    //   shift.leaders.some((leader) => {
+    //     const leaderFull = leaders.find((l) => l.id === leader.id);
+    //     return leaderFull?.church === churchFilter;
+    //   });
 
-    const weekdayMatch = shift.weekday === parseInt(dateFilter);
+    let weekdayMatch = true;
+    if (dateFilter !== "all") {
+      weekdayMatch = shift.weekday === parseInt(dateFilter);
+    }
 
     const statusMatch =
       statusFilter === "all" ||
@@ -210,7 +225,7 @@ export default function AdminDashboard() {
       (statusFilter === "partial" && shift.status === "partial") ||
       (statusFilter === "full" && shift.status === "full");
 
-    return searchMatch && churchMatch && weekdayMatch && statusMatch;
+    return searchMatch && weekdayMatch && statusMatch; //churchMatch
   });
 
   const exportToCSV = () => {
@@ -229,8 +244,8 @@ export default function AdminDashboard() {
       const churchNames = shift.leaders
         .map((leader) => {
           const leaderFull = leaders.find((l) => l.id === leader.id);
-          const church = churches.find((c) => c.id === leaderFull?.church);
-          return church?.name || "";
+          // Verifica se o líder foi encontrado antes de acessar a propriedade 'church'
+          return leaderFull && leaderFull.church ? leaderFull.church.name : "";
         })
         .filter((name) => name !== "")
         .join(", ");
@@ -248,6 +263,68 @@ export default function AdminDashboard() {
     if (csvLinkRef.current) {
       csvLinkRef.current.href = url;
       csvLinkRef.current.download = `relatorio-turnos-${format(
+        new Date(),
+        "dd-MM-yyyy"
+      )}.csv`;
+      csvLinkRef.current.click();
+    }
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 100);
+  };
+
+  const exportLeadersToCSV = () => {
+    const headers = ["Nome", "Email", "WhatsApp", "Igreja"];
+
+    const csvData = leaders.map((leader) => {
+      const churchName = leader.church?.name || ""; // Usar o nome da igreja do líder
+      return [leader.name, leader.email, leader.whatsapp, churchName];
+    });
+
+    const csvContent = [headers, ...csvData]
+      .map((row) => row.join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    if (csvLinkRef.current) {
+      csvLinkRef.current.href = url;
+      csvLinkRef.current.download = `relatorio-lideres-${format(
+        new Date(),
+        "dd-MM-yyyy"
+      )}.csv`;
+      csvLinkRef.current.click();
+    }
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 100);
+  };
+
+  const exportTestimoniesToCSV = () => {
+    const headers = ["Líder", "Data", "Conteúdo", "Aprovado"];
+
+    const csvData = testimonies.map((testimony) => {
+      return [
+        testimony.leaderName, // Certifique-se de que o nome do líder esteja incluído no testemunho
+        format(testimony.date, "dd/MM/yyyy"),
+        testimony.content,
+        testimony.approved ? "Sim" : "Não",
+      ];
+    });
+
+    const csvContent = [headers, ...csvData]
+      .map((row) => row.join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    if (csvLinkRef.current) {
+      csvLinkRef.current.href = url;
+      csvLinkRef.current.download = `relatorio-testemunhos-${format(
         new Date(),
         "dd-MM-yyyy"
       )}.csv`;
@@ -290,12 +367,83 @@ export default function AdminDashboard() {
     return recommended.slice(0, 10);
   };
 
-  const getLeaderChurch = (leaderId: string) => {
-    const leader = leaders.find((l) => l.id === leaderId);
-    if (!leader) return "";
+  // const getLeaderChurch = (leaderId: string) => {
+  //   const leader = leaders.find((l) => l.id === leaderId);
+  //   if (!leader) return "";
 
-    const church = churches.find((c) => c.id === leader.church);
-    return church?.name || "";
+  //   const church = churches.find((c) => c.id === leader.church);
+  //   return church?.name || "";
+  // };
+
+  // Approve testimony
+  const handleApproveTestimony = (testimonyId: string) => {
+    setTestimonies((prevTestimonies) =>
+      prevTestimonies.map((t) =>
+        t.id === testimonyId ? { ...t, approved: true } : t
+      )
+    );
+
+    toast({
+      title: "Testemunho aprovado",
+      description: "O testemunho foi aprovado com sucesso.",
+    });
+  };
+
+  // Reject testimony
+  const handleRejectTestimony = (testimonyId: string) => {
+    // In a real app, you might want to add a reason for rejection
+    // Here we'll just remove the testimony
+    setTestimonies((prevTestimonies) =>
+      prevTestimonies.filter((t) => t.id !== testimonyId)
+    );
+
+    toast({
+      title: "Testemunho recusado",
+      description: "O testemunho foi recusado e removido.",
+    });
+  };
+
+  // Export testimonies to CSV
+  const handleExportTestimonies = () => {
+    // Headers for the CSV
+    const headers = ["Líder", "Data", "Conteúdo", "Status"];
+
+    // Format data for CSV
+    const csvData = testimonies.map((testimony) => {
+      const leader = testimony.leaderName;
+      const date = format(testimony.date, "dd/MM/yyyy");
+      const content = `"${testimony.content.replace(/"/g, '""')}"`; // Escape quotes for CSV
+      const status = testimony.approved ? "Aprovado" : "Pendente";
+
+      return [leader, date, content, status];
+    });
+
+    // Create CSV content
+    const csvContent = [
+      headers.join(","),
+      ...csvData.map((row) => row.join(",")),
+    ].join("\n");
+
+    // Create download link
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    if (csvLinkRef.current) {
+      csvLinkRef.current.href = url;
+      csvLinkRef.current.download = `testemunhos-oracao-${format(
+        new Date(),
+        "dd-MM-yyyy"
+      )}.csv`;
+      csvLinkRef.current.click();
+    }
+
+    // Clean up
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+
+    toast({
+      title: "Exportação concluída",
+      description: "Os testemunhos foram exportados com sucesso.",
+    });
   };
 
   if (isLoading) {
@@ -329,7 +477,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 w-full md:w-auto mt-4 md:mt-0">
-            <Select value={churchFilter} onValueChange={setChurchFilter}>
+            {/* <Select value={churchFilter} onValueChange={setChurchFilter}>
               <SelectTrigger className="w-full md:w-[180px] h-9">
                 <SelectValue placeholder="Filtrar por igreja" />
               </SelectTrigger>
@@ -341,7 +489,7 @@ export default function AdminDashboard() {
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
+            </Select> */}
 
             <div className="flex gap-2 ml-auto md:ml-0">
               <Button
@@ -367,10 +515,10 @@ export default function AdminDashboard() {
                     <FileText className="h-4 w-4 mr-2" />
                     Exportar para CSV
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  {/* <DropdownMenuItem>
                     <Calendar className="h-4 w-4 mr-2" />
                     Relatório completo
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -385,7 +533,7 @@ export default function AdminDashboard() {
           className="space-y-6"
         >
           <div className="overflow-x-auto pb-2">
-            <TabsList className="grid grid-cols-4 w-full min-w-[400px]">
+            <TabsList className="grid grid-cols-5 w-full ">
               <TabsTrigger value="overview" className="text-xs md:text-sm">
                 <BarChart3 className="h-4 w-4 mr-1 md:mr-2" />
                 <span>Visão Geral</span>
@@ -397,6 +545,10 @@ export default function AdminDashboard() {
               <TabsTrigger value="leaders" className="text-xs md:text-sm">
                 <Users className="h-4 w-4 mr-1 md:mr-2" />
                 <span>Líderes</span>
+              </TabsTrigger>
+              <TabsTrigger value="testimonies" className="text-xs md:text-sm">
+                <FileText className="h-4 w-4 mr-1 md:mr-2" />
+                <span>Testemunhos</span>
               </TabsTrigger>
               <TabsTrigger value="reports" className="text-xs md:text-sm">
                 <FileText className="h-4 w-4 mr-1 md:mr-2" />
@@ -691,12 +843,12 @@ export default function AdminDashboard() {
                     </div>
                   </ScrollArea>
                 </CardContent>
-                <CardFooter className="border-t px-4 py-3">
+                {/* <CardFooter className="border-t px-4 py-3">
                   <Button variant="outline" size="sm" className="w-full">
                     <UserPlus className="h-4 w-4 mr-2" />
                     Adicionar Líderes
                   </Button>
-                </CardFooter>
+                </CardFooter> */}
               </Card>
             </div>
 
@@ -708,7 +860,12 @@ export default function AdminDashboard() {
                     Relatos dos líderes durante os turnos
                   </CardDescription>
                 </div>
-                <Button variant="ghost" size="sm" className="gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1"
+                  onClick={() => setActiveTab("testimonies")}
+                >
                   <span>Ver todos</span>
                   <ArrowUpRight className="h-4 w-4" />
                 </Button>
@@ -755,7 +912,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex flex-col gap-4">
-                  <div className="relative">
+                  {/* <div className="relative">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                       type="search"
@@ -764,7 +921,7 @@ export default function AdminDashboard() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                  </div>
+                  </div> */}
 
                   <div className="flex flex-wrap gap-2">
                     <Button
@@ -784,6 +941,7 @@ export default function AdminDashboard() {
                         <SelectValue placeholder="Data" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="all">Todos</SelectItem>
                         <SelectItem value={"0"}>Domingo</SelectItem>
                         <SelectItem value={"1"}>Segunda</SelectItem>
                         <SelectItem value={"2"}>Terça</SelectItem>
@@ -816,7 +974,7 @@ export default function AdminDashboard() {
                       className="h-9 w-9 ml-auto"
                       onClick={() => {
                         setSearchTerm("");
-                        setDateFilter("1");
+                        setDateFilter("all");
                         setStatusFilter("all");
                         setChurchFilter("all");
                         setShowSingleLeaderShifts(false);
@@ -836,7 +994,7 @@ export default function AdminDashboard() {
                           <TableHead>Horário</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Líderes</TableHead>
-                          <TableHead className="text-right">Ações</TableHead>
+                          {/* <TableHead className="text-right">Ações</TableHead> */}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -874,7 +1032,7 @@ export default function AdminDashboard() {
                                           {leader.name}
                                         </Badge>
                                         <span className="text-xs text-muted-foreground">
-                                          {getLeaderChurch(leader.id)}
+                                          {/* {getLeaderChurch(leader.id)} */}
                                         </span>
                                       </div>
                                     ))}
@@ -885,7 +1043,7 @@ export default function AdminDashboard() {
                                   </div>
                                 )}
                               </TableCell>
-                              <TableCell className="text-right">
+                              {/* <TableCell className="text-right">
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button
@@ -912,7 +1070,7 @@ export default function AdminDashboard() {
                                     </DropdownMenuItem>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
-                              </TableCell>
+                              </TableCell> */}
                             </TableRow>
                           ))}
                       </TableBody>
@@ -938,7 +1096,7 @@ export default function AdminDashboard() {
                             </div>
                             <div className="flex items-center">
                               <RenderShiftStatus status={shift.status} />
-
+                              {/* 
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button
@@ -964,7 +1122,7 @@ export default function AdminDashboard() {
                                     Ver relatórios
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
-                              </DropdownMenu>
+                              </DropdownMenu> */}
                             </div>
                           </div>
 
@@ -994,7 +1152,7 @@ export default function AdminDashboard() {
                                       {leader.name}
                                     </Badge>
                                     <span className="text-xs text-muted-foreground">
-                                      {getLeaderChurch(leader.id)}
+                                      {/* {getLeaderChurch(leader.id)} */}
                                     </span>
                                   </div>
                                 ))}
@@ -1041,7 +1199,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-          {/* 
+
           <TabsContent value="leaders" className="space-y-6">
             <Card>
               <CardHeader>
@@ -1062,7 +1220,7 @@ export default function AdminDashboard() {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <Select defaultValue="all">
+                    {/* <Select defaultValue="all">
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Filtrar por igreja" />
                       </SelectTrigger>
@@ -1074,7 +1232,7 @@ export default function AdminDashboard() {
                           </SelectItem>
                         ))}
                       </SelectContent>
-                    </Select>
+                    </Select> */}
 
                     <Button variant="outline">
                       <Filter className="h-4 w-4 mr-2" />
@@ -1091,7 +1249,7 @@ export default function AdminDashboard() {
                         <TableHead>Igreja</TableHead>
                         <TableHead>Contato</TableHead>
                         <TableHead>Turnos</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
+                        {/* <TableHead className="text-right">Ações</TableHead> */}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -1101,25 +1259,25 @@ export default function AdminDashboard() {
                             <div className="font-medium">{leader.name}</div>
                             <div className="text-xs text-muted-foreground">
                               Registrado em{" "}
-                              {format(leader.registeredAt, "dd/MM/yyyy")}
+                              {/* {format(leader.registeredAt, "dd/MM/yyyy")} */}
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center">
                               <Building className="h-4 w-4 mr-1 text-muted-foreground" />
-                              <span>{getLeaderChurch(leader.id)}</span>
+                              <span>{leader.church.name}</span>
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="text-sm">{leader.email}</div>
                             <div className="text-xs text-muted-foreground">
-                              {leader.phone}
+                              {leader.whatsapp}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge>{leader.shifts.length}</Badge>
+                            <Badge>{leader.userShifts.length}</Badge>
                           </TableCell>
-                          <TableCell className="text-right">
+                          {/* <TableCell className="text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button
@@ -1146,7 +1304,7 @@ export default function AdminDashboard() {
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
-                          </TableCell>
+                          </TableCell> */}
                         </TableRow>
                       ))}
                     </TableBody>
@@ -1169,71 +1327,77 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-
+          <TabsContent value="testimonies" className="mt-0">
+            <TestimonyList
+              testimonies={testimonies}
+              onApproveTestimony={handleApproveTestimony}
+              onRejectTestimony={handleRejectTestimony}
+            />
+          </TabsContent>
           <TabsContent value="reports" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Testemunhos</CardTitle>
-                  <CardDescription>
-                    Relatos dos líderes durante os turnos de oração
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ScrollArea className="h-[400px] pr-4">
-                    <div className="space-y-4">
-                      {testimonies.map((testimony) => (
-                        <div
-                          key={testimony.id}
-                          className="border rounded-lg p-4 space-y-2"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="font-medium">
-                              {testimony.leaderName}
-                            </div>
-                            <Badge
-                              variant={
-                                testimony.approved ? "outline" : "secondary"
-                              }
-                              className={
-                                testimony.approved
-                                  ? "bg-success/10 text-success"
-                                  : ""
-                              }
-                            >
-                              {testimony.approved ? "Aprovado" : "Pendente"}
-                            </Badge>
+            <Card>
+              <CardHeader>
+                <CardTitle>Testemunhos</CardTitle>
+                <CardDescription>
+                  Relatos dos líderes durante os turnos de oração
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-[400px] pr-4">
+                  <div className="space-y-4">
+                    {testimonies.map((testimony) => (
+                      <div
+                        key={testimony.id}
+                        className="border rounded-lg p-4 space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium">
+                            {testimony.leaderName}
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            {format(testimony.date, "dd/MM/yyyy 'às' HH:mm", {
-                              locale: ptBR,
-                            })}
-                          </div>
-                          <p className="text-sm">{testimony.content}</p>
-                          {!testimony.approved && (
-                            <div className="flex space-x-2 pt-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-7 text-xs"
-                              >
-                                Aprovar
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-7 text-xs text-destructive"
-                              >
-                                Recusar
-                              </Button>
-                            </div>
-                          )}
+                          <Badge
+                            variant={
+                              testimony.approved ? "outline" : "secondary"
+                            }
+                            className={
+                              testimony.approved
+                                ? "bg-success/10 text-success"
+                                : ""
+                            }
+                          >
+                            {testimony.approved ? "Aprovado" : "Pendente"}
+                          </Badge>
                         </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </CardContent>
-              </Card>
+                        <div className="text-xs text-muted-foreground">
+                          {format(testimony.date, "dd/MM/yyyy 'às' HH:mm", {
+                            locale: ptBR,
+                          })}
+                        </div>
+                        <p className="text-sm">{testimony.content}</p>
+                        {!testimony.approved && (
+                          <div className="flex space-x-2 pt-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-7 text-xs"
+                            >
+                              Aprovar
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-7 text-xs text-destructive"
+                            >
+                              Recusar
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+            {/*
 
               <Card>
                 <CardHeader>
@@ -1275,9 +1439,8 @@ export default function AdminDashboard() {
                   </ScrollArea>
                 </CardContent>
               </Card>
-            </div>
-
-            <Card>
+            </div>*/}
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Exportar Dados</CardTitle>
                 <CardDescription>
@@ -1309,8 +1472,43 @@ export default function AdminDashboard() {
                   </Button>
                 </div>
               </CardContent>
+            </Card> */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Exportar Dados</CardTitle>
+                <CardDescription>
+                  Gere relatórios e exporte dados para análise externa
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Button
+                    onClick={exportToCSV} // Exportar turnos
+                    className="flex items-center justify-center"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Exportar Turnos (CSV)
+                  </Button>
+                  <Button
+                    onClick={exportLeadersToCSV} // Exportar líderes
+                    variant="outline"
+                    className="flex items-center justify-center"
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Exportar Líderes (CSV)
+                  </Button>
+                  <Button
+                    onClick={exportTestimoniesToCSV} // Exportar testemunhos
+                    variant="outline"
+                    className="flex items-center justify-center"
+                  >
+                    <MessageSquareQuote className="h-4 w-4 mr-2" />
+                    Exportar Testemunhos (CSV)
+                  </Button>
+                </div>
+              </CardContent>
             </Card>
-          </TabsContent> */}
+          </TabsContent>
         </Tabs>
 
         <Dialog
@@ -1333,7 +1531,7 @@ export default function AdminDashboard() {
                         <TableHead>Dia da Semana</TableHead>
                         <TableHead>Horário</TableHead>
                         <TableHead>Líder Atual</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
+                        {/* <TableHead className="text-right">Ações</TableHead> */}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -1359,12 +1557,12 @@ export default function AdminDashboard() {
                             </div>
                           </TableCell>
                           {/*  precisa criar a funcionalidade para adicionar lider */}
-                          <TableCell className="text-right">
+                          {/* <TableCell className="text-right">
                             <Button variant="outline" size="sm">
                               <UserPlus className="h-4 w-4 mr-2" />
                               Adicionar Líder
                             </Button>
-                          </TableCell>
+                          </TableCell> */}
                         </TableRow>
                       ))}
                     </TableBody>
@@ -1410,7 +1608,8 @@ export default function AdminDashboard() {
                       <div className="flex items-center text-xs text-muted-foreground mb-3">
                         <Building className="h-3 w-3 mr-1" />
                         <span>
-                          {getLeaderChurch(shift.leaders[0]?.id || "")}
+                          aqui
+                          {/* {getLeaderChurch(shift.leaders[0]?.id || "")} */}
                         </span>
                       </div>
 

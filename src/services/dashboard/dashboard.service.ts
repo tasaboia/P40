@@ -1,11 +1,7 @@
 import api from "@p40/lib/axios";
 import { FailException } from "@p40/common/contracts/exceptions/exception";
 import { prisma } from "@p40/lib/prisma";
-import {
-  Shift,
-  ShiftWithoutStatusAndWeekday,
-  SingleLeaderShiftResponse,
-} from "@p40/common/contracts/dashboard/dashboard";
+import { Shift } from "@p40/common/contracts/dashboard/dashboard";
 
 export class DashboardService {
   async getStats(churchId: string) {
@@ -370,6 +366,99 @@ export class DashboardService {
           },
         },
       });
+    } catch (error) {
+      console.error("Erro ao buscar turnos vazios ou com 1 líder:", error);
+      throw new Error("Erro ao buscar turnos vazios ou com 1 líder");
+    }
+  }
+
+  async getLeaders(churchId: string) {
+    try {
+      const allLeaders = await prisma.user.findMany({
+        where: {
+          churchId: churchId,
+          role: "LEADER", // Garantir que apenas líderes sejam retornados
+        },
+        include: {
+          church: {
+            include: {
+              events: {
+                select: {
+                  id: true, // Include events' IDs for the church
+                },
+              },
+            },
+          },
+          userShifts: {
+            include: {
+              prayerTurn: {
+                select: {
+                  endTime: true,
+                  startTime: true,
+                  weekday: true,
+                  type: true,
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const leaders = allLeaders.map((leader) => ({
+        id: leader.id,
+        name: leader.name,
+        email: leader.email,
+        whatsapp: leader.whatsapp || "",
+        imageUrl: leader.imageUrl,
+        church: {
+          id: leader.church.id,
+          name: leader.church.name,
+          events: leader.church.events.map((event) => ({
+            id: event.id,
+          })),
+        },
+        userShifts: leader.userShifts.map((shift) => ({
+          prayerTurn: {
+            id: shift.prayerTurn.id,
+            startTime: shift.prayerTurn.startTime,
+            endTime: shift.prayerTurn.endTime,
+            weekday: shift.prayerTurn.weekday,
+            type: shift.prayerTurn.type,
+          },
+        })),
+      }));
+
+      return leaders;
+    } catch (error) {
+      console.error("Erro ao buscar turnos vazios ou com 1 líder:", error);
+      throw new Error("Erro ao buscar turnos vazios ou com 1 líder");
+    }
+  }
+  async getTestemuny(churchId: string) {
+    try {
+      const testimonies = await prisma.testimony.findMany({
+        where: {
+          churchId,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          prayerTurn: {
+            select: {
+              startTime: true,
+              endTime: true,
+              id: true,
+              eventId: true,
+            },
+          },
+        },
+      });
+      return testimonies;
     } catch (error) {
       console.error("Erro ao buscar turnos vazios ou com 1 líder:", error);
       throw new Error("Erro ao buscar turnos vazios ou com 1 líder");

@@ -1,5 +1,6 @@
 import {
   DashboardStatsResponse,
+  LeadersDashboardResponse,
   ShiftResponse,
   SingleLeaderShiftResponse,
 } from "@p40/common/contracts/dashboard/dashboard";
@@ -223,6 +224,34 @@ export class DashboardClient {
       return data.data;
     } catch (error) {
       console.error("Erro ao buscar Lideres em um so horário:", error);
+      return {
+        error: error,
+        success: false,
+        data: null,
+      };
+    }
+  }
+  async getEventLeaders(): Promise<LeadersDashboardResponse> {
+    try {
+      const data = await api.get("/api/dashboard/leaders/all");
+      return data.data;
+    } catch (error) {
+      console.error("Erro ao buscar Lideres em um so horário:", error);
+      return {
+        error: error,
+        success: false,
+        data: null,
+      };
+    }
+  }
+
+  async getTestemuny() {
+    try {
+      const data = await api.get("/api/dashboard/testimonies");
+      return data.data;
+    } catch (error) {
+      console.error("Erro ao buscar testemunhos:", error);
+
       return {
         error: error,
         success: false,
