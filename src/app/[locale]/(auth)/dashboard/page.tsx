@@ -80,6 +80,12 @@ import {
 } from "@p40/components/ui/dropdown-menu";
 import { ScrollArea } from "@p40/components/ui/scroll-area";
 import { toast } from "@p40/hooks/use-toast";
+import { DashboardClient } from "@p40/services/dashboard/dashboard-client";
+import { Shift, Stats } from "@p40/common/contracts/dashboard/dashboard";
+import { RenderShiftStatus } from "./components/render-shift-status";
+import { Weekday } from "@p40/common/contracts/week/schedule";
+import { Avatar, AvatarFallback, AvatarImage } from "@p40/components/ui";
+import { Helpers } from "@p40/common/utils/helpers";
 
 interface Leader {
   id: string;
@@ -89,15 +95,6 @@ interface Leader {
   church: string;
   shifts: Shift[];
   registeredAt: Date;
-}
-
-interface Shift {
-  id: string;
-  date: Date;
-  startTime: string;
-  endTime: string;
-  leaders: Leader[];
-  status: "empty" | "partial" | "full";
 }
 
 interface Church {
@@ -135,12 +132,12 @@ interface ShiftReport {
   notes: string;
 }
 
-// Componente principal
 export default function AdminDashboard() {
-  const router = useRouter();
+  const dashboardClient = new DashboardClient();
+
   const [activeTab, setActiveTab] = useState("overview");
-  const [stats, setStats] = useState<EventStats | null>(null);
-  const [leaders, setLeaders] = useState<Leader[]>([]);
+  const [stats, setStats] = useState<Stats>(null);
+  const [leaders, setLeaders] = useState([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [singleLeaderShifts, setSingleLeaderShifts] = useState<Shift[]>([]);
   const [testimonies, setTestimonies] = useState<Testimony[]>([]);
@@ -150,223 +147,54 @@ export default function AdminDashboard() {
   const [showSingleLeaderShifts, setShowSingleLeaderShifts] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [churchFilter, setChurchFilter] = useState<string>("all");
-  const [dateFilter, setDateFilter] = useState<string>("all");
+  const [dateFilter, setDateFilter] = useState<string>("0");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const csvLinkRef = useRef<HTMLAnchorElement>(null);
+  const [events, setEvents] = useState([]);
 
-  // Carregar dados simulados
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
-        // Simular carregamento de dados
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const [
+          statsData,
+          eventsData,
+          weekdayData,
+          activitiesData,
+          shiftsData,
+          singleLeaderShiftsData,
+        ] = await Promise.all([
+          dashboardClient.getStats(),
+          dashboardClient.getEventStats(),
+          dashboardClient.getWeekdayDistribution(),
+          dashboardClient.getRecentActivity(),
+          dashboardClient.getEventTurns(),
+          dashboardClient.getSingleLeaderAndEmptyShifts(),
+        ]);
 
-        // Dados simulados de igrejas
-        const mockChurches: Church[] = [
-          { id: "1", name: "Igreja Zion Central", location: "São Paulo" },
-          { id: "2", name: "Igreja Zion Norte", location: "São Paulo" },
-          { id: "3", name: "Igreja Zion Sul", location: "São Paulo" },
-        ];
-
-        // Dados simulados de líderes
-        const mockLeaders: Leader[] = Array.from({ length: 85 }, (_, i) => {
-          const churchIndex = Math.floor(Math.random() * mockChurches.length);
-          return {
-            id: `leader-${i + 1}`,
-            name: `Líder ${i + 1}`,
-            email: `lider${i + 1}@exemplo.com`,
-            phone: `(11) 9${Math.floor(Math.random() * 10000)}-${Math.floor(
-              Math.random() * 10000
-            )}`,
-            church: mockChurches[churchIndex].id,
-            shifts: [],
-            registeredAt: new Date(2024, 2, Math.floor(Math.random() * 30) + 1),
-          };
-        });
-
-        // Dados simulados de turnos
-        const startDate = new Date(2024, 3, 1); // 1 de abril de 2024
-        const mockShifts: Shift[] = [];
-
-        // Criar turnos para 40 dias, 24 horas por dia, turnos de 1 hora
-        for (let day = 0; day < 40; day++) {
-          const currentDate = new Date(startDate);
-          currentDate.setDate(startDate.getDate() + day);
-
-          for (let hour = 0; hour < 24; hour++) {
-            const startTime = `${hour.toString().padStart(2, "0")}:00`;
-            const endTime = `${((hour + 1) % 24)
-              .toString()
-              .padStart(2, "0")}:00`;
-
-            // Distribuir líderes aleatoriamente
-            const randomLeaders: Leader[] = [];
-            const maxLeaders = 2; // Máximo de líderes por turno
-
-            // Decidir quantos líderes terá este turno (0, 1 ou 2)
-            const leaderCount = Math.floor(Math.random() * 3);
-
-            // Selecionar líderes aleatórios
-            if (leaderCount > 0) {
-              const availableLeaders = [...mockLeaders];
-              for (
-                let i = 0;
-                i < leaderCount && availableLeaders.length > 0;
-                i++
-              ) {
-                const randomIndex = Math.floor(
-                  Math.random() * availableLeaders.length
-                );
-                randomLeaders.push(availableLeaders[randomIndex]);
-                availableLeaders.splice(randomIndex, 1);
-              }
-            }
-
-            // Determinar o status do turno
-            let status: "empty" | "partial" | "full" = "empty";
-            if (randomLeaders.length === maxLeaders) {
-              status = "full";
-            } else if (randomLeaders.length > 0) {
-              status = "partial";
-            }
-
-            const shift: Shift = {
-              id: `shift-${day}-${hour}`,
-              date: currentDate,
-              startTime,
-              endTime,
-              leaders: randomLeaders,
-              status,
-            };
-
-            mockShifts.push(shift);
-
-            // Adicionar o turno aos líderes
-            randomLeaders.forEach((leader) => {
-              const leaderIndex = mockLeaders.findIndex(
-                (l) => l.id === leader.id
-              );
-              if (leaderIndex !== -1) {
-                mockLeaders[leaderIndex].shifts.push(shift);
-              }
-            });
-          }
-        }
-
-        // Encontrar turnos com apenas um líder
-        const mockSingleLeaderShifts = mockShifts.filter(
-          (shift) => shift.leaders.length === 1
-        );
-
-        // Dados simulados de testemunhos
-        const mockTestimonies: Testimony[] = Array.from(
-          { length: 15 },
-          (_, i) => {
-            const randomLeaderIndex = Math.floor(
-              Math.random() * mockLeaders.length
-            );
-            return {
-              id: `testimony-${i + 1}`,
-              leaderId: mockLeaders[randomLeaderIndex].id,
-              leaderName: mockLeaders[randomLeaderIndex].name,
-              date: new Date(2024, 3, Math.floor(Math.random() * 30) + 1),
-              content: `Este é um testemunho de como a oração impactou minha vida e a vida de outras pessoas. ${
-                i % 2 === 0
-                  ? "Deus é fiel!"
-                  : "Muitas vidas foram transformadas durante este tempo de oração."
-              }`,
-              approved: Math.random() > 0.3, // 70% aprovados
-            };
-          }
-        );
-
-        // Dados simulados de relatórios
-        const mockReports: ShiftReport[] = Array.from(
-          { length: 25 },
-          (_, i) => {
-            const randomShiftIndex = Math.floor(
-              Math.random() * mockShifts.length
-            );
-            const randomShift = mockShifts[randomShiftIndex];
-            const randomLeader = randomShift.leaders[0] || mockLeaders[0];
-            return {
-              id: `report-${i + 1}`,
-              shiftId: randomShift.id,
-              date: randomShift.date,
-              leaderId: randomLeader.id,
-              leaderName: randomLeader.name,
-              attendees: Math.floor(Math.random() * 10) + 1,
-              notes: `Relatório do turno de oração. ${
-                i % 2 === 0
-                  ? "Tivemos um bom tempo de intercessão."
-                  : "Várias pessoas compartilharam pedidos de oração."
-              }`,
-            };
-          }
-        );
-
-        // Calcular estatísticas
-        const totalLeaders = mockLeaders.length;
-        const totalShifts = mockShifts.length;
-        const filledShifts = mockShifts.filter(
-          (shift) => shift.status === "full"
-        ).length;
-        const partialShifts = mockShifts.filter(
-          (shift) => shift.status === "partial"
-        ).length;
-        const emptyShifts = mockShifts.filter(
-          (shift) => shift.status === "empty"
-        ).length;
-        const leadersPercentage = (totalLeaders / 120) * 100; // Supondo uma meta de 120 líderes
-        const shiftsPercentage =
-          ((filledShifts + partialShifts) / totalShifts) * 100;
-
-        const mockStats: EventStats = {
-          totalLeaders,
-          totalShifts,
-          filledShifts,
-          partialShifts,
-          emptyShifts,
-          leadersPercentage,
-          shiftsPercentage,
-        };
-
-        // Atualizar o estado
-        setChurches(mockChurches);
-        setLeaders(mockLeaders);
-        setShifts(mockShifts);
-        setSingleLeaderShifts(mockSingleLeaderShifts);
-        setTestimonies(mockTestimonies);
-        setReports(mockReports);
-        setStats(mockStats);
-        setIsLoading(false);
+        setStats(statsData.data);
+        setEvents(eventsData);
+        setShifts(shiftsData.data);
+        setSingleLeaderShifts(singleLeaderShiftsData.data);
       } catch (error) {
-        console.error("Erro ao carregar dados:", error);
+        console.error("Erro ao carregar dados do dashboard:", error);
+      } finally {
         setIsLoading(false);
-        toast({
-          title: "Erro ao carregar dados",
-          description: "Não foi possível carregar os dados do dashboard",
-          variant: "destructive",
-        });
       }
     };
 
     fetchData();
   }, []);
 
-  // Filtrar turnos
   const filteredShifts = shifts.filter((shift) => {
-    // Filtro de busca
     const searchMatch =
       searchTerm === "" ||
       shift.leaders.some((leader) =>
         leader.name.toLowerCase().includes(searchTerm.toLowerCase())
       ) ||
-      format(shift.date, "dd/MM/yyyy").includes(searchTerm) ||
       shift.startTime.includes(searchTerm) ||
       shift.endTime.includes(searchTerm);
 
-    // Filtro de igreja
     const churchMatch =
       churchFilter === "all" ||
       shift.leaders.some((leader) => {
@@ -374,52 +202,23 @@ export default function AdminDashboard() {
         return leaderFull?.church === churchFilter;
       });
 
-    // Filtro de data
-    let dateMatch = true;
-    if (dateFilter !== "all") {
-      const today = new Date();
-      const shiftDate = new Date(shift.date);
+    const weekdayMatch = shift.weekday === parseInt(dateFilter);
 
-      if (dateFilter === "today") {
-        dateMatch =
-          shiftDate.getDate() === today.getDate() &&
-          shiftDate.getMonth() === today.getMonth() &&
-          shiftDate.getFullYear() === today.getFullYear();
-      } else if (dateFilter === "tomorrow") {
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        dateMatch =
-          shiftDate.getDate() === tomorrow.getDate() &&
-          shiftDate.getMonth() === tomorrow.getMonth() &&
-          shiftDate.getFullYear() === tomorrow.getFullYear();
-      } else if (dateFilter === "thisWeek") {
-        const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - today.getDay());
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        dateMatch = shiftDate >= startOfWeek && shiftDate <= endOfWeek;
-      }
-    }
-
-    // Filtro de status
     const statusMatch =
       statusFilter === "all" ||
       (statusFilter === "empty" && shift.status === "empty") ||
       (statusFilter === "partial" && shift.status === "partial") ||
       (statusFilter === "full" && shift.status === "full");
 
-    return searchMatch && churchMatch && dateMatch && statusMatch;
+    return searchMatch && churchMatch && weekdayMatch && statusMatch;
   });
 
-  // Exportar para CSV
   const exportToCSV = () => {
-    // Cabeçalhos do CSV
-    const headers = ["Data", "Horário", "Status", "Líderes", "Igreja"];
+    const headers = ["Dia da Semana", "Horário", "Status", "Líderes", "Igreja"];
 
-    // Dados formatados para CSV
     const csvData = filteredShifts.map((shift) => {
-      const date = format(shift.date, "dd/MM/yyyy");
       const time = `${shift.startTime} - ${shift.endTime}`;
+      const weekday = shift.weekday;
       const status =
         shift.status === "empty"
           ? "Vazio"
@@ -436,19 +235,16 @@ export default function AdminDashboard() {
         .filter((name) => name !== "")
         .join(", ");
 
-      return [date, time, status, leaderNames, churchNames];
+      return [weekday, time, status, leaderNames, churchNames];
     });
 
-    // Combinar cabeçalhos e dados
     const csvContent = [headers, ...csvData]
       .map((row) => row.join(","))
       .join("\n");
 
-    // Criar blob e link para download
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
 
-    // Criar link e clicar nele para iniciar o download
     if (csvLinkRef.current) {
       csvLinkRef.current.href = url;
       csvLinkRef.current.download = `relatorio-turnos-${format(
@@ -458,85 +254,42 @@ export default function AdminDashboard() {
       csvLinkRef.current.click();
     }
 
-    // Limpar URL
     setTimeout(() => {
       URL.revokeObjectURL(url);
     }, 100);
   };
 
-  // Recomendar horários
   const getRecommendedShifts = () => {
-    // Lógica para recomendar horários com base em vários critérios
-    // 1. Priorizar horários vazios
-    // 2. Depois, horários com apenas um líder
-    // 3. Considerar distribuição ao longo da semana
-
     const emptyShifts = shifts.filter((shift) => shift.status === "empty");
     const partialShifts = shifts.filter((shift) => shift.status === "partial");
 
-    // Priorizar horários noturnos vazios (geralmente mais difíceis de preencher)
     const nightEmptyShifts = emptyShifts.filter((shift) => {
       const hour = Number.parseInt(shift.startTime.split(":")[0]);
-      return hour >= 22 || hour <= 5;
+      return hour >= 0 && hour <= 5; // Horários entre 00:00 e 05:00
     });
 
-    // Priorizar fins de semana com apenas um líder
-    const weekendPartialShifts = partialShifts.filter((shift) => {
-      const day = shift.date.getDay();
-      return day === 0 || day === 6; // 0 = domingo, 6 = sábado
-    });
+    const singleLeaderShifts = partialShifts.filter(
+      (shift) => shift.leaders.length === 1
+    );
 
-    // Combinar recomendações (limitando a 5 de cada categoria)
+    // Combinar recomendações:
+    // 1. Começar pelos turnos vazios da madrugada
+    // 2. Depois, considerar turnos com apenas um líder
+    // 3. Incluir turnos vazios durante a semana (exceto madrugadas)
     const recommended = [
       ...nightEmptyShifts.slice(0, 5),
-      ...weekendPartialShifts.slice(0, 5),
+      ...singleLeaderShifts.slice(0, 5),
       ...emptyShifts
-        .filter((shift) => !nightEmptyShifts.includes(shift))
+        .filter(
+          (shift) =>
+            !nightEmptyShifts.includes(shift) && shift.leaders.length === 0
+        )
         .slice(0, 5),
     ];
 
-    return recommended.slice(0, 10); // Limitar a 10 recomendações no total
+    return recommended.slice(0, 10);
   };
 
-  // Renderizar status do turno
-  const renderShiftStatus = (status: string) => {
-    switch (status) {
-      case "empty":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-destructive/10 text-destructive border-destructive/20"
-          >
-            <XCircle className="h-3 w-3 mr-1" />
-            Vazio
-          </Badge>
-        );
-      case "partial":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-warning/10 text-warning border-warning/20"
-          >
-            <AlertCircle className="h-3 w-3 mr-1" />
-            Parcial
-          </Badge>
-        );
-      case "full":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-success/10 text-success border-success/20"
-          >
-            <CheckCircle2 className="h-3 w-3 mr-1" />
-            Completo
-          </Badge>
-        );
-      default:
-        return null;
-    }
-  };
-
-  // Renderizar igreja do líder
   const getLeaderChurch = (leaderId: string) => {
     const leader = leaders.find((l) => l.id === leaderId);
     if (!leader) return "";
@@ -551,10 +304,7 @@ export default function AdminDashboard() {
         <div className="flex flex-col items-center space-y-4 text-center">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-primary"></div>
           <p className="text-sm md:text-base text-muted-foreground">
-            Carregando dashboard...
-          </p>
-          <p className="text-xs text-muted-foreground max-w-xs">
-            Preparando estatísticas e dados do evento 40 Dias de Oração
+            Carregando Dashboard...
           </p>
         </div>
       </div>
@@ -627,7 +377,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Link oculto para download de CSV */}
         <a ref={csvLinkRef} style={{ display: "none" }} />
 
         <Tabs
@@ -656,9 +405,7 @@ export default function AdminDashboard() {
             </TabsList>
           </div>
 
-          {/* Tab: Visão Geral */}
           <TabsContent value="overview" className="space-y-6">
-            {/* Cards de estatísticas */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card>
                 <CardHeader className="pb-2">
@@ -672,16 +419,24 @@ export default function AdminDashboard() {
                       {stats?.totalLeaders || 0}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Meta: 120
+                      Meta mínima: {stats.totalPrayerTurns}
                     </div>
                   </div>
                   <Progress
-                    value={stats?.leadersPercentage || 0}
+                    value={Math.round(
+                      ((stats?.totalLeaders || 0) /
+                        (stats?.totalPrayerTurns || 1)) *
+                        100
+                    )}
                     className="h-2 mt-2"
                   />
                   <p className="text-xs text-muted-foreground mt-2">
-                    {Math.round(stats?.leadersPercentage || 0)}% da meta
-                    atingida
+                    {Math.round(
+                      ((stats?.totalLeaders || 0) /
+                        (stats?.totalPrayerTurns || 1)) *
+                        100
+                    ) ?? 0}
+                    % da meta atingida
                   </p>
                 </CardContent>
               </Card>
@@ -695,22 +450,20 @@ export default function AdminDashboard() {
                 <CardContent>
                   <div className="flex items-baseline justify-between">
                     <div className="text-3xl font-bold">
-                      {stats?.filledShifts || 0}
+                      {stats?.filledPrayerTurns || 0}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Total: {stats?.totalShifts || 0}
+                      Total: {stats?.totalPrayerTurns || 0}
                     </div>
                   </div>
                   <Progress
-                    value={
-                      ((stats?.filledShifts || 0) / (stats?.totalShifts || 1)) *
-                      100
-                    }
+                    value={stats.shiftsPercentage}
                     className="h-2 mt-2"
                   />
                   <p className="text-xs text-muted-foreground mt-2">
                     {Math.round(
-                      ((stats?.filledShifts || 0) / (stats?.totalShifts || 1)) *
+                      ((stats?.filledPrayerTurns || 0) /
+                        (stats?.totalPrayerTurns || 1)) *
                         100
                     )}
                     % dos horários completos
@@ -727,16 +480,16 @@ export default function AdminDashboard() {
                 <CardContent>
                   <div className="flex items-baseline justify-between">
                     <div className="text-3xl font-bold">
-                      {stats?.partialShifts || 0}
+                      {stats?.partialPrayerTurns || 0}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Total: {stats?.totalShifts || 0}
+                      Total: {stats?.totalPrayerTurns || 0}
                     </div>
                   </div>
                   <Progress
                     value={
-                      ((stats?.partialShifts || 0) /
-                        (stats?.totalShifts || 1)) *
+                      ((stats?.partialPrayerTurns || 0) /
+                        (stats?.totalPrayerTurns || 1)) *
                       100
                     }
                     className="h-2 mt-2"
@@ -744,8 +497,8 @@ export default function AdminDashboard() {
                   <div className="flex justify-between items-center mt-2">
                     <p className="text-xs text-muted-foreground">
                       {Math.round(
-                        ((stats?.partialShifts || 0) /
-                          (stats?.totalShifts || 1)) *
+                        ((stats?.partialPrayerTurns || 0) /
+                          (stats?.totalPrayerTurns || 1)) *
                           100
                       )}
                       % dos horários
@@ -771,22 +524,24 @@ export default function AdminDashboard() {
                 <CardContent>
                   <div className="flex items-baseline justify-between">
                     <div className="text-3xl font-bold">
-                      {stats?.emptyShifts || 0}
+                      {stats?.emptyPrayerTurns || 0}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Total: {stats?.totalShifts || 0}
+                      Total: {stats?.totalPrayerTurns || 0}
                     </div>
                   </div>
                   <Progress
                     value={
-                      ((stats?.emptyShifts || 0) / (stats?.totalShifts || 1)) *
+                      ((stats?.emptyPrayerTurns || 0) /
+                        (stats?.totalPrayerTurns || 1)) *
                       100
                     }
                     className="h-2 mt-2"
                   />
                   <p className="text-xs text-muted-foreground mt-2">
                     {Math.round(
-                      ((stats?.emptyShifts || 0) / (stats?.totalShifts || 1)) *
+                      ((stats?.emptyPrayerTurns || 0) /
+                        (stats?.totalPrayerTurns || 1)) *
                         100
                     )}
                     % dos horários sem líderes
@@ -795,7 +550,6 @@ export default function AdminDashboard() {
               </Card>
             </div>
 
-            {/* Gráficos e recomendações */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card className="lg:col-span-2">
                 <CardHeader>
@@ -810,7 +564,7 @@ export default function AdminDashboard() {
                       <div className="flex justify-between text-sm">
                         <span>Completos</span>
                         <span className="font-medium">
-                          {stats?.filledShifts || 0}
+                          {stats?.filledPrayerTurns || 0}
                         </span>
                       </div>
                       <div className="h-5 bg-muted rounded-full overflow-hidden">
@@ -818,8 +572,8 @@ export default function AdminDashboard() {
                           className="h-full bg-success"
                           style={{
                             width: `${
-                              ((stats?.filledShifts || 0) /
-                                (stats?.totalShifts || 1)) *
+                              ((stats?.filledPrayerTurns || 0) /
+                                (stats?.totalPrayerTurns || 1)) *
                               100
                             }%`,
                           }}
@@ -829,7 +583,7 @@ export default function AdminDashboard() {
                       <div className="flex justify-between text-sm">
                         <span>Parciais</span>
                         <span className="font-medium">
-                          {stats?.partialShifts || 0}
+                          {stats?.partialPrayerTurns || 0}
                         </span>
                       </div>
                       <div className="h-5 bg-muted rounded-full overflow-hidden">
@@ -837,8 +591,8 @@ export default function AdminDashboard() {
                           className="h-full bg-warning"
                           style={{
                             width: `${
-                              ((stats?.partialShifts || 0) /
-                                (stats?.totalShifts || 1)) *
+                              ((stats?.partialPrayerTurns || 0) /
+                                (stats?.totalPrayerTurns || 1)) *
                               100
                             }%`,
                           }}
@@ -848,7 +602,7 @@ export default function AdminDashboard() {
                       <div className="flex justify-between text-sm">
                         <span>Vazios</span>
                         <span className="font-medium">
-                          {stats?.emptyShifts || 0}
+                          {stats?.emptyPrayerTurns || 0}
                         </span>
                       </div>
                       <div className="h-5 bg-muted rounded-full overflow-hidden">
@@ -856,8 +610,8 @@ export default function AdminDashboard() {
                           className="h-full bg-destructive"
                           style={{
                             width: `${
-                              ((stats?.emptyShifts || 0) /
-                                (stats?.totalShifts || 1)) *
+                              ((stats?.emptyPrayerTurns || 0) /
+                                (stats?.totalPrayerTurns || 1)) *
                               100
                             }%`,
                           }}
@@ -876,7 +630,6 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       </div>
-                      {/* Círculo de progresso simulado */}
                       <svg width="100%" height="100%" viewBox="0 0 100 100">
                         <circle
                           cx="50"
@@ -914,25 +667,27 @@ export default function AdminDashboard() {
                 <CardContent className="p-0">
                   <ScrollArea className="h-[300px]">
                     <div className="px-4 py-2">
-                      {getRecommendedShifts().map((shift) => (
-                        <div
-                          key={shift.id}
-                          className="py-2 border-b last:border-0 flex justify-between items-center"
-                        >
-                          <div>
-                            <div className="font-medium">
-                              {format(shift.date, "dd/MM", { locale: ptBR })} •{" "}
-                              {shift.startTime}-{shift.endTime}
+                      {getRecommendedShifts().map((shift) => {
+                        return (
+                          <div
+                            key={shift.id}
+                            className="py-2 border-b last:border-0 flex justify-between items-center"
+                          >
+                            <div>
+                              <div className="font-medium">
+                                {Weekday[shift.weekday]} • {shift.startTime} -{" "}
+                                {shift.endTime}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                {shift.status === "empty"
+                                  ? "Sem líderes"
+                                  : `${shift.leaders.length} líder(es)`}
+                              </div>
                             </div>
-                            <div className="text-sm text-muted-foreground">
-                              {shift.status === "empty"
-                                ? "Sem líderes"
-                                : `${shift.leaders.length} líder(es)`}
-                            </div>
+                            <RenderShiftStatus status={shift.status} />
                           </div>
-                          <div>{renderShiftStatus(shift.status)}</div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </ScrollArea>
                 </CardContent>
@@ -945,7 +700,6 @@ export default function AdminDashboard() {
               </Card>
             </div>
 
-            {/* Testemunhos recentes */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div>
@@ -991,7 +745,6 @@ export default function AdminDashboard() {
             </Card>
           </TabsContent>
 
-          {/* Tab: Turnos */}
           <TabsContent value="shifts" className="space-y-6">
             <Card>
               <CardHeader>
@@ -1026,15 +779,18 @@ export default function AdminDashboard() {
                     </Button>
 
                     <Select value={dateFilter} onValueChange={setDateFilter}>
-                      <SelectTrigger className="h-9 flex-1 min-w-[120px]">
+                      <SelectTrigger className="h-9 flex-1 ">
                         <Calendar className="h-4 w-4 mr-2 md:mr-1" />
                         <SelectValue placeholder="Data" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Todas as datas</SelectItem>
-                        <SelectItem value="today">Hoje</SelectItem>
-                        <SelectItem value="tomorrow">Amanhã</SelectItem>
-                        <SelectItem value="thisWeek">Esta semana</SelectItem>
+                        <SelectItem value={"0"}>Domingo</SelectItem>
+                        <SelectItem value={"1"}>Segunda</SelectItem>
+                        <SelectItem value={"2"}>Terça</SelectItem>
+                        <SelectItem value="3">Quarta</SelectItem>
+                        <SelectItem value="4">Quinta</SelectItem>
+                        <SelectItem value="5">Sexta</SelectItem>
+                        <SelectItem value="6">Sábado</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -1060,7 +816,7 @@ export default function AdminDashboard() {
                       className="h-9 w-9 ml-auto"
                       onClick={() => {
                         setSearchTerm("");
-                        setDateFilter("all");
+                        setDateFilter("1");
                         setStatusFilter("all");
                         setChurchFilter("all");
                         setShowSingleLeaderShifts(false);
@@ -1072,12 +828,11 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="rounded-md border overflow-hidden">
-                  {/* Versão para desktop */}
                   <div className="hidden md:block">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Data</TableHead>
+                          <TableHead>Dias da Semana</TableHead>
                           <TableHead>Horário</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Líderes</TableHead>
@@ -1094,19 +849,14 @@ export default function AdminDashboard() {
                             <TableRow key={shift.id}>
                               <TableCell>
                                 <div className="font-medium">
-                                  {format(shift.date, "dd/MM/yyyy", {
-                                    locale: ptBR,
-                                  })}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {format(shift.date, "EEEE", { locale: ptBR })}
+                                  {Helpers.getWeekdayName(shift.weekday)}
                                 </div>
                               </TableCell>
                               <TableCell>
                                 {shift.startTime} - {shift.endTime}
                               </TableCell>
                               <TableCell>
-                                {renderShiftStatus(shift.status)}
+                                <RenderShiftStatus status={shift.status} />
                               </TableCell>
                               <TableCell>
                                 {shift.leaders.length > 0 ? (
@@ -1169,7 +919,6 @@ export default function AdminDashboard() {
                     </Table>
                   </div>
 
-                  {/* Versão para mobile (cards) */}
                   <div className="md:hidden">
                     {(showSingleLeaderShifts
                       ? singleLeaderShifts
@@ -1184,16 +933,12 @@ export default function AdminDashboard() {
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <div className="font-medium text-sm">
-                                {format(shift.date, "dd/MM/yyyy", {
-                                  locale: ptBR,
-                                })}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                {format(shift.date, "EEEE", { locale: ptBR })}
+                                {Helpers.getWeekdayName(shift.weekday)}
                               </div>
                             </div>
                             <div className="flex items-center">
-                              {renderShiftStatus(shift.status)}
+                              <RenderShiftStatus status={shift.status} />
+
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button
@@ -1296,8 +1041,7 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Tab: Líderes */}
+          {/* 
           <TabsContent value="leaders" className="space-y-6">
             <Card>
               <CardHeader>
@@ -1426,7 +1170,6 @@ export default function AdminDashboard() {
             </Card>
           </TabsContent>
 
-          {/* Tab: Relatórios */}
           <TabsContent value="reports" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
@@ -1567,10 +1310,9 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
 
-        {/* Modal para horários com apenas um líder */}
         <Dialog
           open={showSingleLeaderShifts}
           onOpenChange={setShowSingleLeaderShifts}
@@ -1584,15 +1326,13 @@ export default function AdminDashboard() {
             </DialogHeader>
             <div className="py-4">
               <div className="rounded-md border overflow-hidden">
-                {/* Versão para desktop */}
                 <div className="hidden md:block">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Data</TableHead>
+                        <TableHead>Dia da Semana</TableHead>
                         <TableHead>Horário</TableHead>
                         <TableHead>Líder Atual</TableHead>
-                        <TableHead>Igreja</TableHead>
                         <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -1601,23 +1341,24 @@ export default function AdminDashboard() {
                         <TableRow key={shift.id}>
                           <TableCell>
                             <div className="font-medium">
-                              {format(shift.date, "dd/MM/yyyy", {
-                                locale: ptBR,
-                              })}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {format(shift.date, "EEEE", { locale: ptBR })}
+                              {Helpers.getWeekdayName(shift.weekday)}
                             </div>
                           </TableCell>
                           <TableCell>
                             {shift.startTime} - {shift.endTime}
                           </TableCell>
                           <TableCell>
-                            {shift.leaders[0]?.name || "Sem líder"}
+                            <div className="flex gap-2  items-center font-medium">
+                              <Avatar className="h-8 w-8 rounded-full">
+                                <AvatarImage src={shift.leaders[0].imageUrl} />
+                                <AvatarFallback className="rounded-full">
+                                  {Helpers.getInitials(shift.leaders[0].name)}
+                                </AvatarFallback>
+                              </Avatar>
+                              {shift.leaders[0]?.name || "Sem líder"}
+                            </div>
                           </TableCell>
-                          <TableCell>
-                            {getLeaderChurch(shift.leaders[0]?.id || "")}
-                          </TableCell>
+                          {/*  precisa criar a funcionalidade para adicionar lider */}
                           <TableCell className="text-right">
                             <Button variant="outline" size="sm">
                               <UserPlus className="h-4 w-4 mr-2" />
@@ -1630,7 +1371,6 @@ export default function AdminDashboard() {
                   </Table>
                 </div>
 
-                {/* Versão para mobile (cards) */}
                 <div className="md:hidden">
                   {singleLeaderShifts.slice(0, 10).map((shift) => (
                     <div
@@ -1640,10 +1380,10 @@ export default function AdminDashboard() {
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <div className="font-medium text-sm">
-                            {format(shift.date, "dd/MM/yyyy", { locale: ptBR })}
+                            {Helpers.getWeekdayName(shift.weekday)}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {format(shift.date, "EEEE", { locale: ptBR })}
+                            {Weekday[shift.weekday]}
                           </div>
                         </div>
                         <Badge

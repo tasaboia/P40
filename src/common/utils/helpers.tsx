@@ -1,3 +1,5 @@
+import { Weekday } from "../contracts/week/schedule";
+
 export class Helpers {
   static getInitials(fullName: string): string {
     const nameParts = fullName.split(" ");
@@ -56,4 +58,38 @@ export class Helpers {
 
     return now >= turnStart && now <= turnEnd;
   };
+
+  static formatTime(timeString) {
+    if (!timeString) return "";
+    const [hours, minutes] = timeString.split(":");
+    return `${hours}:${minutes}`;
+  }
+
+  static formatDate(date) {
+    if (!date) return "";
+    const d = new Date(date);
+    return d.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
+
+  static formatPercentage(value) {
+    return `${Math.round(value)}%`;
+  }
+
+  static getWeekdayName(weekdayIndex: number) {
+    const days: Weekday[] = [
+      Weekday.Sun,
+      Weekday.Mon,
+      Weekday.Tue,
+      Weekday.Wed,
+      Weekday.Thu,
+      Weekday.Fri,
+      Weekday.Sat,
+    ];
+
+    return days[weekdayIndex];
+  }
 }
