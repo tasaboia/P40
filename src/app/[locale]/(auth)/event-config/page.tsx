@@ -22,53 +22,26 @@ import {
 import { toast } from "@p40/hooks/use-toast";
 import * as UI from "@p40/components/ui/index";
 import { cn } from "@p40/lib/utils";
-
-// Tipos
-interface EventConfig {
-  id: string;
-  name: string;
-  description: string;
-  churchId: string;
-  churchName: string;
-  startDate: Date;
-  endDate: Date;
-  leadersPerShift: number;
-  allowShiftChange: boolean;
-  eventType: "shift" | "clock";
-  shiftDuration: number;
-}
-
-interface Church {
-  id: string;
-  name: string;
-  location: string;
-}
-
-interface PrayerTopic {
-  id: string;
-  day: number;
-  title: string;
-  description: string;
-  imageUrl: string | null;
-  date: Date;
-}
+import { EventConfigClient } from "@p40/services/event-config/event-config-client.service";
+import { Church, PrayerTopic } from "@p40/services/event-config/types";
 
 export default function EventConfigPage() {
   const router = useRouter();
+  const eventConfigClient = new EventConfigClient();
 
   // Estado para os dados do evento
-  const [eventConfig, setEventConfig] = useState<EventConfig>({
-    id: "1",
-    name: "40 Dias de Oração",
-    description: "Evento de oração contínua durante 40 dias",
-    churchId: "1",
-    churchName: "Igreja Zion Central",
-    startDate: new Date(2024, 3, 1, 0, 0, 0), // 1 de abril de 2024
-    endDate: new Date(2024, 4, 10, 23, 59, 59), // 10 de maio de 2024
-    leadersPerShift: 2,
+  const [eventConfig, setEventConfig] = useState({
+    id: "",
+    name: "",
+    description: "",
+    churchId: "",
+    churchName: "",
+    startDate: new Date(),
+    endDate: new Date(),
+    leadersPerShift: 0,
     allowShiftChange: true,
-    eventType: "shift",
-    shiftDuration: 60,
+    eventType: "",
+    shiftDuration: 0,
   });
 
   // Estado para as pautas de oração
@@ -77,6 +50,27 @@ export default function EventConfigPage() {
   const [activeTab, setActiveTab] = useState("general");
   const [church, setChurch] = useState<Church | null>(null);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [eventConfigData] = await Promise.all([
+          eventConfigClient.getEventConfig(),
+        ]);
+        setEventConfig({
+          ...eventConfigData.data,
+          startDate: new Date(eventConfigData.data.startDate),
+          endDate: new Date(eventConfigData.data.endDate),
+        });
+      } catch (error) {
+        console.error("Erro ao carregar dados do dashboard:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
   // Carregar dados simulados
   useEffect(() => {
     // Simular carregamento de dados da igreja
@@ -133,7 +127,7 @@ export default function EventConfigPage() {
   const handleSelectChange = (value: string) => {
     setEventConfig((prev) => ({
       ...prev,
-      eventType: value as "shift" | "clock",
+      eventType: value as "SHIFT" | "CLOCK",
     }));
   };
 
@@ -395,8 +389,8 @@ export default function EventConfigPage() {
                         <UI.SelectValue placeholder="Selecione o tipo" />
                       </UI.SelectTrigger>
                       <UI.SelectContent>
-                        <UI.SelectItem value="shift">Turnos</UI.SelectItem>
-                        <UI.SelectItem value="clock">
+                        <UI.SelectItem value="SHIFT">Turnos</UI.SelectItem>
+                        <UI.SelectItem value="CLOCK">
                           Relógio de Oração
                         </UI.SelectItem>
                       </UI.SelectContent>
@@ -478,24 +472,17 @@ export default function EventConfigPage() {
                       </div>
                       <div>
                         <span className="text-muted-foreground">
-                          Total de turnos:
+                          Total de turnos por semana:
                         </span>{" "}
-                        <UI.Badge variant="outline">
-                          {Math.ceil(
-                            (totalDays * 24 * 60) / eventConfig.shiftDuration
-                          )}
-                        </UI.Badge>
+                        <UI.Badge variant="outline">{7 * 24}</UI.Badge>
                       </div>
                       <div>
                         <span className="text-muted-foreground">
-                          Líderes necessários:
+                          Líderes necessário para evento totalmente preenchido:
                         </span>{" "}
                         <UI.Badge variant="outline" className="bg-primary/10">
                           <Users className="h-3 w-3 mr-1" />
-                          {eventConfig.leadersPerShift *
-                            Math.ceil(
-                              (totalDays * 24 * 60) / eventConfig.shiftDuration
-                            )}
+                          {eventConfig.leadersPerShift * 7 * 24}
                         </UI.Badge>
                       </div>
                     </div>
@@ -506,7 +493,7 @@ export default function EventConfigPage() {
           </UI.TabsContent>
 
           <UI.TabsContent value="topics" className="space-y-6">
-            <UI.Card>
+            {/* <UI.Card>
               <UI.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div>
                   <UI.CardTitle>Pautas Diárias de Oração</UI.CardTitle>
@@ -644,7 +631,6 @@ export default function EventConfigPage() {
                             Prévia da imagem:
                           </p>
                           <div className="relative aspect-video w-full max-w-xs overflow-hidden rounded-md border">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={topic.imageUrl || "/placeholder.svg"}
                               alt={`Imagem para ${topic.title}`}
@@ -666,7 +652,7 @@ export default function EventConfigPage() {
                   )}
                 </div>
               </UI.CardContent>
-            </UI.Card>
+            </UI.Card> */}
           </UI.TabsContent>
         </UI.Tabs>
 

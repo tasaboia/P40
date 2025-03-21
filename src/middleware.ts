@@ -5,6 +5,7 @@ import { auth } from "../auth";
 
 const intlMiddleware = createMiddleware(routing);
 const publicPages = ["/", "/login", "/leaders-onboarding"];
+const privetePages = ["/event-config", "/schedule", "/dashboard"];
 
 const availableLocales = routing?.locales || ["en", "pt", "es"];
 
