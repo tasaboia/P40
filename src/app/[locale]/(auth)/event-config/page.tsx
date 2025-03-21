@@ -7,63 +7,49 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import {
-  CalendarIcon,
-  Clock,
-  Save,
-  X,
-  Upload,
-  Plus,
-  Trash2,
-  Info,
-  Building,
-  Users,
-} from "lucide-react";
+import { CalendarIcon, Clock, Save, Info, Building, Users } from "lucide-react";
 import * as UI from "@p40/components/ui/index";
 import { cn } from "@p40/lib/utils";
 import { EventConfigClient } from "@p40/services/event-config/event-config-client.service";
 import { PrayerTopic } from "@p40/services/event-config/types";
 import { useToast } from "@p40/hooks/use-toast";
-import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 export default function EventConfigPage() {
   const { toast } = useToast();
   const router = useRouter();
   const eventConfigClient = new EventConfigClient();
-
-  const {
-    data: eventConfigData,
-    isLoading: isLoadingEventConfig,
-    error,
-  } = useQuery({
-    queryKey: ["eventConfig"],
-    queryFn: () => eventConfigClient.getEventConfig(),
-  });
-
-  const {
-    data: churchData,
-    isLoading: isLoadingChurch,
-    error: churchError,
-  } = useQuery({
-    queryKey: ["church", eventConfigData?.churchId],
-    queryFn: () => eventConfigClient.getChurch(eventConfigData?.churchId),
-    enabled: !!eventConfigData?.churchId,
-  });
-
   const [prayerTopics, setPrayerTopics] = useState<PrayerTopic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("general");
-  const [eventConfig, setEventConfig] = useState(eventConfigData);
-  const [church, setChurch] = useState(churchData);
+  const [eventConfig, setEventConfig] = useState({
+    id: "",
+    name: "",
+    description: "",
+    churchId: "",
+    churchName: "",
+    startDate: new Date(),
+    endDate: new Date(),
+    leadersPerShift: 0,
+    allowShiftChange: true,
+    eventType: "",
+    shiftDuration: 0,
+  });
+
+  const [church, setChurch] = useState({
+    id: "",
+    name: "",
+    location: "",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [eventConfigData, churchData] = await Promise.all([
-          ,
-          eventConfigClient.getChurch("794dd71a-0213-4e8d-a3ce-3235fa2942b3"),
-        ]);
+        const eventConfigData = await eventConfigClient.getEventConfig();
+        const churchData = await eventConfigClient.getChurch(
+          eventConfigData.data.churchId
+        );
         setEventConfig({
           ...eventConfigData.data,
           startDate: new Date(eventConfigData.data.startDate),

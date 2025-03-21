@@ -1,4 +1,3 @@
-"use client";
 import { Weekday } from "@p40/common/contracts/week/schedule";
 import {
   Tabs,
@@ -9,27 +8,20 @@ import {
 import DayList from "./day-list";
 import { today } from "@p40/common/utils/schedule";
 import { getAllData } from "@p40/services/dashboard/dashboard-all";
-import { ErrorHandler } from "../error-handler";
-import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
-import { Suspense, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 
-export default function WeekTab({ userId }: { userId: string }) {
+export default function WeekTab({
+  event,
+  prayerTurns,
+  turns,
+  user,
+}: {
+  event: any;
+  prayerTurns: any;
+  turns: any;
+  user: any;
+}) {
   const t = useTranslations("common");
-
-  const {
-    data: dashboard,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["scheduleData", userId],
-    queryFn: () => getAllData(userId),
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-  });
-
   return (
     <Tabs defaultValue={today}>
       <TabsList className="sticky top-0 z-10 w-full">
@@ -46,16 +38,14 @@ export default function WeekTab({ userId }: { userId: string }) {
         const dayAbbr = key as keyof typeof Weekday;
         return (
           <TabsContent key={dayAbbr} value={dayAbbr}>
-            {!isLoading && (
-              <DayList
-                weekAbbr={Weekday[dayAbbr]}
-                weekday={Object.values(Weekday).indexOf(Weekday[dayAbbr])}
-                event={dashboard?.data?.event}
-                prayerTurns={dashboard?.data?.prayerTurns}
-                turns={dashboard?.data?.turns}
-                user={dashboard?.data?.user}
-              />
-            )}
+            <DayList
+              weekAbbr={Weekday[dayAbbr]}
+              weekday={Object.values(Weekday).indexOf(Weekday[dayAbbr])}
+              event={event}
+              prayerTurns={prayerTurns}
+              turns={turns}
+              user={user}
+            />
           </TabsContent>
         );
       })}

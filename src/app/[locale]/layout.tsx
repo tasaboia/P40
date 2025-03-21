@@ -10,6 +10,7 @@ import BaseLayout from "@p40/components/custom/base-layout/base-layout";
 import { Providers } from "../providers";
 import { Inter } from "next/font/google";
 import { clsx } from "clsx";
+import { Toaster } from "@p40/components/ui";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -54,6 +55,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <Providers>
           <BaseLayout locale={locale} messages={messages}>
             {children}
+            <Toaster />
           </BaseLayout>
         </Providers>
       </body>

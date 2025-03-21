@@ -211,7 +211,6 @@ export function TurnItem({
                 </Button>
               ) : (
                 <React.Fragment>
-                  {" "}
                   {(!turnItem?.leaders ||
                     turnItem?.leaders.length <
                       event.maxParticipantsPerTurn) && (
