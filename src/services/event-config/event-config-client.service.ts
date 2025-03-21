@@ -39,9 +39,9 @@ export class EventConfigClient {
       };
     }
   }
-  async getChurch() {
+  async getChurch(churchId: string) {
     try {
-      const data = await api.get("/api/church");
+      const data = await api.get(`/api/church?churchId=${churchId}`);
       return data.data;
     } catch (error) {
       console.error("Erro ao buscar estatísticas:", error);

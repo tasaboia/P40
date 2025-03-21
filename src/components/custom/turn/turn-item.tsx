@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarImage } from "@p40/components/ui/avatar";
-import { Clock, Loader2, MessageCircle, Plus } from "lucide-react";
+import { Clock, Leaf, Loader2, MessageCircle, Plus } from "lucide-react";
 import { Helpers } from "@p40/common/utils/helpers";
 import { PrayerTurnResponse } from "@p40/common/contracts/user/user";
 import {
@@ -122,6 +122,7 @@ export function TurnItem({
           (item) => item.startTime == turn.startTime
         );
 
+        console.log(turnItem);
         const weekdayIndex = Object.values(Weekday).indexOf(Weekday[weekday]);
 
         return (
@@ -175,10 +176,7 @@ export function TurnItem({
                       </p>
 
                       <Link
-                        href={`https://wa.me/${leader.whatsapp.replace(
-                          /\D/g,
-                          ""
-                        )}`}
+                        href={`https://wa.me/${leader.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-muted-foreground flex items-center gap-1 hover:text-green-600 transition"

@@ -68,7 +68,7 @@ model Event {
   checkIns   CheckIn[]    
   prayerTopics              DailyPrayerTopic[]
   maxParticipantsPerTurn    Int?    @default(2)     
-  shiftDuration             Int?    @default(60) //em minutos  
+  shiftDuration             Int?    @default(60)  
   createdAt                 DateTime @default(now())
   updatedAt                 DateTime @updatedAt
 }
@@ -100,7 +100,6 @@ model UserShift {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  @@unique([userId, prayerTurnId], name: "user_prayerTurn_unique")
 }
 
 model User {

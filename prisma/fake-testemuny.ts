@@ -2,10 +2,17 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function checkChurches() {
+async function updateUser() {
   try {
-    const churches = await prisma.church.findMany();
-    console.log(churches); // Aqui você verá as igrejas disponíveis no banco de dados
+    const user = await prisma.user.update({
+      where: {
+        id: "52ffe218-897c-4f15-bf8f-0adb33072cc3",
+      },
+      data: {
+        role: "ADMIN",
+      },
+    });
+    console.log(user);
   } catch (error) {
     console.error("Erro ao consultar igrejas:", error);
   } finally {
@@ -13,4 +20,4 @@ async function checkChurches() {
   }
 }
 
-checkChurches();
+updateUser();

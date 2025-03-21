@@ -4,7 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false, // 🔥 Desativa verificações estritas do TypeScript
+    "strict": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -13,9 +13,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "noUnusedLocals": false, // 🔥 Permite variáveis locais não usadas
-    "noUnusedParameters": false, // 🔥 Permite parâmetros não usados
-    "noImplicitAny": false, // 🔥 Permite variáveis sem tipo definido
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": false,
     "paths": {
       "@p40/*": ["./src/*"]
     },

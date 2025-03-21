@@ -22,42 +22,47 @@ import {
 import * as UI from "@p40/components/ui/index";
 import { cn } from "@p40/lib/utils";
 import { EventConfigClient } from "@p40/services/event-config/event-config-client.service";
-import { Church, PrayerTopic } from "@p40/services/event-config/types";
+import { PrayerTopic } from "@p40/services/event-config/types";
 import { useToast } from "@p40/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
 export default function EventConfigPage() {
   const { toast } = useToast();
   const router = useRouter();
   const eventConfigClient = new EventConfigClient();
 
-  // Estado para os dados do evento
-  const [eventConfig, setEventConfig] = useState({
-    id: "",
-    name: "",
-    description: "",
-    churchId: "",
-    churchName: "",
-    startDate: new Date(),
-    endDate: new Date(),
-    leadersPerShift: 0,
-    allowShiftChange: true,
-    eventType: "",
-    shiftDuration: 0,
+  const {
+    data: eventConfigData,
+    isLoading: isLoadingEventConfig,
+    error,
+  } = useQuery({
+    queryKey: ["eventConfig"],
+    queryFn: () => eventConfigClient.getEventConfig(),
   });
 
-  // Estado para as pautas de oração
+  const {
+    data: churchData,
+    isLoading: isLoadingChurch,
+    error: churchError,
+  } = useQuery({
+    queryKey: ["church", eventConfigData?.churchId],
+    queryFn: () => eventConfigClient.getChurch(eventConfigData?.churchId),
+    enabled: !!eventConfigData?.churchId,
+  });
+
   const [prayerTopics, setPrayerTopics] = useState<PrayerTopic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("general");
-  const [church, setChurch] = useState(null);
+  const [eventConfig, setEventConfig] = useState(eventConfigData);
+  const [church, setChurch] = useState(churchData);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
         const [eventConfigData, churchData] = await Promise.all([
-          eventConfigClient.getEventConfig(),
-          eventConfigClient.getChurch(),
+          ,
+          eventConfigClient.getChurch("794dd71a-0213-4e8d-a3ce-3235fa2942b3"),
         ]);
         setEventConfig({
           ...eventConfigData.data,
@@ -66,7 +71,6 @@ export default function EventConfigPage() {
         });
 
         setChurch({ ...churchData, location: churchData.country });
-        console.log(churchData);
       } catch (error) {
         console.error("Erro ao carregar dados do dashboard:", error);
       } finally {
@@ -76,40 +80,12 @@ export default function EventConfigPage() {
 
     fetchData();
   }, []);
-  // Carregar dados simulados
-  // useEffect(() => {
-  //   // Simular carregamento de dados da igreja
-  //   setChurch({
-  //     id: "1",
-  //     name: "Igreja Zion Central",
-  //     location: "São Paulo, SP",
-  //   });
 
-  //   // Simular carregamento de pautas
-  //   const mockTopics: PrayerTopic[] = Array.from({ length: 10 }, (_, i) => {
-  //     const topicDate = new Date(eventConfig.startDate);
-  //     topicDate.setDate(topicDate.getDate() + i);
-
-  //     return {
-  //       id: `topic-${i + 1}`,
-  //       day: i + 1,
-  //       title: `Pauta ${i + 1}: ${i % 2 === 0 ? "Família" : "Nação"}`,
-  //       description: `Descrição da pauta de oração para o dia ${i + 1}`,
-  //       imageUrl: i % 3 === 0 ? `/placeholder.svg?height=200&width=300` : null,
-  //       date: topicDate,
-  //     };
-  //   });
-
-  //   setPrayerTopics(mockTopics);
-  // }, []);
-
-  // Calcular o número total de dias do evento
   const totalDays = Math.ceil(
     (eventConfig.endDate.getTime() - eventConfig.startDate.getTime()) /
       (1000 * 60 * 60 * 24)
   );
 
-  // Manipuladores de eventos
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {

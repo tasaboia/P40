@@ -9,10 +9,6 @@ async function updateUserRoles() {
         role: "LEADER",
       },
     });
-
-    console.log(
-      `${updatedUsers.count} usuários atualizados para o papel LEADERS.`
-    );
   } catch (error) {
     console.error("Erro ao atualizar usuários:", error);
   } finally {

@@ -12,6 +12,7 @@ export default function DashboardWrapper({ children }) {
   const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const initialRender = useRef(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -36,7 +37,11 @@ export default function DashboardWrapper({ children }) {
         width: `${offsetWidth}px`,
       });
 
-      router.push(`${DashboardTabs[activeIndex].route}`);
+      // Só redirecione apenas quando clicar no botao de tab
+      if (initialRender.current === false) {
+        router.push(`${DashboardTabs[activeIndex].route}`);
+      }
+      initialRender.current = false;
     }
   }, [activeIndex, router]);
 

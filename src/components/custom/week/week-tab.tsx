@@ -1,3 +1,4 @@
+"use client";
 import { Weekday } from "@p40/common/contracts/week/schedule";
 import {
   Tabs,
@@ -10,26 +11,24 @@ import { today } from "@p40/common/utils/schedule";
 import { getAllData } from "@p40/services/dashboard/dashboard-all";
 import { ErrorHandler } from "../error-handler";
 import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import { Suspense, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 
-export default async function WeekTab({ userId }: { userId: string }) {
-  const t = await getTranslations("common");
+export default function WeekTab({ userId }: { userId: string }) {
+  const t = useTranslations("common");
 
-  const dashboardData = await getAllData(userId);
-
-  if (!dashboardData.success || !dashboardData.data) {
-    return (
-      <ErrorHandler
-        error={{
-          title: "Erro ao carregar dados",
-          description:
-            dashboardData.error ||
-            "Não foi possível carregar os dados da agenda",
-        }}
-      />
-    );
-  }
-
-  const { event, prayerTurns, turns, user } = dashboardData.data;
+  const {
+    data: dashboard,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["scheduleData", userId],
+    queryFn: () => getAllData(userId),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <Tabs defaultValue={today}>
@@ -47,14 +46,16 @@ export default async function WeekTab({ userId }: { userId: string }) {
         const dayAbbr = key as keyof typeof Weekday;
         return (
           <TabsContent key={dayAbbr} value={dayAbbr}>
-            <DayList
-              weekAbbr={Weekday[dayAbbr]}
-              weekday={Object.values(Weekday).indexOf(Weekday[dayAbbr])}
-              event={event}
-              prayerTurns={prayerTurns}
-              turns={turns}
-              user={user}
-            />
+            {!isLoading && (
+              <DayList
+                weekAbbr={Weekday[dayAbbr]}
+                weekday={Object.values(Weekday).indexOf(Weekday[dayAbbr])}
+                event={dashboard?.data?.event}
+                prayerTurns={dashboard?.data?.prayerTurns}
+                turns={dashboard?.data?.turns}
+                user={dashboard?.data?.user}
+              />
+            )}
           </TabsContent>
         );
       })}

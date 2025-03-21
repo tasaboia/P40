@@ -1,3 +1,5 @@
+"use client";
+
 import React, { Suspense } from "react";
 import { createTurns } from "@p40/common/utils/schedule";
 import { TurnItem } from "../turn/turn-item";
