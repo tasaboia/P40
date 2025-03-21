@@ -2,13 +2,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../auth";
 import { EventConfigService } from "@p40/services/event-config/event-config.service";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function GET() {
   try {
     const session = await auth();
 
     if (!session || !session.user) {
-      return Response.json({ message: "Não autorizado" }, { status: 401 });
+      return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
@@ -17,14 +20,14 @@ export async function GET() {
     });
 
     if (!user || !user.churchId) {
-      return Response.json(
+      return NextResponse.json(
         { message: "Igreja não encontrada" },
         { status: 404 }
       );
     }
 
     if (user.role !== "ADMIN") {
-      return Response.json(
+      return NextResponse.json(
         { message: "Apenas administradores podem acessar o dashboard" },
         { status: 403 }
       );
@@ -48,12 +51,26 @@ export async function GET() {
   }
 }
 
-export async function PATCH() {
+export async function POST(req: NextRequest) {
+  const {
+    id,
+    name,
+    description,
+    churchId,
+    churchName,
+    startDate,
+    endDate,
+    leadersPerShift,
+    allowShiftChange,
+    eventType,
+    shiftDuration,
+  } = await req.json(); // Usando `req.json()` para obter o corpo da requisição
+
   try {
     const session = await auth();
 
     if (!session || !session.user) {
-      return Response.json({ message: "Não autorizado" }, { status: 401 });
+      return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
@@ -62,25 +79,49 @@ export async function PATCH() {
     });
 
     if (!user || !user.churchId) {
-      return Response.json(
+      return NextResponse.json(
         { message: "Igreja não encontrada" },
         { status: 404 }
       );
     }
 
     if (user.role !== "ADMIN") {
-      return Response.json(
+      return NextResponse.json(
         { message: "Apenas administradores podem acessar o dashboard" },
         { status: 403 }
       );
     }
 
-    const eventConfig = new EventConfigService();
-    const config = await eventConfig.updateEventConfig(user.churchId);
+    const updatedEvent = await prisma.event.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+        description,
+        churchId,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        maxParticipantsPerTurn: leadersPerShift,
+        type: eventType,
+        shiftDuration,
+      },
+    });
+
+    if (allowShiftChange) {
+      await prisma.prayerTurn.updateMany({
+        where: {
+          eventId: updatedEvent.id,
+        },
+        data: {
+          allowChangeAfterStart: allowShiftChange,
+        },
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      data: config,
+      data: updatedEvent,
     });
   } catch (error) {
     return NextResponse.json(

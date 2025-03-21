@@ -19,13 +19,14 @@ import {
   Building,
   Users,
 } from "lucide-react";
-import { toast } from "@p40/hooks/use-toast";
 import * as UI from "@p40/components/ui/index";
 import { cn } from "@p40/lib/utils";
 import { EventConfigClient } from "@p40/services/event-config/event-config-client.service";
 import { Church, PrayerTopic } from "@p40/services/event-config/types";
+import { useToast } from "@p40/hooks/use-toast";
 
 export default function EventConfigPage() {
+  const { toast } = useToast();
   const router = useRouter();
   const eventConfigClient = new EventConfigClient();
 
@@ -48,20 +49,24 @@ export default function EventConfigPage() {
   const [prayerTopics, setPrayerTopics] = useState<PrayerTopic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("general");
-  const [church, setChurch] = useState<Church | null>(null);
+  const [church, setChurch] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [eventConfigData] = await Promise.all([
+        const [eventConfigData, churchData] = await Promise.all([
           eventConfigClient.getEventConfig(),
+          eventConfigClient.getChurch(),
         ]);
         setEventConfig({
           ...eventConfigData.data,
           startDate: new Date(eventConfigData.data.startDate),
           endDate: new Date(eventConfigData.data.endDate),
         });
+
+        setChurch({ ...churchData, location: churchData.country });
+        console.log(churchData);
       } catch (error) {
         console.error("Erro ao carregar dados do dashboard:", error);
       } finally {
@@ -72,31 +77,31 @@ export default function EventConfigPage() {
     fetchData();
   }, []);
   // Carregar dados simulados
-  useEffect(() => {
-    // Simular carregamento de dados da igreja
-    setChurch({
-      id: "1",
-      name: "Igreja Zion Central",
-      location: "São Paulo, SP",
-    });
+  // useEffect(() => {
+  //   // Simular carregamento de dados da igreja
+  //   setChurch({
+  //     id: "1",
+  //     name: "Igreja Zion Central",
+  //     location: "São Paulo, SP",
+  //   });
 
-    // Simular carregamento de pautas
-    const mockTopics: PrayerTopic[] = Array.from({ length: 10 }, (_, i) => {
-      const topicDate = new Date(eventConfig.startDate);
-      topicDate.setDate(topicDate.getDate() + i);
+  //   // Simular carregamento de pautas
+  //   const mockTopics: PrayerTopic[] = Array.from({ length: 10 }, (_, i) => {
+  //     const topicDate = new Date(eventConfig.startDate);
+  //     topicDate.setDate(topicDate.getDate() + i);
 
-      return {
-        id: `topic-${i + 1}`,
-        day: i + 1,
-        title: `Pauta ${i + 1}: ${i % 2 === 0 ? "Família" : "Nação"}`,
-        description: `Descrição da pauta de oração para o dia ${i + 1}`,
-        imageUrl: i % 3 === 0 ? `/placeholder.svg?height=200&width=300` : null,
-        date: topicDate,
-      };
-    });
+  //     return {
+  //       id: `topic-${i + 1}`,
+  //       day: i + 1,
+  //       title: `Pauta ${i + 1}: ${i % 2 === 0 ? "Família" : "Nação"}`,
+  //       description: `Descrição da pauta de oração para o dia ${i + 1}`,
+  //       imageUrl: i % 3 === 0 ? `/placeholder.svg?height=200&width=300` : null,
+  //       date: topicDate,
+  //     };
+  //   });
 
-    setPrayerTopics(mockTopics);
-  }, []);
+  //   setPrayerTopics(mockTopics);
+  // }, []);
 
   // Calcular o número total de dias do evento
   const totalDays = Math.ceil(
@@ -203,7 +208,6 @@ export default function EventConfigPage() {
     setIsLoading(true);
 
     try {
-      // Validações
       if (eventConfig.startDate >= eventConfig.endDate) {
         toast({
           title: "Erro de validação",
@@ -224,18 +228,20 @@ export default function EventConfigPage() {
         return;
       }
 
-      // Simulando envio para API
-      console.log("Enviando configurações:", { eventConfig, prayerTopics });
+      const responde = await eventConfigClient.updateEventConfig(eventConfig);
 
-      // Simular tempo de resposta
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      toast({
-        title: "Configurações salvas",
-        description: "As configurações do evento foram salvas com sucesso",
-      });
-
-      // router.push('/admin/events')
+      if (responde.data.success) {
+        toast({
+          title: "Configurações salvas",
+          description: "As configurações do evento foram salvas com sucesso",
+        });
+      } else {
+        toast({
+          title: "Erro ao salvar",
+          description: "Ocorreu um erro ao salvar as configurações",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Erro ao salvar configurações:", error);
       toast({
