@@ -2,7 +2,7 @@ import React from "react";
 import { auth } from "../../../../../auth";
 import { ErrorHandler } from "@p40/components/custom/error-handler";
 import WeekTab from "@p40/components/custom/week/week-tab";
-import { getAllData } from "@p40/services/dashboard/dashboard-all";
+import QueryProvider from "@p40/providers/query-provider";
 
 export default async function SchedulePage() {
   const session = await auth();
@@ -14,33 +14,16 @@ export default async function SchedulePage() {
           title: "Não autorizado",
           description: "Você precisa estar logado para acessar esta página",
         }}
+        showToast={true}
       />
     );
   }
-
-  const dashboardData = await getAllData(session.user.id);
-
-  if (!dashboardData) {
-    return (
-      <ErrorHandler
-        error={{
-          title: "Erro ao buscar dados",
-          description: "Tente novamente mais tarder",
-        }}
-      />
-    );
-  }
-
-  const { event, prayerTurns, turns, user } = dashboardData.data;
 
   return (
-    <div className="flex flex-col gap-4 bg-muted p-4">
-      <WeekTab
-        event={event}
-        prayerTurns={prayerTurns}
-        turns={turns}
-        user={user}
-      />
-    </div>
+    <QueryProvider>
+      <div className="flex flex-col gap-4 bg-muted p-4">
+        <WeekTab userId={session.user.id} />
+      </div>
+    </QueryProvider>
   );
 }

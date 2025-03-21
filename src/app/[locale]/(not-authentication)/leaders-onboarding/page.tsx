@@ -46,10 +46,10 @@ export default function OnboardingFlow() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col h-full bg-background">
       <main className="flex-1 flex flex-col items-center justify-between p-4">
         {!isCompleting && (
-          <div className="w-full max-w-md flex justify-between mb-4 mt-2">
+          <div className="w-full max-w-md flex justify-between mb-4 mt-6">
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
