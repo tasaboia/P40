@@ -31,3 +31,4 @@ export * from "./badge";
 export * from "./textarea";
 export * from "./calendar";
 export * from "./switch";
+export * from "./progress";

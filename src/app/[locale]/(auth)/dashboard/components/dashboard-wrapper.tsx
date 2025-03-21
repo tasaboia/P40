@@ -106,14 +106,6 @@ export default function DashboardWrapper({ children }) {
         </UI.CardContent>
       </UI.Card>
 
-      <div>
-        <h1 className="text-2xl font-bold px-6 pt-6 ">
-          {DashboardTabs[activeIndex].title}
-        </h1>
-        <span className="text-muted-foreground px-6">
-          {DashboardTabs[activeIndex].describe}
-        </span>
-      </div>
       <div className="p-2">{children}</div>
     </div>
   );
