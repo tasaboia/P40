@@ -453,7 +453,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container px-3 md:px-6 py-4 md:py-6">
+    <div className="container px-2 md:px-6 py-4 md:py-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -526,7 +526,7 @@ export default function AdminDashboard() {
           className="space-y-6"
         >
           <div className="overflow-x-auto pb-2">
-            <TabsList className="grid grid-cols-5 w-full ">
+            <TabsList className="flex w-max min-w-full whitespace-nowrap gap-2 px-1">
               <TabsTrigger value="overview" className="text-xs md:text-sm">
                 <BarChart3 className="h-4 w-4 mr-1 md:mr-2" />
                 <span>Visão Geral</span>

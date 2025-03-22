@@ -4,16 +4,23 @@ import { useState, useRef, useEffect } from "react";
 import * as UI from "@p40/components/ui/index";
 import { useRouter } from "next/navigation";
 import { DashboardTabs } from "@p40/common/constants";
+import { usePathname } from "@p40/i18n/routing";
 
 export default function DashboardWrapper({ children }) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const router = useRouter();
+  const path = usePathname();
+  const indexInicial = DashboardTabs.findIndex((tabs) =>
+    tabs.route.includes(path.replace(/\//g, ""))
+  );
+
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(indexInicial);
+  const [activeIndex, setActiveIndex] = useState(indexInicial);
+
   const [hoverStyle, setHoverStyle] = useState({});
   const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const initialRender = useRef(true);
-  const router = useRouter();
 
   useEffect(() => {
     if (hoveredIndex !== null) {
@@ -36,27 +43,12 @@ export default function DashboardWrapper({ children }) {
         left: `${offsetLeft}px`,
         width: `${offsetWidth}px`,
       });
-
-      // Só redirecione apenas quando clicar no botao de tab
       if (initialRender.current === false) {
         router.push(`${DashboardTabs[activeIndex].route}`);
       }
       initialRender.current = false;
     }
   }, [activeIndex, router]);
-
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      const overviewElement = tabRefs.current[0];
-      if (overviewElement) {
-        const { offsetLeft, offsetWidth } = overviewElement;
-        setActiveStyle({
-          left: `${offsetLeft}px`,
-          width: `${offsetWidth}px`,
-        });
-      }
-    });
-  }, []);
 
   return (
     <div
@@ -71,7 +63,6 @@ export default function DashboardWrapper({ children }) {
       >
         <UI.CardContent className="p-0">
           <div className="relative">
-            {/* Hover Highlight */}
             <div
               className="absolute h-[30px] transition-all duration-300 ease-out bg-[#0e0f1114] dark:bg-[#ffffff1a] rounded-[6px] flex items-center"
               style={{
@@ -111,7 +102,7 @@ export default function DashboardWrapper({ children }) {
         </UI.CardContent>
       </UI.Card>
 
-      <div className="p-2">{children}</div>
+      <div>{children}</div>
     </div>
   );
 }
