@@ -102,7 +102,9 @@ export function UserEdit({ user }) {
             </div>
             <SheetFooter className="flex flex-col py-4 gap-4">
               <Button type="submit" disabled={isPending}>
-                {isPending && <Loader2 className="animate-spin" />}
+                {isPending && (
+                  <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-primary"></div>
+                )}
                 {t("actions.submit")}
               </Button>
               <SheetClose asChild>

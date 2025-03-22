@@ -97,7 +97,9 @@ export function Onboarding({ user }) {
           </div>
           <DialogFooter>
             <Button type="submit" disabled={isPending}>
-              {isPending && <Loader2 className="animate-spin" />}
+              {isPending && (
+                <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-primary"></div>
+              )}
               {t("actions.submit")}
             </Button>
           </DialogFooter>

@@ -21,13 +21,13 @@ import {
   TabsList,
   TabsTrigger,
 } from "@p40/components/ui/tabs";
-import type { Shift, Testimony } from "./types";
+import type { Shift } from "./types";
 
 interface TestimonyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   shift: Shift;
-  testimonies: Testimony[];
+  testimonies: any[];
   onApproveTestimony?: (testimonyId: string) => void;
   onRejectTestimony?: (testimonyId: string) => void;
 }

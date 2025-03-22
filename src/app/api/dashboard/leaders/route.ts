@@ -1,38 +1,20 @@
 import { DashboardService } from "@p40/services/dashboard/dashboard.service";
 import { NextResponse } from "next/server";
-import { auth } from "../../../../../auth";
-import { prisma } from "../../prisma";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const churchId = searchParams.get("churchId");
   try {
-    const session = await auth();
-
-    if (!session || !session.user) {
-      return Response.json({ message: "Não autorizado" }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email as string },
-      select: { churchId: true, role: true },
-    });
-
-    if (!user || !user.churchId) {
+    if (!churchId) {
       return Response.json(
         { message: "Igreja não encontrada" },
         { status: 404 }
       );
     }
 
-    // if (user.role !== "ADMIN") {
-    //   return Response.json(
-    //     { message: "Apenas administradores podem acessar o dashboard" },
-    //     { status: 403 }
-    //   );
-    // }
-
     const dashboardService = new DashboardService();
     const singleLeadersShifts =
-      await dashboardService.getSingleLeaderAndEmptyShifts(user.churchId);
+      await dashboardService.getSingleLeaderAndEmptyShifts(churchId);
 
     return NextResponse.json({
       success: true,

@@ -25,15 +25,6 @@ export interface Church {
   location: string;
 }
 
-export interface Testimony {
-  id: string;
-  leaderId: string;
-  leaderName: string;
-  date: Date;
-  content: string;
-  approved: boolean;
-}
-
 export interface ShiftReport {
   id: string;
   shiftId: string;

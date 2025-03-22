@@ -114,7 +114,8 @@ export function TurnItem({
     <div>
       {loading && (
         <div className="w-full flex  justify-center items-center">
-          <Loader2 className="animate-spin items-center" />
+          {/* <Loader2 className="animate-spin items-center" /> */}
+          <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-primary"></div>
         </div>
       )}
       {shift.map((turn) => {

@@ -21,22 +21,21 @@ import {
   TabsTrigger,
 } from "@p40/components/ui/tabs";
 import { Input } from "@p40/components/ui/input";
-import type { Testimony } from "./types";
+import { useDashboard } from "@p40/common/context/dashboard-context";
 
 interface TestimonyListProps {
-  testimonies: Testimony[];
   onApproveTestimony: (testimonyId: string) => void;
   onRejectTestimony: (testimonyId: string) => void;
 }
 
 export function TestimonyList({
-  testimonies,
   onApproveTestimony,
   onRejectTestimony,
 }: TestimonyListProps) {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
+  const { testimonies } = useDashboard();
   // Filter testimonies based on active tab and search term
   const filteredTestimonies = testimonies.filter((testimony) => {
     const matchesTab =

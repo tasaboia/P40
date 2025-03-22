@@ -9,25 +9,18 @@ import {
   CardTitle,
 } from "@p40/components/ui/card";
 import { Button } from "@p40/components/ui/button";
-import type { Shift, Leader, Testimony } from "./types";
+import type { Shift, Leader } from "./types";
+import { useDashboard } from "@p40/common/context/dashboard-context";
 
-interface ExportDataProps {
-  shifts: Shift[];
-  leaders: Leader[];
-  testimonies: Testimony[];
-  onExportShifts: () => void;
-  onExportLeaders: () => void;
-  onExportTestimonies: () => void;
-}
-
-export function ExportData({
-  shifts,
-  leaders,
-  testimonies,
-  onExportShifts,
-  onExportLeaders,
-  onExportTestimonies,
-}: ExportDataProps) {
+export function ExportData() {
+  const {
+    shifts,
+    leaders,
+    testimonies,
+    exportExportShifts,
+    exportLeadersToCSV,
+    exportTestimoniesToCSV,
+  } = useDashboard();
   return (
     <Card>
       <CardHeader>
@@ -39,7 +32,7 @@ export function ExportData({
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button
-            onClick={onExportShifts}
+            onClick={exportExportShifts}
             className="flex items-center justify-center h-10"
           >
             <FileText className="h-4 w-4 mr-2" />
@@ -47,7 +40,7 @@ export function ExportData({
           </Button>
           <Button
             variant="outline"
-            onClick={onExportLeaders}
+            onClick={exportLeadersToCSV}
             className="flex items-center justify-center h-10"
           >
             <Users className="h-4 w-4 mr-2" />
@@ -55,7 +48,7 @@ export function ExportData({
           </Button>
           <Button
             variant="outline"
-            onClick={onExportTestimonies}
+            onClick={exportTestimoniesToCSV}
             className="flex items-center justify-center h-10"
           >
             <MessageSquareQuote className="h-4 w-4 mr-2" />

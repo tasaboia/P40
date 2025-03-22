@@ -147,7 +147,9 @@ export default function Login() {
                   className="w-full"
                   disabled={isPending}
                 >
-                  {isPending && <Loader2 className="animate-spin" />}
+                  {isPending && (
+                    <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-primary"></div>
+                  )}
                   {t("login_button")}
                 </UI.Button>
               </div>

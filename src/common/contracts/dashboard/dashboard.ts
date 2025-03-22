@@ -44,6 +44,10 @@ export interface Shift {
   weekday: number;
   status?: "empty" | "partial" | "full";
   type?: string;
+  church?: {
+    name: string;
+    id: string;
+  };
 }
 
 export type ShiftWithoutStatusAndWeekday = Omit<Shift, "weekday" | "status">;
@@ -57,7 +61,8 @@ export interface PrayerTurn {
   startTime: string;
   endTime: string;
   weekday: number;
-  type: string;
+  type?: string;
+  eventId?: string;
 }
 
 export interface Church {
@@ -77,6 +82,38 @@ export interface DashboadLeader {
 }
 
 export interface LeadersDashboardResponse extends BaseApiResponse {
-  success: boolean;
   data: DashboadLeader[];
+}
+
+export interface Testimony {
+  id: string;
+  userId: string;
+  churchId: string | null;
+  date: Date;
+  content: string;
+  approved: boolean;
+  type: TestimonyType | null;
+  prayerTurnId: string;
+  user: {
+    id: string;
+    name: string;
+  };
+
+  prayerTurn: PrayerTurn;
+}
+export interface TestimonyDashboardResponse extends BaseApiResponse {
+  data: Testimony[];
+}
+
+export enum TestimonyType {
+  HEALING = "HEALING",
+  DELIVERANCE = "DELIVERANCE",
+  TRANSFORMATION = "TRANSFORMATION",
+  SALVATION = "SALVATION",
+  BLESSING = "BLESSING",
+  PROVISION = "PROVISION",
+  MIRACLE = "MIRACLE",
+  ENCOURAGEMENT = "ENCOURAGEMENT",
+  FAITH = "FAITH",
+  PEACE = "PEACE",
 }

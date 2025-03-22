@@ -107,7 +107,9 @@ export default function Location() {
 
         {isLoading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            {/* <Loader2 className="h-8 w-8 animate-spin text-primary" />
+             */}
+            <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
           <div className="max-h-[300px] overflow-y-auto pr-2">

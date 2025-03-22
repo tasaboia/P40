@@ -6,13 +6,13 @@ import { EventConfigService } from "@p40/services/event-config/event-config.serv
 import { prisma } from "../prisma";
 
 export async function GET() {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
+  }
+
   try {
-    const session = await auth();
-
-    if (!session || !session.user) {
-      return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
-    }
-
     const user = await prisma.user.findUnique({
       where: { email: session.user.email as string },
       select: { churchId: true, role: true },

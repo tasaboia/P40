@@ -5,13 +5,36 @@ import {
   SingleLeaderShiftResponse,
   TestimonyDashboardResponse,
 } from "@p40/common/contracts/dashboard/dashboard";
-import api from "@p40/lib/axios";
 
-export class DashboardClient {
-  async getStats(churchId: string): Promise<DashboardStatsResponse | null> {
+export class DashboardServer {
+  private baseUrl: string;
+  private userId: string;
+
+  constructor(userId: string) {
+    this.baseUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+    this.userId = userId;
+  }
+
+  private async fetchWithAuth<T>(url: string): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${url}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.userId}`,
+        "x-userId": this.userId, // Adicional para garantir
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro na requisição: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
+  async getStats(): Promise<DashboardStatsResponse | null> {
     try {
-      const data = await api.get(`/api/dashboard/stats?churchId=${churchId}`);
-      return data.data;
+      return await this.fetchWithAuth("/api/dashboard/stats");
     } catch (error) {
       console.error("Erro ao buscar estatísticas:", error);
       return {
@@ -31,10 +54,9 @@ export class DashboardClient {
     }
   }
 
-  async getEventTurns(churchId: string): Promise<ShiftResponse> {
+  async getEventTurns(): Promise<ShiftResponse> {
     try {
-      const data = await api.get(`/api/dashboard/turns?churchId=${churchId}`);
-      return data.data;
+      return await this.fetchWithAuth("/api/dashboard/turns");
     } catch (error) {
       console.error("Erro ao buscar atividades recentes:", error);
       return {
@@ -45,27 +67,9 @@ export class DashboardClient {
     }
   }
 
-  async getSingleLeaderAndEmptyShifts(
-    churchId: string
-  ): Promise<SingleLeaderShiftResponse> {
+  async getSingleLeaderAndEmptyShifts(): Promise<SingleLeaderShiftResponse> {
     try {
-      const data = await api.get(`/api/dashboard/leaders?churchId=${churchId}`);
-      return data.data;
-    } catch (error) {
-      console.error("Erro ao buscar Lideres em um so horário:", error);
-      return {
-        error: error,
-        success: false,
-        data: null,
-      };
-    }
-  }
-  async getEventLeaders(churchId: string): Promise<LeadersDashboardResponse> {
-    try {
-      const data = await api.get(
-        `/api/dashboard/leaders/all?churchId=${churchId}`
-      );
-      return data.data;
+      return await this.fetchWithAuth("/api/dashboard/leaders");
     } catch (error) {
       console.error("Erro ao buscar Lideres em um so horário:", error);
       return {
@@ -76,15 +80,24 @@ export class DashboardClient {
     }
   }
 
-  async getTestemuny(churchId: string): Promise<TestimonyDashboardResponse> {
+  async getEventLeaders(): Promise<LeadersDashboardResponse> {
     try {
-      const data = await api.get(
-        `/api/dashboard/testimonies?churchId=${churchId}`
-      );
-      return data.data;
+      return await this.fetchWithAuth("/api/dashboard/leaders/all");
+    } catch (error) {
+      console.error("Erro ao buscar Lideres em um so horário:", error);
+      return {
+        error: error,
+        success: false,
+        data: null,
+      };
+    }
+  }
+
+  async getTestemuny(): Promise<TestimonyDashboardResponse> {
+    try {
+      return await this.fetchWithAuth("/api/dashboard/testimonies");
     } catch (error) {
       console.error("Erro ao buscar testemunhos:", error);
-
       return {
         error: error,
         success: false,

@@ -313,6 +313,7 @@ export class DashboardService {
             include: {
               user: {
                 select: {
+                  church: true,
                   id: true,
                   name: true,
                   imageUrl: true,
@@ -334,6 +335,10 @@ export class DashboardService {
           weekday: turn.weekday,
           endTime: turn.endTime,
           leaders: [turn.userShifts[0].user],
+          church: {
+            name: turn.userShifts[0].user.church.name,
+            id: turn.userShifts[0].user.church.id,
+          },
         };
       });
 
@@ -435,6 +440,7 @@ export class DashboardService {
       throw new Error("Erro ao buscar turnos vazios ou com 1 líder");
     }
   }
+
   async getTestemuny(churchId: string) {
     try {
       const testimonies = await prisma.testimony.findMany({
@@ -462,6 +468,29 @@ export class DashboardService {
     } catch (error) {
       console.error("Erro ao buscar turnos vazios ou com 1 líder:", error);
       throw new Error("Erro ao buscar turnos vazios ou com 1 líder");
+    }
+  }
+
+  async addLeaderToShift(leaderId: string, shiftId: string) {
+    try {
+      const existing = await prisma.userShift.findFirst({
+        where: {
+          userId: leaderId,
+          prayerTurnId: shiftId,
+        },
+      });
+
+      const newUserShift = await prisma.userShift.create({
+        data: {
+          userId: leaderId,
+          prayerTurnId: shiftId,
+        },
+      });
+
+      return { success: true, data: newUserShift };
+    } catch (error) {
+      console.error("Erro ao adicionar líder ao turno:", error);
+      return { success: false, error: error.message };
     }
   }
 }
