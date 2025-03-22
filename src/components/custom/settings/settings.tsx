@@ -50,16 +50,6 @@ export function Settings({ user, turnItens }: SettingsProps) {
           <Menu />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuItem>
-            <FileText />
-            {t("actions.daily_guidelines")}
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <MessageCircleWarning />
-            {t("actions.occurrences")}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuLabel>{t("actions.settings")}</DropdownMenuLabel>
           {turnItens?.length > 0 && (
             <TurnsUserList turnItens={turnItens} user={user} />
           )}
