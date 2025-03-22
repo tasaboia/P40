@@ -164,18 +164,12 @@ export default function AdminDashboard() {
       try {
         const [
           statsData,
-          eventsData,
-          weekdayData,
-          activitiesData,
           shiftsData,
           singleLeaderShiftsData,
           leadersData,
           testemunyData,
         ] = await Promise.all([
           dashboardClient.getStats(),
-          dashboardClient.getEventStats(),
-          dashboardClient.getWeekdayDistribution(),
-          dashboardClient.getRecentActivity(),
           dashboardClient.getEventTurns(),
           dashboardClient.getSingleLeaderAndEmptyShifts(),
           dashboardClient.getEventLeaders(),
@@ -183,7 +177,6 @@ export default function AdminDashboard() {
         ]);
 
         setStats(statsData.data);
-        setEvents(eventsData);
         setShifts(shiftsData.data);
         setSingleLeaderShifts(singleLeaderShiftsData.data);
         setLeaders(leadersData.data);

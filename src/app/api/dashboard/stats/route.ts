@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../../auth";
 import { DashboardService } from "@p40/services/dashboard/dashboard.service";
+import { prisma } from "../../prisma";
 
 export async function GET(request: NextRequest) {
   try {

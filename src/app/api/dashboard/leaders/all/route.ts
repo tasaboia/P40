@@ -1,6 +1,7 @@
 import { DashboardService } from "@p40/services/dashboard/dashboard.service";
 import { NextResponse } from "next/server";
 import { auth } from "../../../../../../auth";
+import { prisma } from "../../../prisma";
 
 export async function GET() {
   try {

@@ -1,7 +1,7 @@
 import api from "@p40/lib/axios";
 import { FailException } from "@p40/common/contracts/exceptions/exception";
-import { prisma } from "@p40/lib/prisma";
 import { Shift } from "@p40/common/contracts/dashboard/dashboard";
+import { prisma } from "@p40/app/api/prisma";
 
 export class DashboardService {
   async getStats(churchId: string) {

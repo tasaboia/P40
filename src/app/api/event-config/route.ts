@@ -2,9 +2,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../../../auth";
 import { EventConfigService } from "@p40/services/event-config/event-config.service";
-import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+import { prisma } from "../prisma";
 
 export async function GET() {
   try {
