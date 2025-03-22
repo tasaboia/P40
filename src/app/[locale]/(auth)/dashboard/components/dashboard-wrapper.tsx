@@ -7,7 +7,7 @@ import { DashboardTabs } from "@p40/common/constants";
 
 export default function DashboardWrapper({ children }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [activeIndex, setActiveIndex] = useState(1);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [hoverStyle, setHoverStyle] = useState({});
   const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" });
   const [isDarkMode, setIsDarkMode] = useState(false);
