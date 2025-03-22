@@ -122,7 +122,6 @@ export function TurnItem({
           (item) => item.startTime == turn.startTime
         );
 
-        console.log(turnItem);
         const weekdayIndex = Object.values(Weekday).indexOf(Weekday[weekday]);
 
         return (

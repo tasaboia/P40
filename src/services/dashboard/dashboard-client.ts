@@ -10,7 +10,6 @@ export class DashboardClient {
   async getStats(): Promise<DashboardStatsResponse | null> {
     try {
       const data = await api.get("/api/dashboard/stats");
-      console.log(data.data);
       return data.data;
     } catch (error) {
       console.error("Erro ao buscar estatísticas:", error);
@@ -206,7 +205,6 @@ export class DashboardClient {
   async getEventTurns(): Promise<ShiftResponse> {
     try {
       const data = await api.get("/api/dashboard/turns");
-      console.log(data);
       return data.data;
     } catch (error) {
       console.error("Erro ao buscar atividades recentes:", error);

@@ -35,7 +35,11 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
-  if (session && req.nextUrl.pathname === `/${locale}/login`) {
+  if (
+    session &&
+    session.user.churchId &&
+    req.nextUrl.pathname === `/${locale}/login`
+  ) {
     return NextResponse.redirect(new URL(`/${locale}/schedule`, req.url));
   }
 

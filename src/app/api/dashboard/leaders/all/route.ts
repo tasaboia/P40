@@ -22,12 +22,12 @@ export async function GET() {
       );
     }
 
-    if (user.role !== "ADMIN") {
-      return Response.json(
-        { message: "Apenas administradores podem acessar o dashboard" },
-        { status: 403 }
-      );
-    }
+    // if (user.role !== "ADMIN") {
+    //   return Response.json(
+    //     { message: "Apenas administradores podem acessar o dashboard" },
+    //     { status: 403 }
+    //   );
+    // }
 
     const dashboardService = new DashboardService();
     const leadersShifts = await dashboardService.getLeaders(user.churchId);
