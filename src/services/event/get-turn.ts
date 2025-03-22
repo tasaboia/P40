@@ -5,24 +5,27 @@ interface GetTurnsParams {
   weekday?: number;
   eventId: string;
   userId?: string;
+  filtered?: boolean;
 }
 
-export async function getTurns(
-  params: GetTurnsParams
-): Promise<PrayerTurnResponse[] | null> {
+export async function getTurns({
+  eventId,
+  filtered = false,
+  userId,
+  weekday,
+}: GetTurnsParams): Promise<PrayerTurnResponse[] | null> {
   try {
-    if (!params.eventId) {
+    if (!eventId) {
       throw new FailException({
         message: "O parâmetro 'eventId' é obrigatório.",
         statusCode: 400,
       });
     }
-
-    const searchParams = new URLSearchParams(
-      Object.entries(params)
-        .filter(([, value]) => value !== undefined)
-        .map(([key, value]) => [key, value!.toString()])
-    );
+    const searchParams = new URLSearchParams();
+    searchParams.append("eventId", eventId);
+    searchParams.append("filtered", filtered.toString());
+    if (userId) searchParams.append("userId", userId);
+    if (weekday) searchParams.append("weekday", weekday.toString());
 
     const response = await api.get(
       `/api/event/turn?${searchParams.toString()}`

@@ -45,7 +45,7 @@ export default async function NavUser() {
   ]);
 
   const turnItems = event?.id
-    ? await getTurns({ eventId: event?.id, userId })
+    ? await getTurns({ eventId: event?.id, userId, filtered: true })
     : [];
 
   return (

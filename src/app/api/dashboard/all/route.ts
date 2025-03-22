@@ -91,7 +91,11 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-      turnsData = await getTurns({ eventId: event.id, userId });
+      turnsData = await getTurns({
+        eventId: event.id,
+        userId,
+        filtered: false,
+      });
     } catch (error) {
       warnings.push("Não foi possível carregar os turnos");
     }

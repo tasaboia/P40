@@ -8,6 +8,8 @@ export async function GET(req: Request) {
   const weekday = searchParams.get("weekday");
   const eventId = searchParams.get("eventId");
   const userId = searchParams.get("userId");
+  const filtered = searchParams.get("filtered");
+  const isFiltered = filtered === "true";
 
   try {
     if (!eventId) {
@@ -19,7 +21,32 @@ export async function GET(req: Request) {
 
     let prayerTurns;
 
-    if (userId) {
+    if (isFiltered) {
+      prayerTurns = await prisma.prayerTurn.findMany({
+        where: {
+          eventId: eventId,
+          userShifts: {
+            some: {
+              userId: userId,
+            },
+          },
+        },
+        include: {
+          userShifts: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  whatsapp: true,
+                  imageUrl: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    } else if (userId) {
       prayerTurns = await prisma.prayerTurn.findMany({
         where: {
           eventId: eventId,
