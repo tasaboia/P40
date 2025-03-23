@@ -54,21 +54,24 @@ export class DashboardService {
           },
         },
       });
-      // Lógica de turnos parcialmente preenchidos
+
       const partialPrayerTurns = allPrayerTurns.filter(
         (turn) =>
           turn.userShifts.length > 0 &&
           turn.userShifts.length < turn.event.maxParticipantsPerTurn
       ).length;
 
-      // Turnos vazios
+      const fullMaxParticipantsPerTurn = allPrayerTurns.filter(
+        (turn) =>
+          turn.event?.maxParticipantsPerTurn &&
+          turn.userShifts.length === turn.event.maxParticipantsPerTurn
+      ).length;
+
       const emptyPrayerTurns = totalPrayerTurns - filledPrayerTurns;
 
-      // Percentual de líderes
       const leadersPercentage =
         totalEvents > 0 ? (totalLeaders / totalEvents) * 100 : 0;
 
-      // Percentual de turnos preenchidos
       const shiftsPercentage =
         totalPrayerTurns > 0 ? (filledPrayerTurns / totalPrayerTurns) * 100 : 0;
 
@@ -78,6 +81,7 @@ export class DashboardService {
         totalPrayerTurns,
         filledPrayerTurns,
         partialPrayerTurns,
+        fullMaxParticipantsPerTurn,
         emptyPrayerTurns,
         leadersPercentage,
         shiftsPercentage,
@@ -201,105 +205,7 @@ export class DashboardService {
     }
   }
 
-  async getTopLeaders(churchId: string, limit: number = 5) {
-    try {
-      // Busca os usuários com mais turnos
-      const leaders = await prisma.user.findMany({
-        where: {
-          churchId,
-          userShifts: {
-            some: {
-              prayerTurn: {
-                event: {},
-              },
-            },
-          },
-        },
-        include: {
-          _count: {
-            select: {
-              userShifts: true,
-            },
-          },
-        },
-        orderBy: {
-          userShifts: {
-            _count: "desc",
-          },
-        },
-        take: limit,
-      });
-
-      return leaders.map((leader) => ({
-        id: leader.id,
-        name: leader.name || "Usuário",
-        email: leader.email,
-        imageUrl: leader.imageUrl,
-        turnsCount: leader._count.userShifts,
-      }));
-    } catch (error) {
-      console.error("Erro ao buscar líderes principais:", error);
-      throw new Error("Erro ao buscar líderes principais");
-    }
-  }
-
-  async getRecentActivity(churchId: string, limit: number = 10) {
-    try {
-      // Busca atividades recentes (aqui usamos userShifts como exemplo)
-      const recentActivities = await prisma.userShift.findMany({
-        where: {
-          prayerTurn: {
-            event: {
-              churchId,
-            },
-          },
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-          prayerTurn: {
-            include: {
-              event: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: limit,
-      });
-
-      return recentActivities.map((activity) => ({
-        id: activity.id,
-        type: "join", // Você pode expandir isso com outros tipos de atividades
-        user: {
-          id: activity.userId,
-          name: activity.user.name || "Usuário",
-        },
-        event: {
-          id: activity.prayerTurn.event.id,
-          name: activity.prayerTurn.event.name,
-        },
-        timestamp: activity.createdAt,
-        weekday: activity.prayerTurn.weekday,
-        time: activity.prayerTurn.startTime,
-      }));
-    } catch (error) {
-      console.error("Erro ao buscar atividades recentes:", error);
-      throw new Error("Erro ao buscar atividades recentes");
-    }
-  }
-
-  async getSingleLeaderAndEmptyShifts(churchId: string): Promise<Shift[]> {
+  async getSingleLeaderAndEmptyShifts(churchId: string) {
     try {
       const allPrayerTurns = await prisma.prayerTurn.findMany({
         where: {
@@ -310,12 +216,16 @@ export class DashboardService {
         include: {
           userShifts: {
             include: {
+              prayerTurn: true,
               user: {
                 select: {
                   church: true,
                   id: true,
                   name: true,
                   imageUrl: true,
+                  email: true,
+                  role: true,
+                  whatsapp: true,
                 },
               },
             },
@@ -334,6 +244,7 @@ export class DashboardService {
           weekday: turn.weekday,
           endTime: turn.endTime,
           leaders: [turn.userShifts[0].user],
+          prayerTurn: turn,
           church: {
             name: turn.userShifts[0].user.church.name,
             id: turn.userShifts[0].user.church.id,

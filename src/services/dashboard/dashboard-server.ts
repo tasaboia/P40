@@ -41,6 +41,7 @@ export class DashboardServer {
         error: error,
         success: false,
         data: {
+          fullMaxParticipantsPerTurn: 0,
           totalLeaders: 0,
           totalEvents: 0,
           totalPrayerTurns: 0,

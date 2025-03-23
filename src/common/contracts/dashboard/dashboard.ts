@@ -18,6 +18,7 @@ export interface Stats {
   totalPrayerTurns: number; // Total de turnos de oração
   filledPrayerTurns: number; // Total de turnos de oração preenchidos
   partialPrayerTurns: number; // Total de turnos de oração parcialmente preenchidos
+  fullMaxParticipantsPerTurn: number; // Total de turnos de oração max de participantes preenchidos
   emptyPrayerTurns: number; // Total de turnos de oração vazios
   leadersPercentage: number; // Percentual de líderes por evento
   shiftsPercentage: number; // Percentual de turnos preenchidos
@@ -30,6 +31,9 @@ export interface Leader {
   id: string;
   name: string;
   imageUrl: string;
+  email?: true;
+  role?: true;
+  whatsapp?: true;
 }
 
 export interface SingleLeaderShiftResponse extends BaseApiResponse {
@@ -41,6 +45,7 @@ export interface Shift {
   startTime: string;
   endTime: string;
   leaders?: Leader[];
+  prayerTurn?: PrayerTurn;
   weekday: number;
   status?: "empty" | "partial" | "full";
   type?: string;

@@ -29,6 +29,7 @@ interface DashboardContextType {
   exportToCSV: () => void;
   exportLeadersToCSV: () => void;
   exportTestimoniesToCSV: () => void;
+  exportSingleLeaderShiftsToCSV: () => void;
   exportExportShifts: () => void;
   getRecommendedShifts: () => Contracts.Shift[];
   handleApproveTestimony: (id: string) => void;
@@ -120,6 +121,39 @@ export function DashboardProvider({
   const exportLeadersToCSV = () => {
     const headers = ["Nome", "Email", "WhatsApp"];
     const csvData = leaders.map((l) => [l.name, l.email, l.whatsapp]);
+    const csvContent = [headers, ...csvData].map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    if (csvLinkRef.current) {
+      csvLinkRef.current.href = url;
+      csvLinkRef.current.download = `lideres-${format(
+        new Date(),
+        "dd-MM-yyyy"
+      )}.csv`;
+      csvLinkRef.current.click();
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  };
+
+  const exportSingleLeaderShiftsToCSV = () => {
+    const headers = [
+      "Nome",
+      "Email",
+      "WhatsApp",
+      "Inicio do turno",
+      "Fim do turno",
+    ];
+
+    const csvData = singleLeaderShifts.flatMap((shift) => {
+      return (shift.leaders || []).map((leader) => [
+        leader.name || "Sem nome",
+        leader.email || "Sem email",
+        leader.whatsapp || "Sem WhatsApp",
+        shift.prayerTurn?.startTime || "",
+        shift.prayerTurn?.endTime || "",
+      ]);
+    });
+
     const csvContent = [headers, ...csvData].map((r) => r.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -250,6 +284,7 @@ export function DashboardProvider({
         exportToCSV,
         exportLeadersToCSV,
         exportTestimoniesToCSV,
+        exportSingleLeaderShiftsToCSV,
         exportExportShifts,
         getRecommendedShifts,
         handleApproveTestimony,

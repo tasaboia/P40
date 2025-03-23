@@ -109,7 +109,7 @@ model User {
   whatsapp    String?  
   email       String   @unique 
   imageUrl    String?  
-  role        Role     @default(USER)
+  role        Role     @default(ADMIN)
   userShifts  UserShift[]   
   checkIns    CheckIn[]  
   onboarding  Boolean @default(false)

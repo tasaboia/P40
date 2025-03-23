@@ -10,6 +10,13 @@ import {
   UserCheck,
 } from "lucide-react";
 import { useDashboard } from "@p40/common/context/dashboard-context";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  flexRender,
+  ColumnDef,
+} from "@tanstack/react-table";
 
 interface SingleLeaderDialogProps {
   showSingleLeaderShifts: boolean;
@@ -20,16 +27,69 @@ export default function SingleLeaderDialog({
   setShowSingleLeaderShifts,
   showSingleLeaderShifts,
 }: SingleLeaderDialogProps) {
-  const { singleLeaderShifts, exportToCSV } = useDashboard();
+  const { singleLeaderShifts, exportSingleLeaderShiftsToCSV } = useDashboard();
 
   const [pageIndex, setPageIndex] = React.useState(0);
   const pageSize = 10;
-  const totalPages = Math.ceil(singleLeaderShifts.length / pageSize);
 
-  const paginatedShifts = singleLeaderShifts.slice(
-    pageIndex * pageSize,
-    pageIndex * pageSize + pageSize
+  const columns = React.useMemo<ColumnDef<any>[]>(
+    () => [
+      {
+        header: "Dia da Semana",
+        accessorKey: "weekday",
+        cell: ({ row }) => (
+          <div className="font-medium">
+            {Helpers.getWeekdayName(row.original.weekday)}
+          </div>
+        ),
+      },
+      {
+        header: "Horário",
+        accessorFn: (row) => `${row.startTime} - ${row.endTime}`,
+        cell: ({ row }) =>
+          `${row.original.startTime} - ${row.original.endTime}`,
+      },
+      {
+        header: "Líder Atual",
+        accessorKey: "leader",
+        cell: ({ row }) => {
+          const leader = row.original.leaders?.[0];
+          return (
+            <div className="flex gap-2 items-center font-medium capitalize">
+              <UI.Avatar className="h-8 w-8 rounded-full">
+                <UI.AvatarImage src={leader?.imageUrl} />
+                <UI.AvatarFallback className="rounded-full">
+                  {Helpers.getInitials(leader?.name || "")}
+                </UI.AvatarFallback>
+              </UI.Avatar>
+              {leader?.name?.toLowerCase() || "Sem líder"}
+            </div>
+          );
+        },
+      },
+    ],
+    []
   );
+
+  const table = useReactTable({
+    data: singleLeaderShifts,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
+    },
+    onPaginationChange: (updater) => {
+      const newState =
+        typeof updater === "function"
+          ? updater({ pageIndex, pageSize })
+          : updater;
+      setPageIndex(newState.pageIndex);
+    },
+  });
 
   return (
     <UI.Dialog
@@ -50,34 +110,30 @@ export default function SingleLeaderDialog({
             <div className="hidden md:block">
               <UI.Table>
                 <UI.TableHeader>
-                  <UI.TableRow>
-                    <UI.TableHead>Dia da Semana</UI.TableHead>
-                    <UI.TableHead>Horário</UI.TableHead>
-                    <UI.TableHead>Líder Atual</UI.TableHead>
-                  </UI.TableRow>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <UI.TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <UI.TableHead key={header.id} className="text-left">
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </UI.TableHead>
+                      ))}
+                    </UI.TableRow>
+                  ))}
                 </UI.TableHeader>
                 <UI.TableBody>
-                  {paginatedShifts.map((shift) => (
-                    <UI.TableRow key={shift.id}>
-                      <UI.TableCell>
-                        <div className="font-medium">
-                          {Helpers.getWeekdayName(shift.weekday)}
-                        </div>
-                      </UI.TableCell>
-                      <UI.TableCell>
-                        {shift.startTime} - {shift.endTime}
-                      </UI.TableCell>
-                      <UI.TableCell>
-                        <div className="flex gap-2 items-center font-medium capitalize">
-                          <UI.Avatar className="h-8 w-8 rounded-full">
-                            <UI.AvatarImage src={shift.leaders[0].imageUrl} />
-                            <UI.AvatarFallback className="rounded-full ">
-                              {Helpers.getInitials(shift.leaders[0].name)}
-                            </UI.AvatarFallback>
-                          </UI.Avatar>
-                          {shift.leaders[0]?.name.toLowerCase() || "Sem líder"}
-                        </div>
-                      </UI.TableCell>
+                  {table.getRowModel().rows.map((row) => (
+                    <UI.TableRow key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <UI.TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </UI.TableCell>
+                      ))}
                     </UI.TableRow>
                   ))}
                 </UI.TableBody>
@@ -86,44 +142,49 @@ export default function SingleLeaderDialog({
 
             {/* Versão mobile */}
             <div className="md:hidden">
-              {paginatedShifts.map((shift) => (
-                <div key={shift.id} className="p-3 border-b last:border-b-0">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <div className="font-medium text-sm">
-                        {Helpers.getWeekdayName(shift.weekday)}
+              {table.getRowModel().rows.map((shiftRow) => {
+                const shift = shiftRow.original;
+                return (
+                  <div key={shift.id} className="p-3 border-b last:border-b-0">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <div className="font-medium text-sm">
+                          {Helpers.getWeekdayName(shift.weekday)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {Weekday[shift.weekday]}
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {Weekday[shift.weekday]}
-                      </div>
+                      <UI.Badge
+                        variant="outline"
+                        className="bg-warning/10 text-warning border-warning/20"
+                      >
+                        <AlertCircle className="h-3 w-3 mr-1" />
+                        Parcial
+                      </UI.Badge>
                     </div>
-                    <UI.Badge
-                      variant="outline"
-                      className="bg-warning/10 text-warning border-warning/20"
-                    >
-                      <AlertCircle className="h-3 w-3 mr-1" />
-                      Parcial
-                    </UI.Badge>
-                  </div>
 
-                  <div className="flex items-center text-sm mb-2">
-                    <Clock className="h-3 w-3 mr-1 text-muted-foreground" />
-                    <span>
-                      {shift.startTime} - {shift.endTime}
-                    </span>
-                  </div>
+                    <div className="flex items-center text-sm mb-2">
+                      <Clock className="h-3 w-3 mr-1 text-muted-foreground" />
+                      <span>
+                        {shift.startTime} - {shift.endTime}
+                      </span>
+                    </div>
 
-                  <div className="flex items-center text-sm mb-2">
-                    <UserCheck className="h-3 w-3 mr-1 text-muted-foreground" />
-                    <span>{shift.leaders[0]?.name || "Sem líder"}</span>
-                  </div>
+                    <div className="flex items-center text-sm mb-2">
+                      <UserCheck className="h-3 w-3 mr-1 text-muted-foreground" />
+                      <span>{shift.leaders?.[0]?.name || "Sem líder"}</span>
+                    </div>
 
-                  <div className="flex items-center text-xs text-muted-foreground mb-3">
-                    <Building className="h-3 w-3 mr-1" />
-                    <span>{shift.church.name || "Igreja não informada"}</span>
+                    <div className="flex items-center text-xs text-muted-foreground mb-3">
+                      <Building className="h-3 w-3 mr-1" />
+                      <span>
+                        {shift.church?.name || "Igreja não informada"}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -146,9 +207,11 @@ export default function SingleLeaderDialog({
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  setPageIndex((prev) => Math.min(prev + 1, totalPages - 1))
+                  setPageIndex((prev) =>
+                    Math.min(prev + 1, table.getPageCount() - 1)
+                  )
                 }
-                disabled={pageIndex >= totalPages - 1}
+                disabled={pageIndex >= table.getPageCount() - 1}
               >
                 Próximo
               </UI.Button>
@@ -164,7 +227,10 @@ export default function SingleLeaderDialog({
           >
             Fechar
           </UI.Button>
-          <UI.Button onClick={exportToCSV} className="w-full sm:w-auto">
+          <UI.Button
+            onClick={exportSingleLeaderShiftsToCSV}
+            className="w-full sm:w-auto"
+          >
             <Download className="h-4 w-4 mr-2" />
             Exportar Lista (CSV)
           </UI.Button>

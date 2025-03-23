@@ -7,7 +7,8 @@ import { RenderShiftStatus } from "./render-shift-status";
 import { useDashboard } from "@p40/common/context/dashboard-context";
 import { Weekday } from "@p40/common/contracts/week/schedule";
 import * as UI from "@p40/components/ui/index";
-import SingleLeaderDialog from "./single-leader-dialog";
+import { Helpers } from "@p40/common/utils/helpers";
+import RecommendedShiftsCard from "./recommended-shifts-card";
 
 interface StatsCardsProps {
   setShowSingleLeaderShifts: (value: boolean) => void;
@@ -173,20 +174,24 @@ export default function StatsCards({
                 <div className="flex justify-between text-sm">
                   <span>Completos</span>
                   <span className="font-medium">
-                    {stats?.filledPrayerTurns || 0}
+                    {stats?.fullMaxParticipantsPerTurn || 0}
                   </span>
                 </div>
                 <div className="h-5 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-success"
-                    style={{
-                      width: `${
-                        ((stats?.filledPrayerTurns || 0) /
-                          (stats?.totalPrayerTurns || 1)) *
-                        100
-                      }%`,
-                    }}
-                  ></div>
+                  <div className="h-5 w-full bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gray-800 transition-all duration-300"
+                      style={{
+                        width: `${
+                          stats?.totalPrayerTurns
+                            ? (stats.fullMaxParticipantsPerTurn /
+                                stats.totalPrayerTurns) *
+                              100
+                            : 0
+                        }%`,
+                      }}
+                    ></div>
+                  </div>
                 </div>
 
                 <div className="flex justify-between text-sm">
@@ -196,16 +201,20 @@ export default function StatsCards({
                   </span>
                 </div>
                 <div className="h-5 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-warning"
-                    style={{
-                      width: `${
-                        ((stats?.partialPrayerTurns || 0) /
-                          (stats?.totalPrayerTurns || 1)) *
-                        100
-                      }%`,
-                    }}
-                  ></div>
+                  <div className="h-5 w-full bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gray-500 transition-all duration-300"
+                      style={{
+                        width: `${
+                          stats?.totalPrayerTurns
+                            ? (stats.partialPrayerTurns /
+                                stats.totalPrayerTurns) *
+                              100
+                            : 0
+                        }%`,
+                      }}
+                    ></div>
+                  </div>
                 </div>
 
                 <div className="flex justify-between text-sm">
@@ -267,39 +276,7 @@ export default function StatsCards({
           </UI.CardContent>
         </UI.Card>
 
-        <UI.Card>
-          <UI.CardHeader>
-            <UI.CardTitle>Horários Recomendados</UI.CardTitle>
-            <UI.CardDescription>Sugestões para priorizar</UI.CardDescription>
-          </UI.CardHeader>
-          <UI.CardContent className="p-0">
-            <UI.ScrollArea className="h-[300px]">
-              <div className="px-4 py-2">
-                {getRecommendedShifts().map((shift) => {
-                  return (
-                    <div
-                      key={shift.id}
-                      className="py-2 border-b last:border-0 flex justify-between items-center"
-                    >
-                      <div>
-                        <div className="font-medium">
-                          {Weekday[shift.weekday]} • {shift.startTime} -{" "}
-                          {shift.endTime}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {shift.status === "empty"
-                            ? "Sem líderes"
-                            : `${shift.leaders.length} líder(es)`}
-                        </div>
-                      </div>
-                      <RenderShiftStatus status={shift.status} />
-                    </div>
-                  );
-                })}
-              </div>
-            </UI.ScrollArea>
-          </UI.CardContent>
-        </UI.Card>
+        <RecommendedShiftsCard />
       </div>
 
       <UI.Card>
