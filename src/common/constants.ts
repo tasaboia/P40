@@ -22,17 +22,34 @@ export type TAreaName = (typeof AreasOfService)[number];
 export const DashboardTabs = [
   {
     indexTitle: "Agenda",
-    route: "schedule",
     role: ["USER", "LEADER", "ADMIN"],
+    route: {
+      url: "schedule",
+      params: "",
+    },
   },
   {
     indexTitle: "Geral",
-    route: "dashboard",
     role: ["ADMIN"],
+    route: {
+      url: "dashboard",
+      params: "",
+    },
   },
   {
     indexTitle: "Configuração",
-    route: "event-config",
     role: ["ADMIN"],
+    route: {
+      url: "event-config",
+      params: "",
+    },
+  },
+  {
+    indexTitle: "Pautas Diárias",
+    role: ["USER", "LEADER", "ADMIN"],
+    route: {
+      url: "daily-topic",
+      params: "eventId",
+    },
   },
 ];

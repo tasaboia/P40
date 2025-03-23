@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
@@ -10,10 +10,11 @@ import { ptBR } from "date-fns/locale";
 import { CalendarIcon, Clock, Save, Info, Building, Users } from "lucide-react";
 import * as UI from "@p40/components/ui/index";
 import { cn } from "@p40/lib/utils";
-import { EventConfigClient } from "@p40/services/event-config/event-config-client.service";
 import { PrayerTopic } from "@p40/services/event-config/types";
 import { useToast } from "@p40/hooks/use-toast";
-import { useSession } from "next-auth/react";
+import { EventConfigClient } from "@p40/services/event-config/event-config-client";
+
+// const DailyTopics = lazy(() => import("./components/daily-topics"));
 
 export default function EventConfigPage() {
   const { toast } = useToast();
@@ -110,62 +111,6 @@ export default function EventConfigPage() {
     }
   };
 
-  const handleTopicChange = (
-    id: string,
-    field: keyof PrayerTopic,
-    value: string | null
-  ) => {
-    setPrayerTopics((prev) =>
-      prev.map((topic) =>
-        topic.id === id ? { ...topic, [field]: value } : topic
-      )
-    );
-  };
-
-  const handleAddTopic = () => {
-    const newDay = prayerTopics.length + 1;
-    const topicDate = new Date(eventConfig.startDate);
-    topicDate.setDate(topicDate.getDate() + newDay - 1);
-
-    const newTopic: PrayerTopic = {
-      id: `topic-${Date.now()}`,
-      day: newDay,
-      title: `Nova Pauta ${newDay}`,
-      description: "",
-      imageUrl: null,
-      date: topicDate,
-    };
-
-    setPrayerTopics((prev) => [...prev, newTopic]);
-  };
-
-  const handleRemoveTopic = (id: string) => {
-    setPrayerTopics((prev) => {
-      const filtered = prev.filter((topic) => topic.id !== id);
-      // Reordenar os dias
-      return filtered.map((topic, index) => ({
-        ...topic,
-        day: index + 1,
-      }));
-    });
-  };
-
-  const handleImageUpload = (
-    topicId: string,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Simulando upload - em produção, você enviaria para um servidor
-      const reader = new FileReader();
-      reader.onload = () => {
-        const imageUrl = reader.result as string;
-        handleTopicChange(topicId, "imageUrl", imageUrl);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleSaveConfig = async () => {
     setIsLoading(true);
 
@@ -217,7 +162,7 @@ export default function EventConfigPage() {
   };
 
   return (
-    <div className="container py-3 max-w-5xl">
+    <div className="container py-3 w-full px-6 pb-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -458,190 +403,32 @@ export default function EventConfigPage() {
                 </div>
               </UI.CardContent>
             </UI.Card>
+            <div className="mt-6 flex justify-end space-x-4">
+              <UI.Button variant="outline" onClick={() => router.back()}>
+                Cancelar
+              </UI.Button>
+              <UI.Button onClick={handleSaveConfig} disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                    Salvando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Salvar Configurações
+                  </>
+                )}
+              </UI.Button>
+            </div>
           </UI.TabsContent>
 
-          <UI.TabsContent value="topics" className="space-y-6">
-            {/* <UI.Card>
-              <UI.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div>
-                  <UI.CardTitle>Pautas Diárias de Oração</UI.CardTitle>
-                  <UI.CardDescription>
-                    Configure as pautas para cada dia do evento
-                  </UI.CardDescription>
-                </div>
-                <UI.Button onClick={handleAddTopic} size="sm">
-                  <Plus className="h-4 w-4 mr-1" />
-                  Adicionar Pauta
-                </UI.Button>
-              </UI.CardHeader>
-              <UI.CardContent>
-                <div className="text-sm text-muted-foreground mb-4 flex items-center space-x-2">
-                  <Info className="h-4 w-4" />
-                  <span>
-                    Você pode adicionar até {totalDays} pautas para este evento
-                    de {totalDays} dias.
-                  </span>
-                </div>
-
-                <div className="space-y-6">
-                  {prayerTopics.map((topic) => (
-                    <div
-                      key={topic.id}
-                      className="border rounded-md p-4 space-y-4"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center space-x-2">
-                          <UI.Badge variant="outline" className="bg-primary/5">
-                            Dia {topic.day}
-                          </UI.Badge>
-                          <span className="text-sm text-muted-foreground">
-                            {format(topic.date, "EEEE, dd/MM", {
-                              locale: ptBR,
-                            })}
-                          </span>
-                        </div>
-                        <UI.Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRemoveTopic(topic.id)}
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </UI.Button>
-                      </div>
-
-                      <UI.Separator />
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <UI.Label htmlFor={`topic-title-${topic.id}`}>
-                            Título da Pauta
-                          </UI.Label>
-                          <UI.Input
-                            id={`topic-title-${topic.id}`}
-                            value={topic.title}
-                            onChange={(e) =>
-                              handleTopicChange(
-                                topic.id,
-                                "title",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Ex: Família, Nação, Igreja..."
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <UI.Label htmlFor={`topic-image-${topic.id}`}>
-                            Imagem (opcional)
-                          </UI.Label>
-                          <div className="flex items-center space-x-2">
-                            <UI.Input
-                              id={`topic-image-${topic.id}`}
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={(e) => handleImageUpload(topic.id, e)}
-                            />
-                            <UI.Button
-                              variant="outline"
-                              onClick={() =>
-                                document
-                                  .getElementById(`topic-image-${topic.id}`)
-                                  ?.click()
-                              }
-                              className="w-full"
-                            >
-                              <Upload className="h-4 w-4 mr-2" />
-                              {topic.imageUrl
-                                ? "Alterar imagem"
-                                : "Upload de imagem"}
-                            </UI.Button>
-
-                            {topic.imageUrl && (
-                              <UI.Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() =>
-                                  handleTopicChange(topic.id, "imageUrl", null)
-                                }
-                                className="h-8 w-8 text-muted-foreground"
-                              >
-                                <X className="h-4 w-4" />
-                              </UI.Button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <UI.Label htmlFor={`topic-description-${topic.id}`}>
-                          Descrição da Pauta
-                        </UI.Label>
-                        <UI.Textarea
-                          id={`topic-description-${topic.id}`}
-                          value={topic.description}
-                          onChange={(e) =>
-                            handleTopicChange(
-                              topic.id,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          placeholder="Descreva o tema de oração para este dia..."
-                          rows={3}
-                        />
-                      </div>
-
-                      {topic.imageUrl && (
-                        <div className="mt-2">
-                          <p className="text-sm text-muted-foreground mb-2">
-                            Prévia da imagem:
-                          </p>
-                          <div className="relative aspect-video w-full max-w-xs overflow-hidden rounded-md border">
-                            <img
-                              src={topic.imageUrl || "/placeholder.svg"}
-                              alt={`Imagem para ${topic.title}`}
-                              className="object-cover w-full h-full"
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
-                  {prayerTopics.length === 0 && (
-                    <div className="text-center py-8 border rounded-md">
-                      <p className="text-muted-foreground">
-                        Nenhuma pauta adicionada. Clique em "Adicionar Pauta"
-                        para começar.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </UI.CardContent>
-            </UI.Card> */}
+          <UI.TabsContent value="topics" className="space-y-6 w-full p-6">
+            <Suspense>
+              {/* <DailyTopics eventConfigData={eventConfig} /> */}
+            </Suspense>
           </UI.TabsContent>
         </UI.Tabs>
-
-        <div className="mt-6 flex justify-end space-x-4">
-          <UI.Button variant="outline" onClick={() => router.back()}>
-            Cancelar
-          </UI.Button>
-          <UI.Button onClick={handleSaveConfig} disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                Salvando...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2" />
-                Salvar Configurações
-              </>
-            )}
-          </UI.Button>
-        </div>
       </motion.div>
     </div>
   );

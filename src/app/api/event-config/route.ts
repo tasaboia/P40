@@ -25,13 +25,6 @@ export async function GET() {
       );
     }
 
-    // if (user.role !== "ADMIN") {
-    //   return NextResponse.json(
-    //     { message: "Apenas administradores podem acessar o dashboard" },
-    //     { status: 403 }
-    //   );
-    // }
-
     const eventConfig = new EventConfigService();
     const config = await eventConfig.getEventConfig(user.churchId);
 

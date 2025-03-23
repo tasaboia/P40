@@ -2,27 +2,33 @@
 
 import { useState, useRef, useEffect, ReactNode, useMemo } from "react";
 import * as UI from "@p40/components/ui/index";
-import { useRouter } from "next/navigation";
 import { usePathname } from "@p40/i18n/routing";
+import { useRouter } from "next/navigation";
+import { toast } from "@p40/hooks/use-toast";
 
 interface DashboardWrapperProps {
   children: ReactNode;
+  eventId?: string;
   filteredTabs: {
     indexTitle: string;
-    route: string;
     role: string[];
+    route: {
+      url: string;
+      params?: string;
+    };
   }[];
 }
 
 export default function DashboardWrapper({
   children,
   filteredTabs,
+  eventId,
 }: DashboardWrapperProps) {
   const router = useRouter();
   const path = usePathname();
 
   const indexInicial = filteredTabs.findIndex((tabs) =>
-    tabs.route.includes(path.replace(/\//g, ""))
+    tabs.route.url.includes(path.replace(/\//g, ""))
   );
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(indexInicial);
@@ -57,7 +63,18 @@ export default function DashboardWrapper({
         width: `${offsetWidth}px`,
       });
       if (initialRender.current === false) {
-        router.push(`${filteredTabs[activeIndex].route}`);
+        if (filteredTabs[activeIndex].route.params == "eventId") {
+          if (eventId) {
+            router.push(`/${filteredTabs[activeIndex].route.url}/${eventId}`);
+          } else {
+            toast({
+              title: "Erro ao buscar pautas de oração",
+              variant: "destructive",
+            });
+          }
+        } else {
+          router.push(`/${filteredTabs[activeIndex].route.url}`);
+        }
       }
       initialRender.current = false;
     }
