@@ -9,7 +9,6 @@ export class DashboardService {
       const totalLeaders = await prisma.user.count({
         where: {
           churchId,
-          role: "LEADER",
         },
       });
 
