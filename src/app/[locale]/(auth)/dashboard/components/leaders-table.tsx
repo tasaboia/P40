@@ -20,6 +20,9 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
 } from "@p40/components/ui";
 import { Building, Filter, Search } from "lucide-react";
 import {
@@ -29,6 +32,7 @@ import {
   flexRender,
   ColumnDef,
 } from "@tanstack/react-table";
+import { Helpers } from "@p40/common/utils/helpers";
 
 export default function LeadersTable() {
   const { leaders } = useDashboard();
@@ -75,12 +79,15 @@ export default function LeadersTable() {
         header: "Nome",
         accessorKey: "name",
         cell: ({ row }) => (
-          <div>
+          <div className="flex gap-2 items-center">
+            <Avatar className="h-8 w-8 rounded-full">
+              <AvatarImage src={row.original?.imageUrl} />
+              <AvatarFallback className="rounded-full">
+                {Helpers.getInitials(row.original.name || "")}
+              </AvatarFallback>
+            </Avatar>
             <div className="font-medium capitalize">
               {row.original.name.toLowerCase()}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {/* Registrado em {format(row.original.registeredAt, "dd/MM/yyyy")} */}
             </div>
           </div>
         ),
