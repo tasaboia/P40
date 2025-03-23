@@ -69,13 +69,6 @@ export default function LeadersTable() {
     });
   }, [leaders, search, selectedChurches, onlyWithShifts]);
 
-  const paginatedLeaders = useMemo(() => {
-    return filteredLeaders.slice(
-      pageIndex * pageSize,
-      pageIndex * pageSize + pageSize
-    );
-  }, [filteredLeaders, pageIndex]);
-
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
@@ -124,7 +117,7 @@ export default function LeadersTable() {
   );
 
   const table = useReactTable({
-    data: paginatedLeaders,
+    data: filteredLeaders,
     columns,
     state: {
       pagination: { pageIndex, pageSize },
@@ -203,8 +196,8 @@ export default function LeadersTable() {
 
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Mostrando {paginatedLeaders.length} de {filteredLeaders.length}{" "}
-            líderes
+            Mostrando {table.getRowModel().rows.length} de{" "}
+            {filteredLeaders.length} líderes
           </div>
           <div className="flex items-center space-x-2">
             <Button

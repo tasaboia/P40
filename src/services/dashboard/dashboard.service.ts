@@ -381,7 +381,7 @@ export class DashboardService {
       const allLeaders = await prisma.user.findMany({
         where: {
           churchId: churchId,
-          role: "LEADER", // Garantir que apenas líderes sejam retornados
+          // role: "LEADER", // Garantir que apenas líderes sejam retornados
         },
         include: {
           church: {

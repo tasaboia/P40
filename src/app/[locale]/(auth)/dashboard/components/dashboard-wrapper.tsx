@@ -1,15 +1,27 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ReactNode, useMemo } from "react";
 import * as UI from "@p40/components/ui/index";
 import { useRouter } from "next/navigation";
-import { DashboardTabs } from "@p40/common/constants";
 import { usePathname } from "@p40/i18n/routing";
 
-export default function DashboardWrapper({ children }) {
+interface DashboardWrapperProps {
+  children: ReactNode;
+  filteredTabs: {
+    indexTitle: string;
+    route: string;
+    role: string[];
+  }[];
+}
+
+export default function DashboardWrapper({
+  children,
+  filteredTabs,
+}: DashboardWrapperProps) {
   const router = useRouter();
   const path = usePathname();
-  const indexInicial = DashboardTabs.findIndex((tabs) =>
+
+  const indexInicial = filteredTabs.findIndex((tabs) =>
     tabs.route.includes(path.replace(/\//g, ""))
   );
 
@@ -20,6 +32,7 @@ export default function DashboardWrapper({ children }) {
   const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+
   const initialRender = useRef(true);
 
   useEffect(() => {
@@ -44,7 +57,7 @@ export default function DashboardWrapper({ children }) {
         width: `${offsetWidth}px`,
       });
       if (initialRender.current === false) {
-        router.push(`${DashboardTabs[activeIndex].route}`);
+        router.push(`${filteredTabs[activeIndex].route}`);
       }
       initialRender.current = false;
     }
@@ -77,7 +90,7 @@ export default function DashboardWrapper({ children }) {
             />
 
             <div className="relative flex space-x-[6px] items-center">
-              {DashboardTabs.map((tab, index) => (
+              {filteredTabs.map((tab, index) => (
                 <div
                   key={index}
                   ref={(el) => {

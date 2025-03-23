@@ -23,13 +23,16 @@ export const DashboardTabs = [
   {
     indexTitle: "Agenda",
     route: "schedule",
+    role: ["USER", "LEADER", "ADMIN"],
   },
   {
     indexTitle: "Geral",
     route: "dashboard",
+    role: ["ADMIN"],
   },
   {
     indexTitle: "Configuração",
     route: "event-config",
+    role: ["ADMIN"],
   },
 ];
