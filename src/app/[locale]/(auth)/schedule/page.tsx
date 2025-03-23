@@ -34,7 +34,7 @@ export default async function SchedulePage() {
   const { event, prayerTurns, turns, user } = dashboardData.data;
 
   return (
-    <div className="flex flex-col gap-4 bg-muted p-4">
+    <div className="flex flex-col gap-4 bg-muted ">
       <WeekTab
         event={event}
         prayerTurns={prayerTurns}

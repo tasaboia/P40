@@ -116,10 +116,8 @@ export async function DELETE(req, res) {
 
 export async function PUT(req: Request): Promise<NextResponse> {
   try {
-    // Garantir que o body da requisição está correto
     const { id, eventId, description, date, imageUrl } = await req.json();
 
-    // Verifique se o id está presente
     if (!id) {
       return NextResponse.json(
         {

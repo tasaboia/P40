@@ -189,7 +189,7 @@ export default function DailyTopicPage() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className="space-y-4"
+          className="space-y-1"
         >
           {/* Cabeçalho com navegação */}
           <div className="flex items-center justify-between mb-4">
@@ -225,7 +225,7 @@ export default function DailyTopicPage() {
           {/* Indicador de tópico atual/passado/futuro */}
           <div className="flex justify-center">
             {isCurrentTopicToday() ? (
-              <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+              <div className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm font-medium">
                 Tópico de Hoje
               </div>
             ) : isCurrentTopicPast() ? (

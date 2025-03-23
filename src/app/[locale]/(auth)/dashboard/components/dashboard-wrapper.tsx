@@ -87,7 +87,7 @@ export default function DashboardWrapper({
       }`}
     >
       <UI.Card
-        className={`w-full max-w-[1200px] h-10 px-6 border-none shadow-none relative flex ${
+        className={`w-full max-w-[1200px] h-10 px-2 border-none shadow-none relative flex ${
           isDarkMode ? "bg-transparent" : ""
         }`}
       >
@@ -106,14 +106,14 @@ export default function DashboardWrapper({
               style={activeStyle}
             />
 
-            <div className="relative flex space-x-[6px] items-center">
+            <div className="relative overflow-auto flex  items-center">
               {filteredTabs.map((tab, index) => (
                 <div
                   key={index}
                   ref={(el) => {
                     tabRefs.current[index] = el;
                   }}
-                  className={`px-3 py-2 cursor-pointer transition-colors duration-300 h-[30px] ${
+                  className={`px-2 py-2 cursor-pointer transition-colors duration-300 h-[30px] ${
                     index === activeIndex
                       ? "text-[#0e0e10] dark:text-white"
                       : "text-[#0e0f1199] dark:text-[#ffffff99]"
@@ -122,7 +122,7 @@ export default function DashboardWrapper({
                   onMouseLeave={() => setHoveredIndex(null)}
                   onClick={() => setActiveIndex(index)}
                 >
-                  <div className="text-sm font-[var(--www-mattmannucci-me-geist-regular-font-family)] leading-5 whitespace-nowrap flex items-center justify-center h-full">
+                  <div className="text-xs font-bold font-[var(--www-mattmannucci-me-geist-regular-font-family)] leading-5 whitespace-nowrap flex items-center justify-center h-full">
                     {tab.indexTitle}
                   </div>
                 </div>
