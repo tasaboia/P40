@@ -21,18 +21,6 @@ import { useParams, useRouter } from "next/navigation";
 import { DailyPrayerTopic } from "@p40/common/contracts/daily-topics/daily-topics";
 import { EventConfigClient } from "@p40/services/event-config/event-config-client";
 
-// Interface para testemunhos
-interface Testimony {
-  id: string;
-  userId: string;
-  userName: string;
-  userImage?: string;
-  topicId: string;
-  content: string;
-  createdAt: string;
-  approved: boolean;
-}
-
 export default function DailyTopicPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();

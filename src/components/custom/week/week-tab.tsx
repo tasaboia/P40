@@ -7,7 +7,6 @@ import {
 } from "@p40/components/ui/tabs";
 import DayList from "./day-list";
 import { today } from "@p40/common/utils/schedule";
-import { getAllData } from "@p40/services/dashboard/dashboard-all";
 import { useTranslations } from "next-intl";
 
 export default function WeekTab({

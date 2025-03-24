@@ -3,13 +3,12 @@ import { getUser } from "@p40/services/user/user-service";
 import { eventByChurchId } from "@p40/services/event/event-byId";
 import { getPrayerTurns } from "@p40/services/event/prayer-turn/get-prayer-turns";
 import { getTurns } from "@p40/services/event/get-turn";
-import { dashboardData } from "@p40/services/dashboard/dashboard.service";
 import { getChartEventData } from "@p40/services/event/chart-event-data";
 import { getUserByChurchId } from "@p40/services/user/user-service";
 import { UsersResponse } from "@p40/common/contracts/user/user";
 import { AllResponse } from "@p40/services/dashboard/dashboard-all";
+import { dashboardData } from "@p40/services/dashboard/dashboard.service";
 
-// Interfaces para tipar corretamente as respostas
 interface StatsResponse {
   success: boolean;
   stats: {
@@ -50,7 +49,6 @@ export async function GET(request: NextRequest) {
 
     const event = await eventByChurchId(user.churchId);
     if (!event?.id) {
-      // Retornar dados mesmo sem evento, para permitir onboarding
       return NextResponse.json({
         success: true,
         data: {
@@ -137,7 +135,6 @@ export async function GET(request: NextRequest) {
       warnings.push("Não foi possível carregar os usuários");
     }
 
-    // Construir resposta
     const response: AllResponse = {
       success: true,
       data: {

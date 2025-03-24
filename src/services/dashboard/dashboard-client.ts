@@ -5,6 +5,7 @@ import {
   SingleLeaderShiftResponse,
   TestimonyDashboardResponse,
 } from "@p40/common/contracts/dashboard/dashboard";
+import { FailException } from "@p40/common/contracts/exceptions/exception";
 import api from "@p40/lib/axios";
 
 export class DashboardClient {
@@ -61,6 +62,7 @@ export class DashboardClient {
       };
     }
   }
+
   async getEventLeaders(churchId: string): Promise<LeadersDashboardResponse> {
     try {
       const data = await api.get(
@@ -91,6 +93,27 @@ export class DashboardClient {
         success: false,
         data: null,
       };
+    }
+  }
+
+  async dashboardData(eventId: string): Promise<{
+    success: boolean;
+    stats: {
+      distinctLeaders: string;
+      singleLeaderSlots: string;
+      filledTimeSlots: string;
+      emptyTimeSlots: string;
+    };
+  }> {
+    try {
+      const response = await api.get(`/api/dashboard?eventId=${eventId}`);
+
+      return response.data;
+    } catch (error) {
+      throw new FailException({
+        message: error.response?.data?.message || "Erro buscar dashboard.",
+        statusCode: error.response?.status || 500,
+      });
     }
   }
 }

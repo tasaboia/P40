@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarImage } from "@p40/components/ui/avatar";
-import { Clock, Leaf, Loader2, MessageCircle, Plus } from "lucide-react";
+import { Clock, MessageCircle, Plus } from "lucide-react";
 import { Helpers } from "@p40/common/utils/helpers";
 import { PrayerTurnResponse } from "@p40/common/contracts/user/user";
 import {
@@ -22,7 +22,7 @@ import { Weekday } from "@p40/common/contracts/week/schedule";
 import Link from "next/link";
 import React, { useState } from "react";
 
-//melhoria: atualizar o valor na lista para o usuario antes mesmo de atualizar no backend
+//TODO: atualizar o valor na lista para o usuario antes mesmo de atualizar no backend
 
 export function TurnItem({
   weekday,
@@ -114,11 +114,11 @@ export function TurnItem({
     <div>
       {loading && (
         <div className="w-full flex  justify-center items-center">
-          {/* <Loader2 className="animate-spin items-center" /> */}
-          <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-full h-4 w-4 md:h-12 md:w-12 border-b-2 border-primary"></div>
         </div>
       )}
       {shift.map((turn) => {
+        //garantir que vamos ter as informações do líder por turno
         const turnItem = turnItens?.find(
           (item) => item.startTime == turn.startTime
         );

@@ -8,10 +8,6 @@ import { DashboardProvider } from "@p40/common/context/dashboard-context";
 export default async function DashboardPage() {
   const session = await auth();
 
-  if (session.user.role !== "ADMIN") {
-    redirect("schedule");
-  }
-
   if (!session.user.churchId) {
     return (
       <ErrorHandler

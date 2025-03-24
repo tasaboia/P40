@@ -3,15 +3,15 @@
 import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
 import * as UI from "@p40/components/ui/index";
-import { useDashboard } from "@p40/common/context/dashboard-context";
-import StatsCards from "./stats-cards";
 import { lazy, useState } from "react";
-import ShiftsReport from "./shifts-report";
-import LeadersTable from "./leaders-table";
 import { TestimonyList } from "@p40/components/custom/dashboard/testimony-list";
-import { ExportData } from "@p40/components/custom/dashboard/export-data";
+import { useDashboard } from "@p40/common/context/dashboard-context";
+import LeadersTable from "./leaders-table";
 import Report from "./report";
-const SingleLeaderDialog = await lazy(() => import("./single-leader-dialog"));
+import ShiftsReport from "./shifts-report";
+import StatsCards from "./stats-cards";
+
+const SingleLeaderDialog = lazy(() => import("./single-leader-dialog")); //modal
 
 export default function DashboardContainer() {
   const { activeTab, setActiveTab, exportToCSV } = useDashboard();

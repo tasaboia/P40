@@ -1,5 +1,5 @@
-import { columns } from "@p40/app/[locale]/(auth)/dashboard/components/columns";
-import { DataTableWithSearch } from "@p40/app/[locale]/(auth)/dashboard/components/data-table";
+import { columns } from "@p40/app/[locale]/(private)/dashboard/components/columns";
+import { DataTableWithSearch } from "@p40/app/[locale]/(private)/dashboard/components/data-table";
 import { EventChart } from "./chart-event";
 import { StatsCards } from "./stats-cards";
 import { ChartData, Leader } from "@p40/common/contracts/prayer-turn/types";

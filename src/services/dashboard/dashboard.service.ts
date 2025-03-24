@@ -1,6 +1,5 @@
 import api from "@p40/lib/axios";
 import { FailException } from "@p40/common/contracts/exceptions/exception";
-import { Shift } from "@p40/common/contracts/dashboard/dashboard";
 import { prisma } from "@p40/app/api/prisma";
 
 export class DashboardService {
@@ -410,6 +409,7 @@ export class DashboardService {
   }
 }
 
+//remover e reorganizar chamadas dashboard
 export async function dashboardData(eventId: string): Promise<{
   success: boolean;
   stats: {
