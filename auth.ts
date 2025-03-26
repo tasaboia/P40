@@ -22,6 +22,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("Preencha todos os campos corretamente.");
         }
 
+        console.log("credentials:", credentials);
+
         try {
           const response = await authProver(
             credentials.username as string,

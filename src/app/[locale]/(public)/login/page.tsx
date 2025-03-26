@@ -105,6 +105,12 @@ export default function Login() {
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
+                  <input
+                    id="zionId"
+                    name="zionId"
+                    value={onboardingData.location.id}
+                    type="hidden"
+                  />
                   <UI.Label htmlFor="email">{t("email")}</UI.Label>
                   <UI.Input
                     id="email"

@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { auth } from "../../../../../auth";
 import { ErrorHandler } from "@p40/components/custom/error-handler";
 import { loadDashboardData } from "@p40/services/dashboard/load-dashboard-data";
