@@ -69,7 +69,7 @@ export class EventConfigClient {
 
   async removeDailyTopic(topicId: string) {
     try {
-      const data = await api.delete(`/api/upload/${topicId}`);
+      const data = await api.delete(`/api/upload?topicId=${topicId}`);
       return data.data;
     } catch (error) {
       console.error("Erro ao remover o tópico:", error);

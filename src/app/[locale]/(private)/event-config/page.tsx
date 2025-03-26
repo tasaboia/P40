@@ -14,7 +14,7 @@ import { PrayerTopic } from "@p40/services/event-config/types";
 import { useToast } from "@p40/hooks/use-toast";
 import { EventConfigClient } from "@p40/services/event-config/event-config-client";
 
-// const DailyTopics = lazy(() => import("./components/daily-topics"));
+const DailyTopics = lazy(() => import("./components/daily-topics"));
 
 export default function EventConfigPage() {
   const { toast } = useToast();
@@ -425,7 +425,7 @@ export default function EventConfigPage() {
 
           <UI.TabsContent value="topics" className="space-y-6 w-full p-6">
             <Suspense>
-              {/* <DailyTopics eventConfigData={eventConfig} /> */}
+              <DailyTopics eventConfigData={eventConfig} />
             </Suspense>
           </UI.TabsContent>
         </UI.Tabs>

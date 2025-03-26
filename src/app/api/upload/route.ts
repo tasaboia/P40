@@ -67,18 +67,29 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 }
 
-export async function DELETE(req, res) {
+export async function DELETE(request: Request) {
   try {
-    const { id } = req.query;
+    const { searchParams } = new URL(request.url);
+    const topicId = searchParams.get("topicId");
+
+    if (!topicId) {
+      return NextResponse.json(
+        { success: false, error: "ID do tópico não fornecido" },
+        { status: 400 }
+      );
+    }
 
     const dailyPrayerTopic = await prisma.dailyPrayerTopic.findUnique({
       where: {
-        id: id,
+        id: topicId,
       },
     });
 
     if (!dailyPrayerTopic) {
-      return res.status(404).json({ error: "Tópico não encontrado" });
+      return NextResponse.json(
+        { success: false, error: "Tópico não encontrado" },
+        { status: 404 }
+      );
     }
 
     if (dailyPrayerTopic.imageUrl) {
@@ -95,15 +106,16 @@ export async function DELETE(req, res) {
 
     await prisma.dailyPrayerTopic.delete({
       where: {
-        id: id,
+        id: topicId,
       },
     });
 
     return NextResponse.json({
       success: true,
-      data: "",
+      data: null,
     });
   } catch (error) {
+    console.error("Erro ao deletar tópico:", error);
     return NextResponse.json(
       {
         success: false,
