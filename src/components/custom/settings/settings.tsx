@@ -33,6 +33,7 @@ import { UserEdit } from "../user-edit/user-edit";
 import { TurnsUserList } from "../user-edit/turns-user";
 import { User } from "@p40/common/contracts/user/user";
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 
 interface SettingsProps {
   user: User;
@@ -42,6 +43,14 @@ interface SettingsProps {
 export function Settings({ user, turnItens }: SettingsProps) {
   const { locale, handleLanguageChange } = useChangeLanguage();
   const t = useTranslations("common");
+  const pathname = usePathname();
+  const isCheckInPage = pathname.includes("/check-in");
+
+  const handleLogout = () => {
+    localStorage.clear();
+    const callbackUrl =  isCheckInPage ? `/check-in/login` : "/login";
+    signOut({ callbackUrl });
+  };
 
   return (
     <div className="absolute top-4 right-4">
@@ -50,12 +59,14 @@ export function Settings({ user, turnItens }: SettingsProps) {
           <Menu />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>{t("actions.settings")}</DropdownMenuLabel>
+        { !isCheckInPage && 
+        
+        <><DropdownMenuLabel>{t("actions.settings")}</DropdownMenuLabel>
           {turnItens?.length > 0 && (
             <TurnsUserList turnItens={turnItens} user={user} />
           )}
-          <UserEdit user={user} />
-
+          <UserEdit user={user} /></>
+        }
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Languages />
@@ -79,7 +90,7 @@ export function Settings({ user, turnItens }: SettingsProps) {
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem onClick={() => signOut()}>
+          <DropdownMenuItem onClick={handleLogout}>
             <LogOut className="h-6 w-6" />
             {t("actions.logout")}
           </DropdownMenuItem>

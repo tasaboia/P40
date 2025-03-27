@@ -17,6 +17,10 @@ export interface Church {
   name: string;
   city: string;
   country: string;
+  events?: {
+    id: string;
+    name: string;
+  }
 }
 
 export interface ZionApiResponse {

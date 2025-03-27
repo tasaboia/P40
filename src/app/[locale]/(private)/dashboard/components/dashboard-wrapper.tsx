@@ -26,6 +26,7 @@ export default function DashboardWrapper({
 }: DashboardWrapperProps) {
   const router = useRouter();
   const path = usePathname();
+  const isCheckinPath = path.includes("check-in");
 
   const indexInicial = filteredTabs.findIndex((tabs) =>
     tabs.route.url.includes(path.replace(/\//g, ""))
@@ -33,16 +34,14 @@ export default function DashboardWrapper({
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(indexInicial);
   const [activeIndex, setActiveIndex] = useState(indexInicial);
-
   const [hoverStyle, setHoverStyle] = useState({});
   const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" });
   const [isDarkMode, setIsDarkMode] = useState(false);
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
-
   const initialRender = useRef(true);
 
   useEffect(() => {
-    if (hoveredIndex !== null) {
+    if (hoveredIndex !== null && !isCheckinPath) {
       const hoveredElement = tabRefs.current[hoveredIndex];
       if (hoveredElement) {
         const { offsetLeft, offsetWidth } = hoveredElement;
@@ -52,9 +51,11 @@ export default function DashboardWrapper({
         });
       }
     }
-  }, [hoveredIndex]);
+  }, [hoveredIndex, isCheckinPath]);
 
   useEffect(() => {
+    if (isCheckinPath) return;
+    
     const activeElement = tabRefs.current[activeIndex];
     if (activeElement) {
       const { offsetLeft, offsetWidth } = activeElement;
@@ -78,7 +79,11 @@ export default function DashboardWrapper({
       }
       initialRender.current = false;
     }
-  }, [activeIndex, router]);
+  }, [activeIndex, router, isCheckinPath, eventId, filteredTabs]);
+
+  if (isCheckinPath) {
+    return <div className="container h-full w-screen">{children}</div>;
+  }
 
   return (
     <div

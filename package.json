@@ -16,9 +16,7 @@
   "prisma": {
     "seed": "node --loader ts-node/esm prisma/seed.ts"
   },
-  "overrides": {
-    "react-is": "^19.0.0-rc-69d4b800-20241021"
-  },
+ 
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",
     "@nivo/bar": "^0.88.0",

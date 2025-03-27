@@ -27,6 +27,15 @@ export default function Login() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  // Limpar o localStorage ao entrar na página de login
+  useEffect(() => {
+    // Verificar se estamos no cliente
+    if (typeof window !== 'undefined') {
+      // Limpar localStorage para evitar problemas com valores null
+      localStorage.clear();
+    }
+  }, []);
+
   useEffect(() => {
     if (!state.error) router.refresh();
   }, [state, router]);
@@ -69,7 +78,7 @@ export default function Login() {
             >
               <div className="flex justify-between items-center text-xs text-muted-foreground">
                 <div>
-                  <span>{onboardingData.location.name}</span>
+                  <span>{onboardingData.location.name || ""}</span>
                   {onboardingData.areas.length > 0 && (
                     <span className="ml-2">
                       • {onboardingData.areas.length} área
@@ -108,7 +117,7 @@ export default function Login() {
                   <input
                     id="zionId"
                     name="zionId"
-                    value={onboardingData.location.id}
+                    value={onboardingData.location.id || ""}
                     type="hidden"
                   />
                   <UI.Label htmlFor="email">{t("email")}</UI.Label>

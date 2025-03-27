@@ -65,7 +65,7 @@ model Event {
   endDate                   DateTime
   description               String?
   prayerTurns               PrayerTurn[]
-  checkIns   CheckIn[]    
+  checkIns                  CheckIn[]    
   prayerTopics              DailyPrayerTopic[]
   maxParticipantsPerTurn    Int?    @default(2)     
   shiftDuration             Int?    @default(60)  

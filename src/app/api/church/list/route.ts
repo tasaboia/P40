@@ -14,6 +14,12 @@ export async function GET() {
             name: true,
             city: true,
             country: true,
+            events: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
       },
@@ -37,6 +43,10 @@ export async function GET() {
         name: church.name,
         city: church.city,
         country: church.country,
+        events: church.events.map((event) => ({
+          id: event.id,
+          name: event.name,
+        })),
       })),
     }));
 

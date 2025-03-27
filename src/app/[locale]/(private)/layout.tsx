@@ -15,12 +15,21 @@ export default async function Layout({ children }: { children: ReactNode }) {
   let filteredTabs = [];
   let eventId;
 
-  if (session.user.role) {
+  if (session && session.user && session.user.role) {
     filteredTabs = DashboardTabs.filter((tabs) =>
       tabs.role.includes(session.user.role)
     );
+    
+    // Obter eventId apenas se churchId existir
     const churchId = session.user.churchId;
-    eventId = (await eventByChurchId(churchId)).id;
+    if (churchId) {
+      try {
+        const event = await eventByChurchId(churchId);
+        eventId = event?.id;
+      } catch (error) {
+        console.error("Erro ao buscar evento por churchId:", error);
+      }
+    }
   }
 
   return (
