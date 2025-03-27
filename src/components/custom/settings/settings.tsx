@@ -44,11 +44,11 @@ export function Settings({ user, turnItens }: SettingsProps) {
   const { locale, handleLanguageChange } = useChangeLanguage();
   const t = useTranslations("common");
   const pathname = usePathname();
-  const isCheckInPage = pathname.includes("/check-in");
+  const isCheckInPage = pathname.includes("check-in");
 
   const handleLogout = () => {
     localStorage.clear();
-    const callbackUrl =  isCheckInPage ? `/check-in/login` : "/login";
+    const callbackUrl =  isCheckInPage ? `/${locale}/check-in/login` : `/${locale}/login`
     signOut({ callbackUrl });
   };
 

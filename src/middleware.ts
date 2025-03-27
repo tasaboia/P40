@@ -4,8 +4,7 @@ import { routing } from "./i18n/routing";
 import { auth } from "../auth";
 
 const intlMiddleware = createMiddleware(routing);
-const publicPages = ["/", "/login", "/leaders-onboarding","/check-in", "/check-in/login"];
-const privetePages = ["/event-config", "/schedule", "/dashboard"];
+const publicPages = ["/", "/login", "/leaders-onboarding", "/check-in/login"];
 
 const availableLocales = routing?.locales || ["en", "pt", "es"];
 
