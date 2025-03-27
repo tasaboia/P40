@@ -303,7 +303,7 @@ export default function CheckInProcess() {
       toast({
         title: "Salvando seus dados...",
         description: "Estamos atualizando suas informações.",
-        duration: 3000
+        duration: 1000
       });
       
       // Atualizar perfil do usuário com esses dados - usando o endpoint PUT que funciona!
@@ -325,7 +325,7 @@ export default function CheckInProcess() {
             title: "Dados salvos!",
             description: "Seus dados foram atualizados com sucesso.",
             variant: "success",
-            duration: 3000
+            duration: 1000
           });
           
           localStorage.setItem("isOnboardingComplete", "true");
@@ -558,7 +558,7 @@ export default function CheckInProcess() {
         );
         break;
         
-      case 'success':
+      case '  ':
         contentToRender = (
           <Card className="w-full max-w-md shadow-lg bg-white overflow-hidden">
             <div className="bg-green-500 h-2 w-full"></div>
