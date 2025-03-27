@@ -43,35 +43,83 @@ export async function GET(request: Request) {
   }
 }
 
-// POST - Criar um novo check-in
 export async function POST(request: Request) {
     const { eventId, timestamp, userId } = await request.json();
-
-    console.log(eventId, timestamp, userId)
    
   try {
+    if (!eventId || !userId) {
+      return NextResponse.json({
+        success: false,
+        message: "ID do evento e do usuário são obrigatórios"
+      }, { status: 400 });
+    }
 
     const checkInTime = new Date(timestamp || new Date());
     const weekday = checkInTime.getDay();
-    const timeString = checkInTime.toLocaleTimeString("pt-BR", { 
-      hour: "2-digit", 
-      minute: "2-digit",
-      hour12: false 
+    
+    // Formatação do horário
+    const hours = checkInTime.getHours().toString().padStart(2, '0');
+    const minutes = checkInTime.getMinutes().toString().padStart(2, '0');
+    const timeString = `${hours}:${minutes}`;
+    
+    console.log("Dados do check-in:", { weekday, timeString });
+    
+    // Buscar todos os turnos para este dia
+    const allTurnsForDay = await prisma.prayerTurn.findMany({
+      where: {
+        eventId: eventId,
+        weekday: weekday
+      },
+      select: {
+        id: true,
+        startTime: true,
+        endTime: true
+      }
     });
-
-    const turn = await prisma.prayerTurn.findFirst({
-        where: {
-          eventId: eventId,   
-          weekday: weekday,   
-          startTime: {
-            lte: timeString
-          },
-          endTime: {
-            gte: timeString
-          }
-        }
-      });
+    
+    // Converter o horário atual para minutos para facilitar comparação
+    const timeToMinutes = (timeStr) => {
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      return hours * 60 + minutes;
+    };
+    
+    const currentMinutes = timeToMinutes(timeString);
+    
+    // Encontrar o turno correto, tratando especialmente turnos que cruzam a meia-noite
+    let matchingTurnId = null;
+    
+    for (const turn of allTurnsForDay) {
+      const startMinutes = timeToMinutes(turn.startTime);
+      let endMinutes = timeToMinutes(turn.endTime);
       
+      // Tratamento especial para turnos que terminam à meia-noite ou depois
+      if (endMinutes <= startMinutes) {
+        endMinutes += 24 * 60; // Adiciona 24 horas em minutos
+      }
+      
+      // Verificar se o horário atual está dentro deste intervalo
+      if (currentMinutes >= startMinutes && 
+          (currentMinutes <= endMinutes || 
+           (turn.endTime === "00:00" && currentMinutes + (24 * 60) <= endMinutes))) {
+        matchingTurnId = turn.id;
+        console.log(`Turno encontrado: ${turn.startTime} - ${turn.endTime}`);
+        break;
+      }
+    }
+    
+    if (!matchingTurnId) {
+      return NextResponse.json({
+        success: false,
+        message: "Não foi encontrado nenhum turno para este horário",
+        debug: {
+          weekday,
+          timeString,
+          availableTurns: allTurnsForDay
+        }
+      }, { status: 404 });
+    }
+
+    // Verificar se já existe check-in para hoje
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -80,7 +128,7 @@ export async function POST(request: Request) {
     const existingCheckIn = await prisma.checkIn.findFirst({
       where: {
         userId: userId,
-        prayerTurnId: turn.id,
+        prayerTurnId: matchingTurnId,
         createdAt: {
           gte: today,
           lt: tomorrow
@@ -101,7 +149,7 @@ export async function POST(request: Request) {
       data: {
         userId: userId,
         eventId,
-        prayerTurnId: turn.id
+        prayerTurnId: matchingTurnId
       },
       include: {
         prayerTurn: {
@@ -137,8 +185,8 @@ export async function POST(request: Request) {
       data: checkIn
     });
   } catch (error) {
+    console.error("Erro no check-in:", error);
     return errorHandler(error);
-   
   }
 }
 
@@ -171,21 +219,8 @@ export async function PUT(request: Request) {
       updateData.leaderLink = leaderLink;
     }
     
-    // Verificar se churchId é válido antes de adicioná-lo
-    if (churchId !== undefined && churchId !== null && churchId !== "") {
-      // Verificar se a igreja existe antes de atualizar
-      const churchExists = await prisma.church.findUnique({
-        where: { id: churchId }
-      });
-      
-      if (churchExists) {
-        updateData.churchId = churchId;
-      } else {
-        console.log(`Igreja com ID ${churchId} não encontrada. Não será atualizado.`);
-      }
-    } else {
-      // Se churchId for null ou vazio, remover a referência
-      updateData.churchId = null;
+    if (churchId !== undefined) {
+      updateData.churchId = churchId;
     }
     
     if (otherChurch !== undefined) {
