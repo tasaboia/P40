@@ -30,7 +30,7 @@ export class EventConfigClient {
   }) {
     try {
       const data = await api.post("/api/event-config", eventConfig);
-      return data.data;
+      return data;
     } catch (error) {
       console.error("Erro ao buscar estatísticas:", error);
       return {
