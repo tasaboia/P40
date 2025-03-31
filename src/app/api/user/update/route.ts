@@ -5,19 +5,13 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { id, name, email, whatsapp, zionId, serviceAreas: areas } = body;
-
-    console.log("Dados recebidos para atualização:", {
-      id,
-      name,
-      serviceAreas: areas
-    });
+   
 
     if (!id) {
       throw new Error("ID do usuário é obrigatório");
     }
 
     return await prisma.$transaction(async (tx) => {
-      // Atualiza dados básicos do usuário
       const user = await tx.user.update({
         where: { id },
         data: {
@@ -28,7 +22,6 @@ export async function POST(req: Request) {
         },
       });
 
-      // Se tiver áreas de serviço para atualizar
       if (areas && Array.isArray(areas) && areas.length > 0) {
         console.log("Atualizando áreas de serviço...");
 

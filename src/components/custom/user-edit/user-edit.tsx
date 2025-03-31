@@ -21,6 +21,18 @@ import { updateUser } from "@p40/services/user/user-service";
 import { PhoneInput } from "../input-phone/input-phone";
 import { useTranslations } from "next-intl";
 
+const formatPhoneNumber = (phone: string | null): string => {
+  if (!phone) return '';
+  
+  // Remove todos os espaços, traços e caracteres especiais
+  // Mantém apenas números e o + inicial
+  const cleanNumber = phone
+    .replace(/^\++/, '') // Remove + extras do início
+    .replace(/[^0-9]/g, ''); // Remove tudo que não for número
+    
+  return cleanNumber ? `+${cleanNumber}` : '';
+};
+
 export function UserEdit({ user }) {
   const [state, formAction, isPending] = useActionState(updateUser, {
     success: false,
@@ -29,6 +41,7 @@ export function UserEdit({ user }) {
   const t = useTranslations("common");
 
   React.useEffect(() => {
+
     if (state.success) {
       toast({
         variant: "success",
@@ -94,7 +107,7 @@ export function UserEdit({ user }) {
                 <PhoneInput
                   id="whatsapp"
                   name="whatsapp"
-                  value={`+${user?.whatsapp}`}
+                  value={formatPhoneNumber(user?.whatsapp)}
                   international
                   placeholder="11 99999-9999"
                 />

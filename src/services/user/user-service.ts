@@ -20,13 +20,10 @@ export const updateUser = async (prevState: any, formData: FormData) => {
       id,
       zionId,
     });
-
-    if (!response.data.success) {
-      throw new Error("Erro ao atualizar usuário.");
-    }
-
+    
     return { success: true, user: response.data.user };
   } catch (error) {
+    console.log("error ->>>>>>>> ", error);
     return { success: false, error: error.message };
   }
 };
@@ -34,10 +31,6 @@ export const updateUser = async (prevState: any, formData: FormData) => {
 export const getUser = async (userId: string): Promise<UserResponse> => {
   try {
     const response = await api.get(`/api/user?userId=${userId}`);
-
-    if (!response.data.success) {
-      throw new Error("Erro ao atualizar usuário.");
-    }
 
     return { success: true, user: response.data.user };
   } catch (error) {
