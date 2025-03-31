@@ -6,20 +6,22 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { TAreaName } from "../constants";
 
 interface OnboardingData {
   location: {
     id: string | null;
     name: string | null;
   };
-  areas: TAreaName[];
+  areas: {
+    id: string;
+    name: string;
+  }[];
 }
 
 interface OnboardingContextType {
   onboardingData: OnboardingData;
   setLocation: (id: string | null, name: string | null) => void;
-  setAreas: (areas: TAreaName[]) => void;
+  setAreas: (areas:[]) => void;
   isOnboardingComplete: boolean;
   setIsOnboardingComplete: (value: boolean) => void;
   resetOnboarding: () => void;
@@ -51,6 +53,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     const savedValue = localStorage.getItem("isOnboardingComplete");
     if (savedValue) {
       setIsOnboardingComplete(JSON.parse(savedValue));
+
     }
 
     const savedData = localStorage.getItem("onboardingData");
@@ -76,7 +79,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const setAreas = (areas: TAreaName[]) => {
+  const setAreas = (areas: { id: string; name: string }[]) => { 
     setOnboardingData((prevData) => ({
       ...prevData,
       areas,

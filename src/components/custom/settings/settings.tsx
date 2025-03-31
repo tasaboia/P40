@@ -47,7 +47,6 @@ export function Settings({ user, turnItens }: SettingsProps) {
   const isCheckInPage = pathname.includes("check-in");
 
   const handleLogout = () => {
-    localStorage.clear();
     const callbackUrl =  isCheckInPage ? `/${locale}/check-in/login` : `/${locale}/login`
     signOut({ callbackUrl });
   };

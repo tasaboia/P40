@@ -12,23 +12,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         username: { label: "username" },
         password: { label: "Password", type: "password" },
         zionId: { label: "zionId" },
+        serviceAreas: { label: "serviceAreas" },
       },
       authorize: async (credentials) => {
-        if (
-          !credentials?.username ||
-          !credentials?.password ||
-          !credentials?.zionId
-        ) {
-          throw new Error("Preencha todos os campos corretamente.");
-        }
-
-        console.log("credentials:", credentials);
+       
+        const serviceAreas = credentials?.serviceAreas;
 
         try {
           const response = await authProver(
             credentials.username as string,
             credentials.password as string,
-            credentials.zionId as string
+            credentials.zionId as string,
+            serviceAreas
           );
 
           if (!response) {

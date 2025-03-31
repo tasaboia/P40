@@ -5,6 +5,7 @@ import Loading from "./loading";
 import { auth } from "../../../../auth";
 import { DashboardTabs } from "@p40/common/constants";
 import { eventByChurchId } from "@p40/services/event/event-byId";
+import { getUser } from "@p40/services/user/user-service";
 
 const DashboardLazy = lazy(
   () => import("./dashboard/components/dashboard-wrapper")
@@ -20,13 +21,15 @@ export default async function Layout({ children }: { children: ReactNode }) {
       tabs.role.includes(session.user.role)
     );
     
-    // Obter eventId apenas se churchId existir
-    const churchId = session.user.churchId;
-    if (churchId) {
+    const userData = await getUser(session.user.id);
+
+    if (userData.user.churchId) {
       try {
-        const event = await eventByChurchId(churchId);
+
+        const event = await eventByChurchId(userData.user.churchId);
         eventId = event?.id;
       } catch (error) {
+        console.log(error);
         console.error("Erro ao buscar evento por churchId:", error);
       }
     }

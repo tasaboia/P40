@@ -30,6 +30,7 @@ export default function DashboardWrapper({
   const isCheckinPath = path.includes("check-in");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  console.log(filteredTabs);
   const indexInicial = filteredTabs.findIndex((tabs) =>
     tabs.route.url.includes(path.replace(/\//g, ""))
   );
@@ -88,6 +89,8 @@ export default function DashboardWrapper({
     }
   }, [hoveredIndex, isCheckinPath, isMobile]);
 
+  console.log(filteredTabs[activeIndex].route.url);
+  console.log(eventId);
   useEffect(() => {
     if (isCheckinPath) return;
     
@@ -106,8 +109,10 @@ export default function DashboardWrapper({
       if (initialRender.current === false) {
         if (filteredTabs[activeIndex].route.params == "eventId") {
           if (eventId) {
+            
             router.push(`/${filteredTabs[activeIndex].route.url}/${eventId}`);
           } else {
+           
             toast({
               title: "Erro ao buscar pautas de oração",
               variant: "destructive",

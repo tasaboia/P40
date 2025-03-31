@@ -109,7 +109,7 @@ model User {
   whatsapp    String?  
   email       String   @unique 
   imageUrl    String?  
-  role        Role     @default(ADMIN)
+  role        Role     @default(USER)
   userShifts  UserShift[]   
   checkIns    CheckIn[]  
   onboarding  Boolean @default(false)
@@ -120,10 +120,8 @@ model User {
   testimony   Testimony[] 
   leaderLink  String?  
   otherChurch String?  
+  serviceAreas UserServiceArea[]
 }
-
-
-
 
 model Testimony {
   id        String   @id @default(uuid())  
@@ -164,6 +162,27 @@ model CheckIn {
   checkInTime  DateTime @default(now())  
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model ServiceArea {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userAreas   UserServiceArea[]
+}
+
+model UserServiceArea {
+  id            String      @id @default(uuid())
+  userId        String
+  serviceAreaId String
+  role          String?      
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          User        @relation(fields: [userId], references: [id])
+  serviceArea   ServiceArea @relation(fields: [serviceAreaId], references: [id])
+
+  @@unique([userId, serviceAreaId])
 }
 
  

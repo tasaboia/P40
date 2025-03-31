@@ -15,7 +15,9 @@
   },
   "prisma": {
     "seed": "node --loader ts-node/esm prisma/seed.ts",
-    "check": "node --loader ts-node/esm prisma/check.ts"
+    "check": "node --loader ts-node/esm prisma/check.ts",
+    "remove-users": "node --loader ts-node/esm prisma/remove-users.ts",
+    "seed-areas": "node --loader ts-node/esm prisma/areas-service.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",

@@ -5,7 +5,7 @@ import { prisma } from "@p40/app/api/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { email, imageUrl, name } = await req.json();
+    const { email, imageUrl, name, zionId } = await req.json();
 
     if (!email || !name) {
       throw new FailException({
@@ -27,6 +27,7 @@ export async function POST(req: Request) {
           email,
           imageUrl,
           onboarding: false,
+          churchId: zionId,
         },
       });
     } else if (existingUser.onboarding === false) {
@@ -35,6 +36,7 @@ export async function POST(req: Request) {
         data: {
           name,
           imageUrl,
+          churchId: zionId,
         },
       });
     } else {

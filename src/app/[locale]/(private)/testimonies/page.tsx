@@ -248,7 +248,7 @@ const TestimonyCard = React.memo(({ testimony }: { testimony: Testimony }) => {
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold">{testimony.user.name}</h3>
+                <h3 className="font-semibold capitalize">{testimony.user.name.toLowerCase()}</h3>
                 {testimony.church && (
                   <p className="text-sm text-muted-foreground">
                     {testimony.church.name}

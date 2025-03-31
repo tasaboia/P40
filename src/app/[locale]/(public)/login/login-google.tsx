@@ -25,6 +25,7 @@ export default function GoogleLogin() {
           email: session.data.user.email,
           whatsapp: session.data.user.whatsapp,
           zionId: onboardingData.location.id,
+          serviceAreas: onboardingData.areas
         });
 
         if (response.status == 200 || response.status == 201) {
@@ -38,8 +39,7 @@ export default function GoogleLogin() {
   if (session.status == "authenticated") {
     return (
       <div className="w-screen h-screen justify-center flex items-center">
-        {/* <Loader2 className="animate-spin" /> */}
-        <div className="animate-spin rounded-full h-8 w-8 md:h-12 md:w-12 border-b-2 border-primary"></div>
+        <Loader2 className="animate-spin" />
       </div>
     );
   } else {
