@@ -193,18 +193,15 @@ export function TurnItem({
               {turnItem?.leaders?.length > 0 &&
               turnItem?.leaders.find((leader) => leader.id == userId) ? (
                 <Button
-                  className="w-full text-destructive"
-                  variant="secondary"
-                  disabled={loading}
-                  onClick={() => {
-                    const turn = turnItens.find((item) =>
-                      item.leaders.some((leader) => leader.id === userId)
-                    );
-                    handlePrayerTurnUnsubscribe({
-                      userId,
-                      prayerTurnId: turn.id,
-                    });
-                  }}
+                className="w-full text-destructive"
+                variant="secondary"
+                disabled={loading}
+                onClick={() => {
+                  handlePrayerTurnUnsubscribe({
+                    userId,
+                    prayerTurnId: turnItem.id,  
+                  });
+                }}
                 >
                   <Plus />
                   {t("actions.leave")}

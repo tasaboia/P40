@@ -25,6 +25,7 @@ export default function DayList({
 }: DayListProps) {
   const filteredTurns = turns.filter((turn) => turn.weekday === weekday);
 
+  
   return (
     <Suspense fallback={<WeekSkeleton />}>
       <TurnItem

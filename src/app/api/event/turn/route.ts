@@ -226,6 +226,7 @@ export async function POST(req: Request) {
     return errorHandler(error);
   }
 }
+
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -237,7 +238,7 @@ export async function DELETE(req: Request) {
         statusCode: 400,
       });
     }
-    const prayerTurn = await prisma.prayerTurn.findFirst({
+    const prayerTurn = await prisma.prayerTurn.findUnique({
       where: {
         id: prayerTurnId,
       },
