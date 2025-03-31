@@ -286,16 +286,18 @@ export default function DailyTopicPage() {
              
           </div>
 
-          <div className="flex justify-center mt-4">
-            <Button
-              onClick={() => setShowTestimonyForm(!showTestimonyForm)}
-              variant="outline"
-              className="w-full"
-            >
-              <MessageSquare className="h-4 w-4 mr-2" />
-              {showTestimonyForm ? "Cancelar" : "Compartilhar Testemunho"}
-            </Button>
-          </div>
+          { currentTopic?.imageUrl  && 
+            <div className="flex justify-center mt-4">
+              <Button
+                onClick={() => setShowTestimonyForm(!showTestimonyForm)}
+                variant="outline"
+                className="w-full"
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                {showTestimonyForm ? "Cancelar" : "Compartilhar Testemunho"}
+              </Button>
+            </div>
+          }
 
           {/* Formulário de testemunho */}
           {showTestimonyForm && (
