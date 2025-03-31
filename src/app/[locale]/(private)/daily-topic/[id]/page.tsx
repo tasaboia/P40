@@ -20,6 +20,7 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { DailyPrayerTopic } from "@p40/common/contracts/daily-topics/daily-topics";
 import { EventConfigClient } from "@p40/services/event-config/event-config-client";
+import { TestimonyType } from "@prisma/client";
 
 export default function DailyTopicPage() {
   const params = useParams<{ id: string }>();
@@ -101,7 +102,7 @@ export default function DailyTopicPage() {
 
   // Enviar testemunho
   const submitTestimony = async () => {
-    if (!session) {
+    if (!session?.user?.id) {
       toast({
         title: "Você precisa estar logado",
         description: "Faça login para compartilhar seu testemunho",
@@ -120,25 +121,56 @@ export default function DailyTopicPage() {
       return;
     }
 
+    // Verificar se temos o tópico atual
+    if (!topics[currentTopicIndex]?.id) {
+      toast({
+        title: "Erro ao enviar",
+        description: "Não foi possível identificar o tópico de oração",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Simulação de envio para API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast({
-        title: "Testemunho enviado",
-        description: "Seu testemunho foi enviado e será revisado em breve",
+      const response = await fetch("/api/testimony", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: testimony,
+          type: TestimonyType.FAITH,
+          userId: session.user.id,
+          churchId: session.user.churchId,
+          date: new Date().toISOString(),
+          approved: false
+        }),
       });
 
-      setTestimony("");
-      setShowTestimonyForm(false);
+      if (!response.ok) {
+        throw new Error("Falha ao enviar testemunho");
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "Testemunho enviado",
+          description: "Seu testemunho foi enviado e será revisado em breve",
+        });
+
+        setTestimony("");
+        setShowTestimonyForm(false);
+      } else {
+        throw new Error(data.message || "Erro ao enviar testemunho");
+      }
     } catch (error) {
       console.error("Erro ao enviar testemunho:", error);
       toast({
         title: "Erro ao enviar",
-        description:
-          "Ocorreu um erro ao enviar seu testemunho. Tente novamente.",
+        description: "Ocorreu um erro ao enviar seu testemunho. Tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -228,17 +260,30 @@ export default function DailyTopicPage() {
           </div>
 
           <div className="relative aspect-[9/16] w-full overflow-hidden rounded-lg border shadow-sm">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={currentTopic?.imageUrl || "/placeholder.svg"}
-              className="object-cover w-full h-full"
-            />
+            {currentTopic?.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={currentTopic.imageUrl}
+                alt="Tópico de oração"
+                className="object-cover w-full h-full"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-primary/10 flex flex-col items-center justify-center p-4">
+                <div className="text-center space-y-4">
+                  <Calendar className="h-12 w-12 text-primary/40 mx-auto" />
+                  <h3 className="text-lg font-semibold text-primary/80">
+                    Em breve
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+                    {isCurrentTopicFuture() 
+                      ? "O tópico de oração para este dia será revelado em breve."
+                      : "Não há imagem disponível no momento."}
+                  </p>
+                </div>
+              </div>
+            )}
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
-              <p className="text-sm text-white/90">
-                {currentTopic?.description}
-              </p>
-            </div>
+             
           </div>
 
           <div className="flex justify-center mt-4">

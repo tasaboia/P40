@@ -37,6 +37,7 @@ interface DashboardContextType {
   setSearchTerm: (value: string) => void;
   setDateFilter: (value: string) => void;
   setStatusFilter: (value: string) => void;
+  updateTestimony: (id: string, data: Partial<Contracts.Testimony>) => void;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(
@@ -268,6 +269,16 @@ export function DashboardProvider({
     toast({ title: "Testemunho recusado" });
   };
 
+  const updateTestimony = (id: string, data: Partial<Contracts.Testimony>) => {
+    setTestimonies(prev => 
+      prev.map(testimony => 
+        testimony.id === id 
+          ? { ...testimony, ...data }
+          : testimony
+      )
+    );
+  };
+
   return (
     <DashboardContext.Provider
       value={{
@@ -295,6 +306,7 @@ export function DashboardProvider({
         setSearchTerm,
         setStatusFilter,
         statusFilter,
+        updateTestimony,
       }}
     >
       {children}

@@ -51,11 +51,22 @@ export const DashboardTabs = [
       url: "daily-topic",
       params: "eventId",
     },
-  },{
+  },
+  {
+    indexTitle: "Testemunhos",
+    role: ["USER", "LEADER", "ADMIN"],
+    route: {
+      url: "testimonies",
+    },
+  },
+  {
     indexTitle: "Check-ins",
     role: ["ADMIN"],
     route: {
       url: "checkin-overview",
     },
   },
+
+
+  
 ];

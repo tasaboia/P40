@@ -1,78 +1,53 @@
-// src/app/api/prayer-turn/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "../prisma";
-import { errorHandler } from "@p40/common/utils/erro-handler";
+import { prisma } from "@p40/lib/prisma";
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
+// Cache para os turnos de oração
+let prayerTurnsCache: any = null;
+let lastFetch: number = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Parâmetro userId é obrigatório" },
-      { status: 400 }
-    );
-  }
-
+export async function GET(request: Request) {
   try {
-    const prayerTurns = await prisma.prayerTurn.findMany({
-      where: {
-        userShifts: {
-          some: {
-            userId: userId,
-          },
-        },
-      },
-      include: {
-        userShifts: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                whatsapp: true,
-                imageUrl: true,
-                email: true,
-              },
-            },
-          },
-        },
-        event: {
-          select: {
-            id: true,
-            name: true,
-            shiftDuration: true,
-          },
-        },
-      },
-      orderBy: [{ weekday: "asc" }, { startTime: "asc" }],
-    });
 
-    if (!prayerTurns || prayerTurns.length === 0) {
-      return NextResponse.json({ prayerTurn: [] }, { status: 200 });
+    // Verificar cache
+    if (prayerTurnsCache && (Date.now() - lastFetch < CACHE_DURATION)) {
+      return NextResponse.json({
+        success: true,
+        data: prayerTurnsCache
+      });
     }
 
-    const formattedPrayerTurns = prayerTurns.map((turn) => ({
-      id: turn.id,
-      startTime: turn.startTime,
-      endTime: turn.endTime,
-      duration: turn.event?.shiftDuration ?? 60,
-      allowChangeAfterStart: turn.allowChangeAfterStart,
-      weekday: turn.weekday,
-      leaders: turn.userShifts.map((shift) => ({
-        id: shift.user.id,
-        name: shift.user.name,
-        whatsapp: shift.user.whatsapp,
-        imageUrl: shift.user.imageUrl,
-        email: shift.user.email,
-      })),
-    }));
+    const prayerTurns = await prisma.prayerTurn.findMany({
+      select: {
+        id: true,
+        startTime: true,
+        endTime: true,
+        weekday: true,
+        event: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: [
+        { weekday: 'asc' },
+        { startTime: 'asc' }
+      ]
+    });
 
-    return NextResponse.json(
-      { prayerTurn: formattedPrayerTurns },
-      { status: 200 }
-    );
+    // Atualizar cache
+    prayerTurnsCache = prayerTurns;
+    lastFetch = Date.now();
+
+    return NextResponse.json({
+      success: true,
+      data: prayerTurns
+    });
+
   } catch (error) {
-    return errorHandler(error);
+    return NextResponse.json({
+      success: false,
+      error: error instanceof Error ? error.message : "Erro desconhecido"
+    }, { status: 500 });
   }
 }

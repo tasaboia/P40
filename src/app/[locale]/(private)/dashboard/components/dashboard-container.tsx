@@ -114,8 +114,7 @@ export default function DashboardContainer() {
           </UI.TabsContent>
           <UI.TabsContent value="testimonies" className="space-y-6">
             <TestimonyList
-              onApproveTestimony={() => {}}
-              onRejectTestimony={() => {}}
+              
             />
           </UI.TabsContent>
           <UI.TabsContent value="reports" className="space-y-6">
