@@ -147,7 +147,6 @@ export default function Login() {
             <UI.Input
               id="email"
               name="email"
-              type="email"
               placeholder={t("email_placeholder")}
               required
               disabled={isLoading}
