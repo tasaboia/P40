@@ -50,6 +50,8 @@ export async function GET() {
       })),
     }));
 
+    console.log(formattedResponse);
+
     return NextResponse.json(formattedResponse, { status: 200 });
   } catch (error) {
     return errorHandler(error);

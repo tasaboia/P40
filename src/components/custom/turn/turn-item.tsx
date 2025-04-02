@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarImage } from "@p40/components/ui/avatar";
-import { Clock, MessageCircle, Plus } from "lucide-react";
+import { Clock, MessageCircle, Minus, Plus, X } from "lucide-react";
 import { Helpers } from "@p40/common/utils/helpers";
 import { PrayerTurnResponse } from "@p40/common/contracts/user/user";
 import {
@@ -93,7 +93,8 @@ export function TurnItem({
 
       if (!response?.error) {
         toast({
-          variant: "warning",
+          variant: "default",
+
           title: t("messages.unsubscribe.success"),
           description: t("messages.unsubscribe.success_desc"),
         });
@@ -203,7 +204,7 @@ export function TurnItem({
                   });
                 }}
                 >
-                  <Plus />
+                  <X />
                   {t("actions.leave")}
                 </Button>
               ) : (

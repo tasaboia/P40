@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../prisma";
-import { auth } from "../../../../../auth";
 
 export async function POST(request: Request) {
-  
-  const { isZionMember, leaderLink, otherChurch, whatsapp, name,userId } =
-  await request.json();
+  const { isZionMember, leaderLink, otherChurch, whatsapp, name, userId } =
+    await request.json();
   try {
-   
     const user = await prisma.user.update({
       where: { id: userId },
       data: {

@@ -21,7 +21,7 @@ interface OnboardingData {
 interface OnboardingContextType {
   onboardingData: OnboardingData;
   setLocation: (id: string | null, name: string | null) => void;
-  setAreas: (areas:[]) => void;
+  setAreas: (areas: []) => void;
   isOnboardingComplete: boolean;
   setIsOnboardingComplete: (value: boolean) => void;
   resetOnboarding: () => void;
@@ -48,12 +48,11 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    setIsClient(true); // Garantir que o código só roda no cliente
+    setIsClient(true);
 
     const savedValue = localStorage.getItem("isOnboardingComplete");
     if (savedValue) {
       setIsOnboardingComplete(JSON.parse(savedValue));
-
     }
 
     const savedData = localStorage.getItem("onboardingData");
@@ -79,7 +78,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const setAreas = (areas: { id: string; name: string }[]) => { 
+  const setAreas = (areas: { id: string; name: string }[]) => {
     setOnboardingData((prevData) => ({
       ...prevData,
       areas,
