@@ -56,7 +56,12 @@ export default function Login() {
       });
 
       if (result?.error) {
-        throw new Error(result.error);
+        toast({
+          title: "Erro",
+          description: 'Usuário e/ou Senha inválido(s).',
+          variant: "destructive",
+        });
+        return;
       }
 
       toast({
