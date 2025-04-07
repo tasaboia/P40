@@ -60,6 +60,20 @@ interface ServiceAreaDialogProps {
   onSave: (leaderId: string, selectedAreas: string[]) => void;
 }
 
+interface ShiftDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  shifts: {
+    prayerTurn: {
+      id: string;
+      startTime: string;
+      endTime: string;
+      weekday: number;
+      type: string;
+    };
+  }[];
+}
+
 function ServiceAreaDialog({ open, onOpenChange, leader, onSave }: ServiceAreaDialogProps) {
   const [selectedAreas, setSelectedAreas] = useState<string[]>(
     leader?.serviceAreas?.map((sa) => sa.serviceArea.id) || []
@@ -138,6 +152,62 @@ function ServiceAreaDialog({ open, onOpenChange, leader, onSave }: ServiceAreaDi
   );
 }
 
+function ShiftDialog({ open, onOpenChange, shifts }: ShiftDialogProps) {
+  console.log('Shifts recebidos:', shifts);
+
+  if (!shifts || shifts.length === 0) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Turnos do Líder</DialogTitle>
+          </DialogHeader>
+          <div className="text-center py-4">
+            <p className="text-muted-foreground">Nenhum turno cadastrado</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  const getWeekdayName = (weekday: number) => {
+    const weekdays = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+    return weekdays[weekday] || 'Dia inválido';
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Turnos do Líder</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            {shifts.map((shift) => (
+              <div 
+                key={`shift-${shift.prayerTurn.id}`} 
+                className="flex items-center justify-between p-3 border rounded-md"
+              >
+                <div className="space-y-1">
+                  <div className="font-medium capitalize">
+                    {getWeekdayName(shift.prayerTurn.weekday)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {shift.prayerTurn.startTime} - {shift.prayerTurn.endTime}
+                  </div>
+                </div>
+                <Badge variant="secondary">
+                  {shift.prayerTurn.type === 'SHIFT' ? 'Turno' : 'Oração'}
+                </Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function LeadersTable() {
   const { leaders } = useDashboard();
   const [search, setSearch] = useState("");
@@ -147,6 +217,8 @@ export default function LeadersTable() {
   const [selectedServiceAreas, setSelectedServiceAreas] = useState<string[]>([]);
   const [onlyWithShifts, setOnlyWithShifts] = useState(false);
   const [editingLeader, setEditingLeader] = useState<any>(null);
+  const [shiftsDialogOpen, setShiftsDialogOpen] = useState(false);
+  const [selectedShifts, setSelectedShifts] = useState<any[]>([]);
   const pageSize = 10;
 
   const churchNames = Array.from(
@@ -276,7 +348,22 @@ export default function LeadersTable() {
       {
         header: "Turnos",
         accessorKey: "userShifts",
-        cell: ({ row }) => <Badge>{row.original.userShifts.length}</Badge>,
+        cell: ({ row }) => {
+          const shifts = row.original.userShifts || [];
+          console.log('Turnos da linha:', shifts); // Para debug
+          return (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSelectedShifts(shifts);
+                setShiftsDialogOpen(true);
+              }}
+            >
+              <Badge>{shifts.length}</Badge>
+            </Button>
+          );
+        },
       },
       {
         header: "Ações",
@@ -468,6 +555,11 @@ export default function LeadersTable() {
           onSave={handleSaveServiceAreas}
         />
       )}
+      <ShiftDialog
+        open={shiftsDialogOpen}
+        onOpenChange={setShiftsDialogOpen}
+        shifts={selectedShifts}
+      />
     </>
   );
 }

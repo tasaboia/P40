@@ -22,7 +22,11 @@ const fetchServiceAreas = async (): Promise<ServiceArea[]> => {
   if (!response.ok) {
     throw new Error('Falha ao carregar áreas');
   }
-  return response.json();
+  const data = await response.json();
+  if (!data.success) {
+    throw new Error(data.error || 'Falha ao carregar áreas');
+  }
+  return data.data;
 };
 
 export default function AreasOfServicePage() {

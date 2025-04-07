@@ -14,7 +14,7 @@ import StatsCards from "./stats-cards";
 const SingleLeaderDialog = lazy(() => import("./single-leader-dialog")); //modal
 
 export default function DashboardContainer() {
-  const { activeTab, setActiveTab, exportToCSV } = useDashboard();
+  const { activeTab, setActiveTab, exportLeadersToCSV } = useDashboard();
   const [showSingleLeaderShifts, setShowSingleLeaderShifts] = useState(false);
 
   return (
@@ -55,9 +55,9 @@ export default function DashboardContainer() {
                 <UI.DropdownMenuContent align="end">
                   <UI.DropdownMenuLabel>Exportar dados</UI.DropdownMenuLabel>
                   <UI.DropdownMenuSeparator />
-                  <UI.DropdownMenuItem onClick={exportToCSV}>
+                  <UI.DropdownMenuItem onClick={exportLeadersToCSV}>
                     <Icons.FileText className="h-4 w-4 mr-2" />
-                    Exportar para CSV
+                    Exportar Líderes (CSV)
                   </UI.DropdownMenuItem>
                 </UI.DropdownMenuContent>
               </UI.DropdownMenu>
