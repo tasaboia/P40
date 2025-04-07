@@ -11,6 +11,8 @@ import {
 import { format } from "date-fns";
 import * as Contracts from "../contracts/dashboard/dashboard";
 import { toast } from "@p40/hooks/use-toast";
+import * as XLSX from 'xlsx';
+import { ExportService } from "@p40/services/export/export.service";
 
 interface DashboardContextType {
   activeTab: string;
@@ -119,121 +121,60 @@ export function DashboardProvider({
     setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
-  const exportLeadersToCSV = () => {
-    const headers = ["Nome", "Email", "WhatsApp"];
-    const csvData = leaders.map((l) => [l.name, l.email, l.whatsapp]);
-    const csvContent = [headers, ...csvData].map((r) => r.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    if (csvLinkRef.current) {
-      csvLinkRef.current.href = url;
-      csvLinkRef.current.download = `lideres-${format(
-        new Date(),
-        "dd-MM-yyyy"
-      )}.csv`;
-      csvLinkRef.current.click();
+  const exportLeadersToCSV = async () => {
+    try {
+      await ExportService.exportLeadersToExcel(leaders);
+      toast({
+        title: "Exportação concluída",
+        description: "Os dados dos líderes foram exportados com sucesso.",
+      });
+    } catch (error) {
+      console.error("Erro ao exportar líderes:", error);
+      toast({
+        title: "Erro na exportação",
+        description: "Ocorreu um erro ao exportar os dados dos líderes.",
+        variant: "destructive",
+      });
     }
-    setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
   const exportSingleLeaderShiftsToCSV = () => {
-    const headers = [
-      "Nome",
-      "Email",
-      "WhatsApp",
-      "Inicio do turno",
-      "Fim do turno",
-    ];
-
-    const csvData = singleLeaderShifts.flatMap((shift) => {
-      return (shift.leaders || []).map((leader) => [
-        leader.name || "Sem nome",
-        leader.email || "Sem email",
-        leader.whatsapp || "Sem WhatsApp",
-        shift.prayerTurn?.startTime || "",
-        shift.prayerTurn?.endTime || "",
-      ]);
-    });
-
-    const csvContent = [headers, ...csvData].map((r) => r.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
+    const url = ExportService.exportSingleLeaderShiftsToCSV(singleLeaderShifts);
     if (csvLinkRef.current) {
       csvLinkRef.current.href = url;
-      csvLinkRef.current.download = `lideres-${format(
-        new Date(),
-        "dd-MM-yyyy"
-      )}.csv`;
+      csvLinkRef.current.download = `lideres-${format(new Date(), "dd-MM-yyyy")}.csv`;
       csvLinkRef.current.click();
     }
     setTimeout(() => URL.revokeObjectURL(url), 100);
+
+    toast({
+      title: "Exportação concluída",
+      description: "Os dados dos líderes foram exportados com sucesso.",
+    });
   };
 
   const exportTestimoniesToCSV = () => {
-    const headers = ["Líder", "Data", "Conteúdo", "Aprovado"];
-    const csvData = testimonies.map((t) => [
-      t.user.name,
-      format(t.date, "dd/MM/yyyy"),
-      t.content,
-      t.approved ? "Sim" : "Não",
-    ]);
-    const csvContent = [headers, ...csvData].map((r) => r.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
+    const url = ExportService.exportTestimoniesToCSV(testimonies);
     if (csvLinkRef.current) {
       csvLinkRef.current.href = url;
-      csvLinkRef.current.download = `testemunhos-${format(
-        new Date(),
-        "dd-MM-yyyy"
-      )}.csv`;
+      csvLinkRef.current.download = `testemunhos-${format(new Date(), "dd-MM-yyyy")}.csv`;
       csvLinkRef.current.click();
     }
     setTimeout(() => URL.revokeObjectURL(url), 100);
+
+    toast({
+      title: "Exportação concluída",
+      description: "Os testemunhos foram exportados com sucesso.",
+    });
   };
 
   const exportExportShifts = () => {
-    const headers = [
-      "Data",
-      "Dia da Semana",
-      "Horário",
-      "Status",
-      "Líderes",
-      "Igreja",
-    ];
-
-    const csvData = shifts.map((shift) => {
-      const weekday = shift.weekday;
-      const time = `${shift.startTime} - ${shift.endTime}`;
-      const status =
-        shift.status === "empty"
-          ? "Vazio"
-          : shift.status === "partial"
-          ? "Parcial"
-          : "Completo";
-      const leaderNames = shift.leaders.map((leader) => leader.name).join(", ");
-      const churchNames = shift.church?.name || "Sem igreja";
-
-      return [weekday, time, status, leaderNames, churchNames];
-    });
-
-    const csvContent = [
-      headers.join(","),
-      ...csvData.map((row) => row.join(",")),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
+    const url = ExportService.exportShiftsToCSV(shifts);
     if (csvLinkRef.current) {
       csvLinkRef.current.href = url;
-      csvLinkRef.current.download = `turnos-oracao-${format(
-        new Date(),
-        "dd-MM-yyyy"
-      )}.csv`;
+      csvLinkRef.current.download = `turnos-oracao-${format(new Date(), "dd-MM-yyyy")}.csv`;
       csvLinkRef.current.click();
     }
-
-    // Clean up
     setTimeout(() => URL.revokeObjectURL(url), 100);
 
     toast({

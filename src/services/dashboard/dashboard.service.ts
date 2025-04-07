@@ -321,6 +321,16 @@ export class DashboardService {
               },
             },
           },
+          serviceAreas: {
+            include: {
+              serviceArea: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -346,12 +356,19 @@ export class DashboardService {
             type: shift.prayerTurn.type,
           },
         })),
+        serviceAreas: leader.serviceAreas.map((sa) => ({
+          id: sa.id,
+          serviceArea: {
+            id: sa.serviceArea.id,
+            name: sa.serviceArea.name,
+          },
+        })),
       }));
 
       return leaders;
     } catch (error) {
-      console.error("Erro ao buscar turnos vazios ou com 1 líder:", error);
-      throw new Error("Erro ao buscar turnos vazios ou com 1 líder");
+      console.error("Erro ao buscar líderes:", error);
+      throw new Error("Erro ao buscar líderes");
     }
   }
 
@@ -405,6 +422,16 @@ export class DashboardService {
     } catch (error) {
       console.error("Erro ao adicionar líder ao turno:", error);
       return { success: false, error: error.message };
+    }
+  }
+
+  async getAllServiceAreas() {
+    try {
+      const response = await api.get('/api/service-areas');
+      return response.data.data;
+    } catch (error) {
+      console.error("Erro ao buscar áreas de serviço:", error);
+      throw new Error("Erro ao buscar áreas de serviço");
     }
   }
 }

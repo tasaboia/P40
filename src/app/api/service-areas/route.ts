@@ -3,17 +3,27 @@ import { prisma } from "@p40/lib/prisma";
 
 export async function GET() {
   try {
-    const areas = await prisma.serviceArea.findMany({
+    const serviceAreas = await prisma.serviceArea.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
       orderBy: {
-        name: 'asc'
-      }
+        name: 'asc',
+      },
     });
 
-    return NextResponse.json(areas);
+    return NextResponse.json({
+      success: true,
+      data: serviceAreas,
+    });
   } catch (error) {
     console.error("Erro ao buscar áreas de serviço:", error);
     return NextResponse.json(
-      { error: "Erro ao buscar áreas de serviço" },
+      {
+        success: false,
+        error: "Erro ao buscar áreas de serviço",
+      },
       { status: 500 }
     );
   }

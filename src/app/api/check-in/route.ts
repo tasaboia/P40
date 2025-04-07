@@ -192,11 +192,10 @@ export async function POST(request: Request) {
 
 // Rota para atualizar informações de onboarding do usuário
 export async function PUT(request: Request) {
+  const { whatsapp, leaderLink, churchId, otherChurch, userId } = await request.json();
  
   try {
-    const { whatsapp, leaderLink, churchId, otherChurch, userId } = await request.json();
     
-    console.log("Dados recebidos:", { whatsapp, leaderLink, churchId, otherChurch, userId });
     
     if (!userId) {
       return NextResponse.json({

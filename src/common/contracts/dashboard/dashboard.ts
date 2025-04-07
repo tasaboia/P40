@@ -84,6 +84,13 @@ export interface DashboadLeader {
   imageUrl: string;
   church: Church;
   userShifts: { prayerTurn: PrayerTurn }[];
+  serviceAreas: {
+    id: string;
+    serviceArea: {
+      id: string;
+      name: string;
+    };
+  }[];
 }
 
 export interface LeadersDashboardResponse extends BaseApiResponse {
