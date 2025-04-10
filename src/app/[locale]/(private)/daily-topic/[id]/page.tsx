@@ -125,7 +125,7 @@ export default function DailyTopicPage() {
     if (!topics[currentTopicIndex]?.id) {
       toast({
         title: "Erro ao enviar",
-        description: "Não foi possível identificar o tópico de oração",
+        description: "Não foi possível identificar a pauta de oração",
         variant: "destructive",
       });
       return;
@@ -209,7 +209,7 @@ export default function DailyTopicPage() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className="space-y-1"
+          className="space-y-4"
         >
           {/* Cabeçalho com navegação */}
           <div className="flex items-center justify-between mb-4">
@@ -246,47 +246,63 @@ export default function DailyTopicPage() {
           <div className="flex justify-center">
             {isCurrentTopicToday() ? (
               <div className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm font-medium">
-                Tópico de Hoje
+                Pauta de Hoje
               </div>
             ) : isCurrentTopicPast() ? (
               <div className="bg-muted/50 text-muted-foreground px-3 py-1 rounded-full text-sm">
-                Tópico Anterior
+                Pauta Anterior
               </div>
             ) : (
               <div className="bg-muted/50 text-muted-foreground px-3 py-1 rounded-full text-sm">
-                Tópico Futuro
+                Pauta Futuro
               </div>
             )}
           </div>
 
-          <div className="relative aspect-[9/16] w-full overflow-hidden rounded-lg border shadow-sm">
-            {currentTopic?.imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={currentTopic.imageUrl}
-                alt="Tópico de oração"
-                className="object-cover w-full h-full"
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-primary/10 flex flex-col items-center justify-center p-4">
-                <div className="text-center space-y-4">
-                  <Calendar className="h-12 w-12 text-primary/40 mx-auto" />
-                  <h3 className="text-lg font-semibold text-primary/80">
-                    Em breve
-                  </h3>
-                  <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
-                    {isCurrentTopicFuture() 
-                      ? "O tópico de oração para este dia será revelado em breve."
-                      : "Não há imagem disponível no momento."}
-                  </p>
+          {/* Lista de imagens do dia */}
+          <div className="space-y-4">
+            {/* Encontrar todas as imagens do mesmo dia */}
+            {topics.filter(topic => 
+              topic.date === currentTopic?.date && topic.imageUrl
+            ).map((topic, index) => (
+              <div 
+                key={topic.id}
+                className="relative aspect-[9/16] w-full overflow-hidden rounded-lg border shadow-sm"
+              >
+                <img
+                  src={topic.imageUrl}
+                  alt={`Pautas de oração ${index + 1}`}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            ))}
+
+            {/* Mostrar placeholder se não houver imagens */}
+            {!topics.some(topic => 
+              topic.date === currentTopic?.date && topic.imageUrl
+            ) && (
+              <div className="relative aspect-[9/16] w-full overflow-hidden rounded-lg border shadow-sm">
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-primary/10 flex flex-col items-center justify-center p-4">
+                  <div className="text-center space-y-4">
+                    <Calendar className="h-12 w-12 text-primary/40 mx-auto" />
+                    <h3 className="text-lg font-semibold text-primary/80">
+                      Em breve
+                    </h3>
+                    <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
+                      {isCurrentTopicFuture() 
+                        ? "A pauta de oração para este dia estará disponível em breve."
+                        : "Não há imagem disponível no momento."}
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
-
-             
           </div>
 
-          { currentTopic?.imageUrl  && 
+          {/* Botão de testemunho */}
+          {topics.some(topic => 
+            topic.date === currentTopic?.date && topic.imageUrl
+          ) && (
             <div className="flex justify-center mt-4">
               <Button
                 onClick={() => setShowTestimonyForm(!showTestimonyForm)}
@@ -297,7 +313,7 @@ export default function DailyTopicPage() {
                 {showTestimonyForm ? "Cancelar" : "Compartilhar Testemunho"}
               </Button>
             </div>
-          }
+          )}
 
           {/* Formulário de testemunho */}
           {showTestimonyForm && (
@@ -311,7 +327,7 @@ export default function DailyTopicPage() {
               <Card>
                 <CardContent className="pt-4">
                   <Textarea
-                    placeholder="Compartilhe seu testemunho sobre este tópico de oração..."
+                    placeholder="Compartilhe seu testemunho sobre a pauta de oração..."
                     value={testimony}
                     onChange={(e) => setTestimony(e.target.value)}
                     rows={4}
@@ -342,12 +358,6 @@ export default function DailyTopicPage() {
               </p>
             </motion.div>
           )}
-
-          {/* <div className="text-center mt-6">
-            <Button variant="link" onClick={() => router.push("/testimonies")}>
-              Ver todos os testemunhos
-            </Button>
-          </div> */}
         </motion.div>
       </AnimatePresence>
     </div>
