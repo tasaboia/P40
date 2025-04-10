@@ -216,6 +216,7 @@ export default function LeadersTable() {
   const [selectedChurches, setSelectedChurches] = useState<string[]>([]);
   const [selectedServiceAreas, setSelectedServiceAreas] = useState<string[]>([]);
   const [onlyWithShifts, setOnlyWithShifts] = useState(false);
+  const [onlyWithoutShifts, setOnlyWithoutShifts] = useState(false);
   const [editingLeader, setEditingLeader] = useState<any>(null);
   const [shiftsDialogOpen, setShiftsDialogOpen] = useState(false);
   const [selectedShifts, setSelectedShifts] = useState<any[]>([]);
@@ -267,11 +268,14 @@ export default function LeadersTable() {
           leader.serviceAreas?.some(sa => sa.serviceArea.name === areaName)
         );
 
-      const matchShifts = !onlyWithShifts || leader.userShifts.length > 0;
+      const matchShifts = 
+        (!onlyWithShifts && !onlyWithoutShifts) || // Se nenhum filtro de turno estiver ativo
+        (onlyWithShifts && leader.userShifts.length > 0) || // Se quiser apenas com turnos
+        (onlyWithoutShifts && leader.userShifts.length === 0); // Se quiser apenas sem turnos
 
       return matchSearch && matchChurch && matchServiceAreas && matchShifts;
     });
-  }, [leaders, search, selectedChurches, selectedServiceAreas, onlyWithShifts]);
+  }, [leaders, search, selectedChurches, selectedServiceAreas, onlyWithShifts, onlyWithoutShifts]);
 
   const handleSaveServiceAreas = async (leaderId: string, selectedAreas: string[]) => {
     try {
@@ -527,12 +531,27 @@ export default function LeadersTable() {
                 </div>
                 <div>
                   <div className="text-sm font-semibold mb-2">Outros</div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      checked={onlyWithShifts}
-                      onCheckedChange={(v) => setOnlyWithShifts(!!v)}
-                    />
-                    <span className="text-sm">Somente com turnos</span>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={onlyWithShifts}
+                        onCheckedChange={(v) => {
+                          setOnlyWithShifts(!!v);
+                          if (!!v) setOnlyWithoutShifts(false);
+                        }}
+                      />
+                      <span className="text-sm">Somente com turnos</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={onlyWithoutShifts}
+                        onCheckedChange={(v) => {
+                          setOnlyWithoutShifts(!!v);
+                          if (!!v) setOnlyWithShifts(false);
+                        }}
+                      />
+                      <span className="text-sm">Somente sem turnos</span>
+                    </div>
                   </div>
                 </div>
                 <Button
