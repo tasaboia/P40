@@ -41,25 +41,32 @@ export default function DailyTopicPage() {
         const topicsResponse = await eventConfigClient.getDailyTopics(
           params.id
         );
-        topicsResponse.data.sort((a, b) => {
+              
+        if (!topicsResponse.data || topicsResponse.data.length === 0) {
+          setIsLoading(false);
+          return;
+        }
+
+        // Ordenar do mais antigo para o mais recente
+        const sortedTopics = [...topicsResponse.data].sort((a, b) => {
           if (!a.date || !b.date) return 0;
-          return parseISO(b.date).getTime() - parseISO(a.date).getTime();
+          return parseISO(a.date).getTime() - parseISO(b.date).getTime();
         });
 
-        setTopics(topicsResponse.data);
+        setTopics(sortedTopics);
 
         // Encontrar o índice do tópico a ser mostrado
         const today = startOfDay(new Date());
         let targetIndex = 0;
 
         // Se o evento já começou, mostrar o tópico do dia atual
-        const firstTopicDate = topicsResponse.data[0]?.date 
-          ? startOfDay(parseISO(topicsResponse.data[0].date))
+        const firstTopicDate = sortedTopics[0]?.date 
+          ? startOfDay(parseISO(sortedTopics[0].date))
           : null;
         
         if (firstTopicDate && !isBefore(today, firstTopicDate)) {
           // Evento já começou, procurar o tópico de hoje
-          const todayIndex = topicsResponse.data.findIndex((topic) => {
+          const todayIndex = sortedTopics.findIndex((topic) => {
             if (!topic.date) return false;
             const topicDate = startOfDay(parseISO(topic.date));
             return topicDate.getTime() === today.getTime();
@@ -69,34 +76,87 @@ export default function DailyTopicPage() {
             targetIndex = todayIndex;
           } else {
             // Se não encontrou o tópico de hoje, mostrar o mais recente
-            targetIndex = 0;
+            targetIndex = sortedTopics.length - 1;
           }
         } else {
           // Evento ainda não começou, mostrar o primeiro tópico
-          targetIndex = topicsResponse.data.length - 1;
+          targetIndex = 0;
         }
 
         setCurrentTopicIndex(targetIndex);
         setIsLoading(false);
       } catch (error) {
-        console.error("Erro ao carregar tópicos:", error);
         setIsLoading(false);
       }
     };
 
     fetchTopics();
-  }, []);
+  }, [params.id]);
 
   const goToPreviousTopic = () => {
-    if (currentTopicIndex < topics.length - 1) {
-      setCurrentTopicIndex(currentTopicIndex + 1);
+    // Encontrar o tópico do dia anterior
+    const currentDate = topics[currentTopicIndex]?.date ? parseISO(topics[currentTopicIndex].date) : null;
+    if (!currentDate) return;
+
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(previousDate.getDate() - 1);
+
+    const previousIndex = topics.findIndex(topic => {
+      if (!topic.date) return false;
+      const topicDate = parseISO(topic.date);
+      return topicDate.getTime() === previousDate.getTime();
+    });
+
+    if (previousIndex !== -1) {
+      setCurrentTopicIndex(previousIndex);
     }
   };
 
   const goToNextTopic = () => {
-    if (currentTopicIndex > 0) {
-      setCurrentTopicIndex(currentTopicIndex - 1);
+    // Encontrar o tópico do próximo dia
+    const currentDate = topics[currentTopicIndex]?.date ? parseISO(topics[currentTopicIndex].date) : null;
+    if (!currentDate) return;
+
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    const nextIndex = topics.findIndex(topic => {
+      if (!topic.date) return false;
+      const topicDate = parseISO(topic.date);
+      return topicDate.getTime() === nextDate.getTime();
+    });
+
+    if (nextIndex !== -1) {
+      setCurrentTopicIndex(nextIndex);
     }
+  };
+
+  // Verificar se existe tópico no dia anterior
+  const hasPreviousDay = () => {
+    if (!topics[currentTopicIndex]?.date) return false;
+    const currentDate = parseISO(topics[currentTopicIndex].date);
+    const previousDate = new Date(currentDate);
+    previousDate.setDate(previousDate.getDate() - 1);
+
+    return topics.some(topic => {
+      if (!topic.date) return false;
+      const topicDate = parseISO(topic.date);
+      return topicDate.getTime() === previousDate.getTime();
+    });
+  };
+
+  // Verificar se existe tópico no próximo dia
+  const hasNextDay = () => {
+    if (!topics[currentTopicIndex]?.date) return false;
+    const currentDate = parseISO(topics[currentTopicIndex].date);
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    return topics.some(topic => {
+      if (!topic.date) return false;
+      const topicDate = parseISO(topic.date);
+      return topicDate.getTime() === nextDate.getTime();
+    });
   };
 
   const isCurrentTopicToday = () => {
@@ -205,6 +265,9 @@ export default function DailyTopicPage() {
     return format(parseISO(dateString), "EEEE, dd 'de' MMMM", { locale: ptBR });
   };
 
+  // Obter tópico atual de forma segura
+  const currentTopic = topics[currentTopicIndex] || null;
+
   // Renderizar esqueleto de carregamento
   if (isLoading) {
     return (
@@ -218,8 +281,22 @@ export default function DailyTopicPage() {
     );
   }
 
-  // Obter tópico atual
-  const currentTopic = topics[currentTopicIndex];
+  // Se não houver tópicos, mostrar mensagem
+  if (topics.length === 0) {
+    return (
+      <div className="container max-w-md mx-auto px-4 py-6">
+        <div className="text-center space-y-4">
+          <Calendar className="h-12 w-12 text-primary/40 mx-auto" />
+          <h3 className="text-lg font-semibold text-primary/80">
+            Nenhuma pauta disponível
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Ainda não há pautas cadastradas para este evento.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-md mx-auto px-4 py-6">
@@ -238,7 +315,7 @@ export default function DailyTopicPage() {
               variant="ghost"
               size="icon"
               onClick={goToPreviousTopic}
-              disabled={currentTopicIndex >= topics.length - 1}
+              disabled={!hasPreviousDay()}
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -257,7 +334,7 @@ export default function DailyTopicPage() {
               variant="ghost"
               size="icon"
               onClick={goToNextTopic}
-              disabled={currentTopicIndex <= 0}
+              disabled={!hasNextDay()}
             >
               <ChevronRight className="h-5 w-5" />
             </Button>

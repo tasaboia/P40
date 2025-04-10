@@ -6,6 +6,7 @@ import { usePathname } from "@p40/i18n/routing";
 import { useRouter } from "next/navigation";
 import { toast } from "@p40/hooks/use-toast";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 interface DashboardWrapperProps {
   children: ReactNode;
@@ -30,13 +31,13 @@ export default function DashboardWrapper({
   const isCheckinPath = path.includes("check-in");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  console.log(filteredTabs);
+  // Encontrar o índice inicial baseado na rota atual
   const indexInicial = filteredTabs.findIndex((tabs) =>
     tabs.route.url.includes(path.replace(/\//g, ""))
   );
 
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(indexInicial);
   const [activeIndex, setActiveIndex] = useState(indexInicial);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hoverStyle, setHoverStyle] = useState({});
   const [activeStyle, setActiveStyle] = useState({ left: "0px", width: "0px" });
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -63,7 +64,6 @@ export default function DashboardWrapper({
       const activeTab = tabRefs.current[activeIndex];
       
       if (activeTab) {
-        // Rolar para centralizar a tab ativa
         const containerWidth = container.offsetWidth;
         const tabWidth = activeTab.offsetWidth;
         const tabLeft = activeTab.offsetLeft;
@@ -89,8 +89,6 @@ export default function DashboardWrapper({
     }
   }, [hoveredIndex, isCheckinPath, isMobile]);
 
-  console.log(filteredTabs[activeIndex].route.url);
-  console.log(eventId);
   useEffect(() => {
     if (isCheckinPath) return;
     
@@ -98,7 +96,6 @@ export default function DashboardWrapper({
     if (activeElement) {
       const { offsetLeft, offsetWidth } = activeElement;
       
-      // No mobile, não usamos o activeStyle para a linha inferior
       if (!isMobile) {
         setActiveStyle({
           left: `${offsetLeft}px`,
@@ -107,12 +104,10 @@ export default function DashboardWrapper({
       }
       
       if (initialRender.current === false) {
-        if (filteredTabs[activeIndex].route.params == "eventId") {
+        if (filteredTabs[activeIndex].route.params === "eventId") {
           if (eventId) {
-            
             router.push(`/${filteredTabs[activeIndex].route.url}/${eventId}`);
           } else {
-           
             toast({
               title: "Erro ao buscar pautas de oração",
               variant: "destructive",
@@ -157,7 +152,6 @@ export default function DashboardWrapper({
               </button>
             )}
             
-            {/* Apenas no desktop mostramos o fundo de hover */}
             {!isMobile && (
               <div
                 className="absolute h-[30px] transition-all duration-300 ease-out bg-[#0e0f1114] dark:bg-[#ffffff1a] rounded-[6px] flex items-center"
@@ -168,7 +162,6 @@ export default function DashboardWrapper({
               />
             )}
             
-            {/* Apenas no desktop mostramos a linha de ativo */}
             {!isMobile && (
               <div
                 className="absolute bottom-[-6px] h-[2px] bg-[#0e0f11] dark:bg-white transition-all duration-300 ease-out"
@@ -221,7 +214,9 @@ export default function DashboardWrapper({
         </UI.CardContent>
       </UI.Card>
 
-      <div>{children}</div>
+      <div className="flex-1">
+        {children}
+      </div>
     </div>
   );
 }

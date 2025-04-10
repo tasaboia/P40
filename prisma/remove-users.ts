@@ -18,10 +18,8 @@ async function removeUsers() {
       await prisma.user.delete({
         where: { id: user.id },
       });
-      console.log(`Usuário removido: ${user.name}`);
     }
 
-    console.log('Remoção concluída com sucesso!');
   } catch (error) {
     console.error('Erro ao remover usuários:', error);
   } finally {
