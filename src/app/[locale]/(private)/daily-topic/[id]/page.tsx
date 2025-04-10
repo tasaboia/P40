@@ -48,14 +48,35 @@ export default function DailyTopicPage() {
 
         setTopics(topicsResponse.data);
 
-        const todayIndex = topicsResponse.data.findIndex((topic) => {
-          if (!topic.date) return false;
-          const topicDate = startOfDay(parseISO(topic.date));
-          const today = startOfDay(new Date());
-          return topicDate.getTime() === today.getTime();
-        });
+        // Encontrar o índice do tópico a ser mostrado
+        const today = startOfDay(new Date());
+        let targetIndex = 0;
 
-        setCurrentTopicIndex(todayIndex !== -1 ? todayIndex : 0);
+        // Se o evento já começou, mostrar o tópico do dia atual
+        const firstTopicDate = topicsResponse.data[0]?.date 
+          ? startOfDay(parseISO(topicsResponse.data[0].date))
+          : null;
+        
+        if (firstTopicDate && !isBefore(today, firstTopicDate)) {
+          // Evento já começou, procurar o tópico de hoje
+          const todayIndex = topicsResponse.data.findIndex((topic) => {
+            if (!topic.date) return false;
+            const topicDate = startOfDay(parseISO(topic.date));
+            return topicDate.getTime() === today.getTime();
+          });
+
+          if (todayIndex !== -1) {
+            targetIndex = todayIndex;
+          } else {
+            // Se não encontrou o tópico de hoje, mostrar o mais recente
+            targetIndex = 0;
+          }
+        } else {
+          // Evento ainda não começou, mostrar o primeiro tópico
+          targetIndex = topicsResponse.data.length - 1;
+        }
+
+        setCurrentTopicIndex(targetIndex);
         setIsLoading(false);
       } catch (error) {
         console.error("Erro ao carregar tópicos:", error);
