@@ -15,7 +15,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         serviceAreas: { label: "serviceAreas" },
       },
       authorize: async (credentials) => {
-       
         const serviceAreas = credentials?.serviceAreas;
 
         try {

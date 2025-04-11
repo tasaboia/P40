@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect, ReactNode, useMemo } from "react";
+import { useState, useRef, useEffect, ReactNode } from "react";
 import * as UI from "@p40/components/ui/index";
 import { usePathname } from "@p40/i18n/routing";
 import { useRouter } from "next/navigation";
 import { toast } from "@p40/hooks/use-toast";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
 
 interface DashboardWrapperProps {
   children: ReactNode;
@@ -50,27 +49,32 @@ export default function DashboardWrapper({
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    
-    return () => window.removeEventListener('resize', checkIfMobile);
+    window.addEventListener("resize", checkIfMobile);
+
+    return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
   // Função para rolar para a tab ativa no mobile
   useEffect(() => {
-    if (isMobile && activeIndex !== -1 && scrollContainerRef.current && tabRefs.current[activeIndex]) {
+    if (
+      isMobile &&
+      activeIndex !== -1 &&
+      scrollContainerRef.current &&
+      tabRefs.current[activeIndex]
+    ) {
       const container = scrollContainerRef.current;
       const activeTab = tabRefs.current[activeIndex];
-      
+
       if (activeTab) {
         const containerWidth = container.offsetWidth;
         const tabWidth = activeTab.offsetWidth;
         const tabLeft = activeTab.offsetLeft;
-        
+
         container.scrollTo({
-          left: tabLeft - (containerWidth / 2) + (tabWidth / 2),
-          behavior: 'smooth'
+          left: tabLeft - containerWidth / 2 + tabWidth / 2,
+          behavior: "smooth",
         });
       }
     }
@@ -91,18 +95,18 @@ export default function DashboardWrapper({
 
   useEffect(() => {
     if (isCheckinPath) return;
-    
+
     const activeElement = tabRefs.current[activeIndex];
     if (activeElement) {
       const { offsetLeft, offsetWidth } = activeElement;
-      
+
       if (!isMobile) {
         setActiveStyle({
           left: `${offsetLeft}px`,
           width: `${offsetWidth}px`,
         });
       }
-      
+
       if (initialRender.current === false) {
         if (filteredTabs[activeIndex].route.params === "eventId") {
           if (eventId) {
@@ -124,13 +128,13 @@ export default function DashboardWrapper({
   // Funções para navegar entre tabs no mobile
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -100, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: -100, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 100, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: 100, behavior: "smooth" });
     }
   };
 
@@ -139,19 +143,27 @@ export default function DashboardWrapper({
   }
 
   return (
-    <div className={`flex flex-col w-full ${isDarkMode ? "dark bg-[#0e0f11]" : ""}`}>
-      <UI.Card className={`w-full max-w-[1200px] h-10 px-2 border-none shadow-none relative flex ${isDarkMode ? "bg-transparent" : ""}`}>
+    <div
+      className={`flex flex-col w-full ${
+        isDarkMode ? "dark bg-[#0e0f11]" : ""
+      }`}
+    >
+      <UI.Card
+        className={`w-full max-w-[1200px] h-10 px-2 border-none shadow-none relative flex ${
+          isDarkMode ? "bg-transparent" : ""
+        }`}
+      >
         <UI.CardContent className="p-0 w-full">
           <div className="relative w-full flex items-center">
             {isMobile && filteredTabs.length > 3 && (
-              <button 
+              <button
                 className="absolute left-0 z-10 bg-background/80 backdrop-blur-sm p-1 rounded-full shadow-sm"
                 onClick={scrollLeft}
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
             )}
-            
+
             {!isMobile && (
               <div
                 className="absolute h-[30px] transition-all duration-300 ease-out bg-[#0e0f1114] dark:bg-[#ffffff1a] rounded-[6px] flex items-center"
@@ -161,7 +173,7 @@ export default function DashboardWrapper({
                 }}
               />
             )}
-            
+
             {!isMobile && (
               <div
                 className="absolute bottom-[-6px] h-[2px] bg-[#0e0f11] dark:bg-white transition-all duration-300 ease-out"
@@ -169,10 +181,10 @@ export default function DashboardWrapper({
               />
             )}
 
-            <div 
+            <div
               ref={scrollContainerRef}
               className="relative w-full overflow-x-auto scrollbar-none flex items-center"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               <div className="flex min-w-max px-4 md:px-0">
                 {filteredTabs.map((tab, index) => (
@@ -183,11 +195,12 @@ export default function DashboardWrapper({
                     }}
                     className={`
                       px-2 py-2 cursor-pointer transition-colors duration-300 h-[30px]
-                      ${index === activeIndex 
-                        ? isMobile 
-                          ? "text-primary border-b-2 border-primary font-medium" 
-                          : "text-[#0e0e10] dark:text-white"
-                        : "text-[#0e0f1199] dark:text-[#ffffff99]"
+                      ${
+                        index === activeIndex
+                          ? isMobile
+                            ? "text-primary border-b-2 border-primary font-medium"
+                            : "text-[#0e0e10] dark:text-white"
+                          : "text-[#0e0f1199] dark:text-[#ffffff99]"
                       }
                     `}
                     onMouseEnter={() => !isMobile && setHoveredIndex(index)}
@@ -201,9 +214,9 @@ export default function DashboardWrapper({
                 ))}
               </div>
             </div>
-            
+
             {isMobile && filteredTabs.length > 3 && (
-              <button 
+              <button
                 className="absolute right-0 z-10 bg-background/80 backdrop-blur-sm p-1 rounded-full shadow-sm"
                 onClick={scrollRight}
               >
@@ -214,9 +227,7 @@ export default function DashboardWrapper({
         </UI.CardContent>
       </UI.Card>
 
-      <div className="flex-1">
-        {children}
-      </div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 }

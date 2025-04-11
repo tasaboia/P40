@@ -34,20 +34,22 @@ import { TurnsUserList } from "../user-edit/turns-user";
 import { User } from "@p40/common/contracts/user/user";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
+import { Event } from "@p40/common/contracts/config/config";
+import { EventResponse } from "@p40/common/contracts/event/event";
 
 interface SettingsProps {
   user: User;
+  event: EventResponse;
   turnItens: any[] | null;
 }
 
-export function Settings({ user, turnItens }: SettingsProps) {
+export function Settings({ user, turnItens,event }: SettingsProps) {
   const { locale, handleLanguageChange } = useChangeLanguage();
   const t = useTranslations("common");
-  const pathname = usePathname();
-  const isCheckInPage = pathname.includes("check-in");
 
   const handleLogout = () => {
-    const callbackUrl =  isCheckInPage ? `/${locale}/check-in/login` : `/${locale}/login`
+    const callbackUrl =
+      user.role == "USER" ? `/${locale}/check-in/login${event ? `?eventId=${event.id}` : ""}` : `/${locale}/login`;
     signOut({ callbackUrl });
   };
 
@@ -58,14 +60,15 @@ export function Settings({ user, turnItens }: SettingsProps) {
           <Menu />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-        { !isCheckInPage && 
-        
-        <><DropdownMenuLabel>{t("actions.settings")}</DropdownMenuLabel>
-          {turnItens?.length > 0 && (
-            <TurnsUserList turnItens={turnItens} user={user} />
+          {user.role != "USER" && (
+            <>
+              <DropdownMenuLabel>{t("actions.settings")}</DropdownMenuLabel>
+              {turnItens?.length > 0 && (
+                <TurnsUserList turnItens={turnItens} user={user} />
+              )}
+              <UserEdit user={user} />
+            </>
           )}
-          <UserEdit user={user} /></>
-        }
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Languages />

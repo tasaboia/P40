@@ -6,22 +6,45 @@ import { prisma } from "../prisma";
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const churchId = searchParams.get("churchId");
-
+  const eventId = searchParams.get("eventId");
+  let returnData;
   try {
-    const church = await prisma.church.findFirst({
-      where: {
-        id: churchId,
-      },
-    });
-
-    if (!church) {
-      throw new FailException({
-        message: "Igreja não encontrada",
-        statusCode: 404,
+    if (churchId) {
+      const church = await prisma.church.findFirst({
+        where: {
+          id: churchId,
+        },
       });
+
+      returnData = church;
+      if (!church) {
+        throw new FailException({
+          message: "Igreja não encontrada",
+          statusCode: 404,
+        });
+      }
     }
 
-    return NextResponse.json(church, { status: 200 });
+    if (eventId) {
+      const event = await prisma.event.findFirst({
+        where: {
+          id: eventId,
+        },
+        include: {
+          church: true,
+        },
+      });
+
+      if (!event) {
+        throw new FailException({
+          message: "Igreja não encontrada",
+          statusCode: 404,
+        });
+      }
+      returnData = event.church;
+    }
+
+    return NextResponse.json(returnData, { status: 200 });
   } catch (error) {
     return errorHandler(error);
   }

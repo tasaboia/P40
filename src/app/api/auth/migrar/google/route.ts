@@ -5,7 +5,7 @@ import { prisma } from "@p40/app/api/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { email, imageUrl, name, zionId } = await req.json();
+    const { email, imageUrl, name, zionId, userType } = await req.json();
 
     if (!email || !name) {
       throw new FailException({
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
     });
 
     let user;
+    const role = userType || "LEADER";
 
     if (!existingUser) {
       user = await prisma.user.create({
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
           imageUrl,
           onboarding: false,
           churchId: zionId,
+          role: role,
         },
       });
     } else if (existingUser.onboarding === false) {

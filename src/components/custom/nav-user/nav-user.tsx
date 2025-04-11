@@ -70,7 +70,7 @@ export default async function NavUser() {
         </div>
       </div>
 
-      <Settings user={userData.user} turnItens={turnItems} />
+      <Settings user={userData.user} turnItens={turnItems} event={event} />
     </div>
   );
 }

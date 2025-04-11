@@ -226,8 +226,6 @@ export async function PUT(request: Request) {
       updateData.otherChurch = otherChurch;
     }
     
-    console.log("Dados para atualização:", updateData);
-
     // Atualizar dados do usuário
     const updatedUser = await prisma.user.update({
       where: {
@@ -236,7 +234,6 @@ export async function PUT(request: Request) {
       data: updateData
     });
 
-    console.log("Usuário atualizado:", updatedUser);
 
     return NextResponse.json({
       success: true,

@@ -12,15 +12,16 @@ export async function POST(req: Request) {
     const body = await req.json();
     console.log("Corpo da requisição recebido:", body);
 
-    const { username, password, zionId, serviceAreas } = body;
+    const { username, password, zionId, serviceAreas, userType } = body;
 
     let areas = [];
-    
-    if (typeof serviceAreas === 'string') {
+    const role = userType || "LEADER";
+
+    if (typeof serviceAreas === "string") {
       try {
         areas = JSON.parse(serviceAreas);
       } catch {
-        areas = serviceAreas.split(',');
+        areas = serviceAreas.split(",");
       }
     } else if (Array.isArray(serviceAreas)) {
       areas = serviceAreas;
@@ -57,6 +58,7 @@ export async function POST(req: Request) {
       churchId: zionId,
       serviceAreas: areas,
       whatsapp: null,
+      role: role,
     };
 
     try {
@@ -94,7 +96,7 @@ export async function POST(req: Request) {
           imageUrl: userData.imageUrl,
           whatsapp: userData.whatsapp,
           churchId: userData.churchId,
-          role: 'LEADER'
+          role: role,
         },
       });
     } else {
@@ -106,7 +108,8 @@ export async function POST(req: Request) {
           email: userData.email,
           imageUrl: userData.imageUrl,
           whatsapp: userData.whatsapp || user.whatsapp,
-          churchId: userData.churchId
+          churchId: userData.churchId,
+          role,
         },
       });
     }
@@ -115,40 +118,39 @@ export async function POST(req: Request) {
     if (areas && areas.length > 0) {
       console.log("Atualizando áreas para usuário:", {
         userId: user.id,
-        areas: areas // Agora é garantido que seja um array
+        areas: areas, // Agora é garantido que seja um array
       });
 
       await prisma.$transaction(async (tx) => {
         await tx.userServiceArea.deleteMany({
-          where: { userId: user.id }
+          where: { userId: user.id },
         });
 
         // Garante que cada área tem um id válido
-        const validAreas = areas.filter(area => area && area.id);
+        const validAreas = areas.filter((area) => area && area.id);
 
         if (validAreas.length > 0) {
           await tx.userServiceArea.createMany({
-            data: validAreas.map(area => ({
+            data: validAreas.map((area) => ({
               userId: user.id,
-              serviceAreaId: area.id
-            }))
+              serviceAreaId: area.id,
+            })),
           });
         }
       });
     }
 
     return NextResponse.json(
-      { 
-        user: { 
-          ...user, 
+      {
+        user: {
+          ...user,
           churchId: zionId,
-          serviceAreas: areas 
-        }, 
-        message: "Login bem-sucedido" 
+          serviceAreas: areas,
+        },
+        message: "Login bem-sucedido",
       },
       { status: 200 }
     );
-
   } catch (error) {
     console.error("Erro na migração:", error);
     return errorHandler(error);

@@ -1,9 +1,7 @@
-
-
 export const DashboardTabs = [
   {
     indexTitle: "Agenda",
-    role: ["USER", "LEADER", "ADMIN"],
+    role: ["LEADER", "ADMIN"],
     route: {
       url: "schedule",
       params: "",
@@ -41,11 +39,17 @@ export const DashboardTabs = [
     },
   },
   {
-    indexTitle: "Check-ins",
+    indexTitle: "Geral Check-ins",
     role: ["ADMIN"],
     route: {
       url: "checkin-overview",
     },
   },
-  
+  {
+    indexTitle: "Meus check-ins",
+    role: ["USER", "ADMIN", "LEADER"],
+    route: {
+      url: "my-checkin",
+    },
+  },
 ];

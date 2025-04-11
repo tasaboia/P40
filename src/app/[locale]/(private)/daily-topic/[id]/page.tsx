@@ -94,69 +94,15 @@ export default function DailyTopicPage() {
   }, [params.id]);
 
   const goToPreviousTopic = () => {
-    // Encontrar o tópico do dia anterior
-    const currentDate = topics[currentTopicIndex]?.date ? parseISO(topics[currentTopicIndex].date) : null;
-    if (!currentDate) return;
-
-    const previousDate = new Date(currentDate);
-    previousDate.setDate(previousDate.getDate() - 1);
-
-    const previousIndex = topics.findIndex(topic => {
-      if (!topic.date) return false;
-      const topicDate = parseISO(topic.date);
-      return topicDate.getTime() === previousDate.getTime();
-    });
-
-    if (previousIndex !== -1) {
-      setCurrentTopicIndex(previousIndex);
+    if (currentTopicIndex > 0) {
+      setCurrentTopicIndex(currentTopicIndex - 1);
     }
   };
 
   const goToNextTopic = () => {
-    // Encontrar o tópico do próximo dia
-    const currentDate = topics[currentTopicIndex]?.date ? parseISO(topics[currentTopicIndex].date) : null;
-    if (!currentDate) return;
-
-    const nextDate = new Date(currentDate);
-    nextDate.setDate(nextDate.getDate() + 1);
-
-    const nextIndex = topics.findIndex(topic => {
-      if (!topic.date) return false;
-      const topicDate = parseISO(topic.date);
-      return topicDate.getTime() === nextDate.getTime();
-    });
-
-    if (nextIndex !== -1) {
-      setCurrentTopicIndex(nextIndex);
+    if (currentTopicIndex < topics.length - 1) {
+      setCurrentTopicIndex(currentTopicIndex + 1);
     }
-  };
-
-  // Verificar se existe tópico no dia anterior
-  const hasPreviousDay = () => {
-    if (!topics[currentTopicIndex]?.date) return false;
-    const currentDate = parseISO(topics[currentTopicIndex].date);
-    const previousDate = new Date(currentDate);
-    previousDate.setDate(previousDate.getDate() - 1);
-
-    return topics.some(topic => {
-      if (!topic.date) return false;
-      const topicDate = parseISO(topic.date);
-      return topicDate.getTime() === previousDate.getTime();
-    });
-  };
-
-  // Verificar se existe tópico no próximo dia
-  const hasNextDay = () => {
-    if (!topics[currentTopicIndex]?.date) return false;
-    const currentDate = parseISO(topics[currentTopicIndex].date);
-    const nextDate = new Date(currentDate);
-    nextDate.setDate(nextDate.getDate() + 1);
-
-    return topics.some(topic => {
-      if (!topic.date) return false;
-      const topicDate = parseISO(topic.date);
-      return topicDate.getTime() === nextDate.getTime();
-    });
   };
 
   const isCurrentTopicToday = () => {
@@ -315,7 +261,7 @@ export default function DailyTopicPage() {
               variant="ghost"
               size="icon"
               onClick={goToPreviousTopic}
-              disabled={!hasPreviousDay()}
+              disabled={currentTopicIndex <= 0}
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -334,7 +280,7 @@ export default function DailyTopicPage() {
               variant="ghost"
               size="icon"
               onClick={goToNextTopic}
-              disabled={!hasNextDay()}
+              disabled={currentTopicIndex >= topics.length - 1}
             >
               <ChevronRight className="h-5 w-5" />
             </Button>
