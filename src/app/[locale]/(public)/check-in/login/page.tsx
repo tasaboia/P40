@@ -64,10 +64,7 @@ export default function GoogleLogin() {
     }
   }, [session.data?.user?.id]);
 
-  useEffect(()=>{
-    if(session.data?.user){
-    console.log("dados do usuario",session.data.user)}
-  },[session])
+ 
   
   const handleLogin = useCallback(async () => {
     if (!eventId || !session.data?.user?.id || isProcessing) return;
@@ -91,13 +88,20 @@ export default function GoogleLogin() {
         return;
       }
 
-      await session.update({
+      const newSession = {
         ...session.data,
         user: {
           ...session.data.user,
-          ...updatedUser
+          ...updatedUser,
+          role: "USER"
         }
-      });
+      };
+
+      await session.update(newSession);
+
+      if (newSession.user.role !== "USER") {
+        throw new Error("Falha ao atualizar a role do usuário");
+      }
 
       router.push(`/check-in/onboarding?eventId=${eventId}`);
     } catch (error) {

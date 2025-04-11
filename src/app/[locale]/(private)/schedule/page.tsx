@@ -6,13 +6,32 @@ import { getAllData } from "@p40/services/dashboard/dashboard-all";
 
 export default async function SchedulePage() {
   const session = await auth();
+  
+  console.log("Session data:", {
+    hasSession: !!session,
+    userId: session?.user?.id,
+    userRole: session?.user?.role,
+    fullSession: session
+  });
 
-  if (!session || !session.user || !session.user.id) {
+  if (!session?.user?.id) {
     return (
       <ErrorHandler
         error={{
           title: "Não autorizado",
           description: "Você precisa estar logado para acessar esta página",
+        }}
+      />
+    );
+  }
+
+  if (session.user.role !== "LEADER" && session.user.role !== "ADMIN") {
+    console.log("Acesso negado - Role atual:", session.user.role);
+    return (
+      <ErrorHandler
+        error={{
+          title: "Não autorizado",
+          description: "Você precisa ser um líder ou administrador para acessar esta página",
         }}
       />
     );
