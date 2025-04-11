@@ -323,8 +323,10 @@ export default function CheckInProcess() {
       if (formData.isZionMember === "true") {
         if (formData.isSameChurch === "true") {
           // Se frequenta esta igreja, usar o ID da igreja atual
-          const currentChurch = churches.find(data => data.events.id === eventIdFromUrl);
-          churchId = currentChurch?.id
+          const currentChurch = churches.find(
+            (data) => data.events.id === eventIdFromUrl
+          );
+          churchId = currentChurch?.id;
 
           console.log("currentChurch", currentChurch);
           console.log("churchId", churchId);
@@ -818,7 +820,7 @@ export default function CheckInProcess() {
 
             <CardFooter className="px-6 pb-6">
               <Button
-              onClick={() => router.push("/my-checkin")}
+                onClick={() => router.push("/my-checkin")}
                 className="w-full h-12"
               >
                 Voltar para o início
@@ -857,7 +859,7 @@ export default function CheckInProcess() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="flex h-full flex-col items-center justify-center p-4 bg-gradient-to-b from-gray-50 to-gray-100">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentView}
