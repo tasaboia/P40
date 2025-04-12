@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { format, isAfter, isBefore, parseISO, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { toZonedTime } from 'date-fns-tz';
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -56,7 +57,15 @@ export default function DailyTopicPage() {
         setTopics(sortedTopics);
 
         // Encontrar o índice do tópico a ser mostrado
-        const today = startOfDay(new Date());
+        const now = new Date();
+        const saoPauloTime = toZonedTime(now, 'America/Sao_Paulo');
+        const today = startOfDay(saoPauloTime);
+
+        // Logs para mostrar a diferença de horário
+        console.log('Horário local do computador:', now.toLocaleString());
+        console.log('Horário de São Paulo:', saoPauloTime.toLocaleString());
+        console.log('Data do início do dia em SP:', today.toLocaleString());
+
         let targetIndex = 0;
 
         // Se o evento já começou, mostrar o tópico do dia atual
@@ -94,36 +103,56 @@ export default function DailyTopicPage() {
   }, [params.id]);
 
   const goToPreviousTopic = () => {
-    if (currentTopicIndex > 0) {
-      setCurrentTopicIndex(currentTopicIndex - 1);
+    // Encontrar o índice do tópico anterior com data diferente
+    let prevIndex = currentTopicIndex - 1;
+    while (prevIndex >= 0 && topics[prevIndex]?.date === topics[currentTopicIndex]?.date) {
+      prevIndex--;
+    }
+    if (prevIndex >= 0) {
+      setCurrentTopicIndex(prevIndex);
     }
   };
 
   const goToNextTopic = () => {
-    if (currentTopicIndex < topics.length - 1) {
-      setCurrentTopicIndex(currentTopicIndex + 1);
+    // Encontrar o índice do próximo tópico com data diferente
+    let nextIndex = currentTopicIndex + 1;
+    while (nextIndex < topics.length && topics[nextIndex]?.date === topics[currentTopicIndex]?.date) {
+      nextIndex++;
+    }
+    if (nextIndex < topics.length) {
+      setCurrentTopicIndex(nextIndex);
     }
   };
 
   const isCurrentTopicToday = () => {
     if (!topics[currentTopicIndex]?.date) return false;
     const topicDate = startOfDay(parseISO(topics[currentTopicIndex].date!));
-    const today = startOfDay(new Date());
+    const now = new Date();
+    const saoPauloTime = toZonedTime(now, 'America/Sao_Paulo');
+    const today = startOfDay(saoPauloTime);
+
+    console.log('Verificando se é o tópico de hoje:');
+    console.log('Horário local:', now.toLocaleString());
+    console.log('Horário SP:', saoPauloTime.toLocaleString());
+    console.log('Data do tópico:', topicDate.toLocaleString());
+    console.log('Início do dia em SP:', today.toLocaleString());
+
     return topicDate.getTime() === today.getTime();
   };
 
   const isCurrentTopicFuture = () => {
     if (!topics[currentTopicIndex]?.date) return false;
     const topicDate = startOfDay(parseISO(topics[currentTopicIndex].date!));
-    const today = startOfDay(new Date());
+    const saoPauloTime = toZonedTime(new Date(), 'America/Sao_Paulo');
+    const today = startOfDay(saoPauloTime);
     return isAfter(topicDate, today);
   };
 
-  // Verificar se o tópico atual é do passado
   const isCurrentTopicPast = () => {
     if (!topics[currentTopicIndex]?.date) return false;
     const topicDate = startOfDay(parseISO(topics[currentTopicIndex].date!));
-    const today = startOfDay(new Date());
+    const saoPauloTime = toZonedTime(new Date(), 'America/Sao_Paulo');
+    const today = startOfDay(saoPauloTime);
     return isBefore(topicDate, today);
   };
 

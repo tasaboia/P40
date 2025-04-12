@@ -54,15 +54,18 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
+    // Ajustar para o timezone de São Paulo
+    const saoPauloTimezone = 'America/Sao_Paulo';
     const checkInTime = new Date(timestamp || new Date());
-    const weekday = checkInTime.getDay();
+    const checkInTimeSP = new Date(checkInTime.toLocaleString('en-US', { timeZone: saoPauloTimezone }));
+    const weekday = checkInTimeSP.getDay();
     
     // Formatação do horário
-    const hours = checkInTime.getHours().toString().padStart(2, '0');
-    const minutes = checkInTime.getMinutes().toString().padStart(2, '0');
+    const hours = checkInTimeSP.getHours().toString().padStart(2, '0');
+    const minutes = checkInTimeSP.getMinutes().toString().padStart(2, '0');
     const timeString = `${hours}:${minutes}`;
     
-    console.log("Dados do check-in:", { weekday, timeString });
+    console.log("Dados do check-in (SP):", { weekday, timeString, timezone: saoPauloTimezone });
     
     // Buscar todos os turnos para este dia
     const allTurnsForDay = await prisma.prayerTurn.findMany({
@@ -122,16 +125,18 @@ export async function POST(request: Request) {
     // Verificar se já existe check-in para hoje
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const todaySP = new Date(today.toLocaleString('en-US', { timeZone: saoPauloTimezone }));
+    todaySP.setHours(0, 0, 0, 0);
+    const tomorrowSP = new Date(todaySP);
+    tomorrowSP.setDate(tomorrowSP.getDate() + 1);
 
     const existingCheckIn = await prisma.checkIn.findFirst({
       where: {
         userId: userId,
         prayerTurnId: matchingTurnId,
         createdAt: {
-          gte: today,
-          lt: tomorrow
+          gte: todaySP,
+          lt: tomorrowSP
         }
       }
     });
@@ -149,7 +154,8 @@ export async function POST(request: Request) {
       data: {
         userId: userId,
         eventId,
-        prayerTurnId: matchingTurnId
+        prayerTurnId: matchingTurnId,
+        createdAt: checkInTimeSP
       },
       include: {
         prayerTurn: {
