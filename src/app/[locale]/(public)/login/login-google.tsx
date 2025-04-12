@@ -25,7 +25,8 @@ export default function GoogleLogin() {
           email: session.data.user.email,
           whatsapp: session.data.user.whatsapp,
           zionId: onboardingData.location.id,
-          serviceAreas: onboardingData.areas
+          serviceAreas: onboardingData.areas,
+          role: "LEADER",
         });
 
         if (response.status == 200 || response.status == 201) {
