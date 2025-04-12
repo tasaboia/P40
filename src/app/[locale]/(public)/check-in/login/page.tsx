@@ -44,28 +44,32 @@ export default function GoogleLogin() {
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar igreja:", error);
-      setError("Não foi possível encontrar o evento. Por favor, tente novamente.");
+      setError(
+        "Não foi possível encontrar o evento. Por favor, tente novamente."
+      );
       return null;
     }
   }, [eventId]);
 
-  const updateUserWithChurch = useCallback(async (churchId: string) => {
-    try {
-      const response = await api.post("/api/user/update", {
-        id: session.data?.user?.id,
-        zionId: churchId,
-        role: "USER",
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Erro ao atualizar usuário:", error);
-      setError("Não foi possível atualizar seus dados. Por favor, tente novamente.");
-      return null;
-    }
-  }, [session.data?.user?.id]);
+  const updateUserWithChurch = useCallback(
+    async (churchId: string) => {
+      try {
+        const response = await api.post("/api/user/update", {
+          id: session.data?.user?.id,
+          zionId: churchId,
+        });
+        return response.data;
+      } catch (error) {
+        console.error("Erro ao atualizar usuário:", error);
+        setError(
+          "Não foi possível atualizar seus dados. Por favor, tente novamente."
+        );
+        return null;
+      }
+    },
+    [session.data?.user?.id]
+  );
 
- 
-  
   const handleLogin = useCallback(async () => {
     if (!eventId || !session.data?.user?.id || isProcessing) return;
 
@@ -93,15 +97,10 @@ export default function GoogleLogin() {
         user: {
           ...session.data.user,
           ...updatedUser,
-          role: "USER"
-        }
+        },
       };
 
       await session.update(newSession);
-
-      if (newSession.user.role !== "USER") {
-        throw new Error("Falha ao atualizar a role do usuário");
-      }
 
       router.push(`/check-in/onboarding?eventId=${eventId}`);
     } catch (error) {
@@ -110,7 +109,14 @@ export default function GoogleLogin() {
       setIsProcessing(false);
       setIsLoading(false);
     }
-  }, [eventId, session.data, router, getChurchByEventId, updateUserWithChurch, isProcessing]);
+  }, [
+    eventId,
+    session.data,
+    router,
+    getChurchByEventId,
+    updateUserWithChurch,
+    isProcessing,
+  ]);
 
   useEffect(() => {
     if (session.status === "authenticated" && eventId && !isProcessing) {
@@ -158,7 +164,8 @@ export default function GoogleLogin() {
           <DialogHeader>
             <DialogTitle>Escaneie o QR Code do Evento</DialogTitle>
             <DialogDescription>
-              Para continuar, você precisa escanear o QR code do evento com a câmera do seu dispositivo.
+              Para continuar, você precisa escanear o QR code do evento com a
+              câmera do seu dispositivo.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center py-4">
@@ -171,7 +178,8 @@ export default function GoogleLogin() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground text-center">
-              Após escanear o QR code, você será redirecionado automaticamente para esta página
+              Após escanear o QR code, você será redirecionado automaticamente
+              para esta página
             </p>
           </div>
         </DialogContent>
@@ -247,7 +255,9 @@ export default function GoogleLogin() {
                         fill="#4285F4"
                       />
                     </svg>
-                    <span>{isLoading ? "Carregando..." : "Entrar com Google"}</span>
+                    <span>
+                      {isLoading ? "Carregando..." : "Entrar com Google"}
+                    </span>
                   </div>
                 </Button>
               </CardFooter>
