@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format, isAfter, isBefore, parseISO, startOfDay } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { toZonedTime } from 'date-fns-tz';
+import { formatInTimeZone } from 'date-fns-tz';
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronLeft,
-  ChevronRight,
+  // ChevronLeft,  // Comentado temporariamente
+  // ChevronRight, // Comentado temporariamente
   Calendar,
   Send,
   MessageSquare,
@@ -56,45 +56,33 @@ export default function DailyTopicPage() {
 
         setTopics(sortedTopics);
 
-        // Encontrar o índice do tópico a ser mostrado
-        const now = new Date();
-        const saoPauloTime = toZonedTime(now, 'America/Sao_Paulo');
-        const today = startOfDay(saoPauloTime);
-
-        // Logs para mostrar a diferença de horário
-        console.log('Horário local do computador:', now.toLocaleString());
-        console.log('Horário de São Paulo:', saoPauloTime.toLocaleString());
-        console.log('Data do início do dia em SP:', today.toLocaleString());
-
-        let targetIndex = 0;
-
-        // Se o evento já começou, mostrar o tópico do dia atual
-        const firstTopicDate = sortedTopics[0]?.date 
-          ? startOfDay(parseISO(sortedTopics[0].date))
-          : null;
+        // Encontrar o índice do tópico de hoje
+        const today = format(new Date(), 'yyyy-MM-dd');
         
-        if (firstTopicDate && !isBefore(today, firstTopicDate)) {
-          // Evento já começou, procurar o tópico de hoje
-          const todayIndex = sortedTopics.findIndex((topic) => {
-            if (!topic.date) return false;
-            const topicDate = startOfDay(parseISO(topic.date));
-            return topicDate.getTime() === today.getTime();
+        console.log('DEBUG - Data de hoje:', today);
+
+        // Procurar o tópico de hoje
+        const todayIndex = sortedTopics.findIndex((topic) => {
+          if (!topic.date) return false;
+          // Pegar apenas a data (yyyy-MM-dd) ignorando o horário
+          const topicDateStr = topic.date.split('T')[0];
+          
+          console.log('Comparando tópico:', {
+            topicId: topic.id,
+            topicDate: topic.date,
+            topicDateStr,
+            today,
+            isMatch: topicDateStr === today
           });
+          
+          return topicDateStr === today;
+        });
 
-          if (todayIndex !== -1) {
-            targetIndex = todayIndex;
-          } else {
-            // Se não encontrou o tópico de hoje, mostrar o mais recente
-            targetIndex = sortedTopics.length - 1;
-          }
-        } else {
-          // Evento ainda não começou, mostrar o primeiro tópico
-          targetIndex = 0;
-        }
-
-        setCurrentTopicIndex(targetIndex);
+        console.log('Índice do tópico de hoje:', todayIndex);
+        setCurrentTopicIndex(todayIndex !== -1 ? todayIndex : -1);
         setIsLoading(false);
       } catch (error) {
+        console.error('Erro ao buscar tópicos:', error);
         setIsLoading(false);
       }
     };
@@ -102,8 +90,9 @@ export default function DailyTopicPage() {
     fetchTopics();
   }, [params.id]);
 
+  // Funções de navegação comentadas temporariamente
+  /*
   const goToPreviousTopic = () => {
-    // Encontrar o índice do tópico anterior com data diferente
     let prevIndex = currentTopicIndex - 1;
     while (prevIndex >= 0 && topics[prevIndex]?.date === topics[currentTopicIndex]?.date) {
       prevIndex--;
@@ -114,7 +103,6 @@ export default function DailyTopicPage() {
   };
 
   const goToNextTopic = () => {
-    // Encontrar o índice do próximo tópico com data diferente
     let nextIndex = currentTopicIndex + 1;
     while (nextIndex < topics.length && topics[nextIndex]?.date === topics[currentTopicIndex]?.date) {
       nextIndex++;
@@ -123,38 +111,37 @@ export default function DailyTopicPage() {
       setCurrentTopicIndex(nextIndex);
     }
   };
+  */
 
   const isCurrentTopicToday = () => {
     if (!topics[currentTopicIndex]?.date) return false;
-    const topicDate = startOfDay(parseISO(topics[currentTopicIndex].date!));
     const now = new Date();
-    const saoPauloTime = toZonedTime(now, 'America/Sao_Paulo');
-    const today = startOfDay(saoPauloTime);
-
-    console.log('Verificando se é o tópico de hoje:');
-    console.log('Horário local:', now.toLocaleString());
-    console.log('Horário SP:', saoPauloTime.toLocaleString());
-    console.log('Data do tópico:', topicDate.toLocaleString());
-    console.log('Início do dia em SP:', today.toLocaleString());
-
-    return topicDate.getTime() === today.getTime();
+    const saoPauloTime = formatInTimeZone(now, 'America/Sao_Paulo', 'yyyy-MM-dd HH:mm:ss');
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const topicDate = format(new Date(topics[currentTopicIndex].date!), 'yyyy-MM-dd');
+    return topicDate === today;
   };
 
+  // Funções de verificação de data comentadas temporariamente
+  /*
   const isCurrentTopicFuture = () => {
     if (!topics[currentTopicIndex]?.date) return false;
-    const topicDate = startOfDay(parseISO(topics[currentTopicIndex].date!));
-    const saoPauloTime = toZonedTime(new Date(), 'America/Sao_Paulo');
-    const today = startOfDay(saoPauloTime);
-    return isAfter(topicDate, today);
+    const now = new Date();
+    const saoPauloTime = formatInTimeZone(now, 'America/Sao_Paulo', 'yyyy-MM-dd HH:mm:ss');
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const topicDate = format(new Date(topics[currentTopicIndex].date!), 'yyyy-MM-dd');
+    return topicDate > today;
   };
 
   const isCurrentTopicPast = () => {
     if (!topics[currentTopicIndex]?.date) return false;
-    const topicDate = startOfDay(parseISO(topics[currentTopicIndex].date!));
-    const saoPauloTime = toZonedTime(new Date(), 'America/Sao_Paulo');
-    const today = startOfDay(saoPauloTime);
-    return isBefore(topicDate, today);
+    const now = new Date();
+    const saoPauloTime = formatInTimeZone(now, 'America/Sao_Paulo', 'yyyy-MM-dd HH:mm:ss');
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const topicDate = format(new Date(topics[currentTopicIndex].date!), 'yyyy-MM-dd');
+    return topicDate < today;
   };
+  */
 
   // Enviar testemunho
   const submitTestimony = async () => {
@@ -237,7 +224,16 @@ export default function DailyTopicPage() {
   // Formatar data do tópico
   const formatTopicDate = (dateString?: string) => {
     if (!dateString) return "";
-    return format(parseISO(dateString), "EEEE, dd 'de' MMMM", { locale: ptBR });
+    // Pegar apenas a data do tópico, ignorando o horário
+    const date = parseISO(dateString.split('T')[0]);
+    
+    console.log('Formatando data do tópico:', {
+      original: dateString,
+      dateSemHora: dateString.split('T')[0],
+      formatted: format(date, "EEEE, dd 'de' MMMM", { locale: ptBR })
+    });
+    
+    return format(date, "EEEE, dd 'de' MMMM", { locale: ptBR });
   };
 
   // Obter tópico atual de forma segura
@@ -257,7 +253,7 @@ export default function DailyTopicPage() {
   }
 
   // Se não houver tópicos, mostrar mensagem
-  if (topics.length === 0) {
+  if (topics.length === 0 || currentTopicIndex === -1) {
     return (
       <div className="container max-w-md mx-auto px-4 py-6">
         <div className="text-center space-y-4">
@@ -266,7 +262,7 @@ export default function DailyTopicPage() {
             Nenhuma pauta disponível
           </h3>
           <p className="text-sm text-muted-foreground">
-            Ainda não há pautas cadastradas para este evento.
+            Não há pauta de oração para hoje.
           </p>
         </div>
       </div>
@@ -284,57 +280,19 @@ export default function DailyTopicPage() {
           transition={{ duration: 0.3 }}
           className="space-y-4"
         >
-          {/* Cabeçalho com navegação */}
-          <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={goToPreviousTopic}
-              disabled={currentTopicIndex <= 0}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-
-            <div className="text-center">
-              <h1 className="text-xl font-bold">Pauta de Oração</h1>
-              {currentTopic?.date && (
-                <p className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-1">
-                  <Calendar className="h-3.5 w-3.5" />
-                  {formatTopicDate(currentTopic.date)}
-                </p>
-              )}
-            </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={goToNextTopic}
-              disabled={currentTopicIndex >= topics.length - 1}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-
-          {/* Indicador de tópico atual/passado/futuro */}
-          <div className="flex justify-center">
-            {isCurrentTopicToday() ? (
-              <div className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm font-medium">
-                Pauta de Hoje
-              </div>
-            ) : isCurrentTopicPast() ? (
-              <div className="bg-muted/50 text-muted-foreground px-3 py-1 rounded-full text-sm">
-                Pauta Anterior
-              </div>
-            ) : (
-              <div className="bg-muted/50 text-muted-foreground px-3 py-1 rounded-full text-sm">
-                Pauta Futuro
-              </div>
+          {/* Cabeçalho */}
+          <div className="text-center">
+            <h1 className="text-xl font-bold">Pauta de Oração</h1>
+            {currentTopic?.date && (
+              <p className="text-sm text-muted-foreground flex items-center justify-center gap-1 mt-1">
+                <Calendar className="h-3.5 w-3.5" />
+                {formatTopicDate(currentTopic.date)}
+              </p>
             )}
           </div>
 
           {/* Lista de imagens do dia */}
           <div className="space-y-4">
-            {/* Encontrar todas as imagens do mesmo dia */}
             {topics.filter(topic => 
               topic.date === currentTopic?.date && topic.imageUrl
             ).map((topic, index) => (
@@ -359,12 +317,10 @@ export default function DailyTopicPage() {
                   <div className="text-center space-y-4">
                     <Calendar className="h-12 w-12 text-primary/40 mx-auto" />
                     <h3 className="text-lg font-semibold text-primary/80">
-                      Em breve
+                      Nenhuma imagem disponível
                     </h3>
                     <p className="text-sm text-muted-foreground max-w-[250px] mx-auto">
-                      {isCurrentTopicFuture() 
-                        ? "A pauta de oração para este dia estará disponível em breve."
-                        : "Não há imagem disponível no momento."}
+                      Não há imagens disponíveis para a pauta de hoje.
                     </p>
                   </div>
                 </div>
