@@ -49,7 +49,13 @@ function DailyTopicContent() {
           return topicDateStr === today;
         });
 
-        setTodayTopics(todaysTopics);
+        // Se não houver pautas para hoje, pegue a primeira pauta do evento
+        if (todaysTopics.length === 0 && sortedTopics.length > 0) {
+          setTodayTopics([sortedTopics[0]]);
+        } else {
+          setTodayTopics(todaysTopics);
+        }
+        
         setIsLoading(false);
       } catch (error) {
         console.error('Erro ao buscar tópicos:', error);
