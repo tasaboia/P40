@@ -30,6 +30,14 @@ enum PrayerTurnType {
   CLOCK // relógio de oração
 }
 
+enum OccurrenceType {
+  TESTIMONY        // Testemunho
+  TECHNICAL_ISSUE  // Problema técnico
+  LEADER_ABSENCE   // Ausência de líder
+  LEADER_DELAY     // Atraso de líder
+  OTHER           // Outros
+}
+
 model Region {
   id        String   @id @default(uuid())
   name      String   @unique
@@ -53,6 +61,7 @@ model Church {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   testimony Testimony[] 
+  occurrence Occurrence[]
 }
 
 model Event {
@@ -89,6 +98,7 @@ model PrayerTurn {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   testimony Testimony[] 
+  occurrence Occurrence[]
 }
 
 model UserShift {
@@ -118,6 +128,8 @@ model User {
   churchId    String?   
   church      Church?  @relation(fields: [churchId], references: [id])
   testimony   Testimony[] 
+  occurrence  Occurrence[]
+  relatedOccurrences Occurrence[] @relation("RelatedLeader")
   leaderLink  String?  
   otherChurch String?  
   serviceAreas UserServiceArea[]
@@ -183,6 +195,23 @@ model UserServiceArea {
   serviceArea   ServiceArea @relation(fields: [serviceAreaId], references: [id])
 
   @@unique([userId, serviceAreaId])
+}
+
+model Occurrence {
+  id          String         @id @default(uuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  churchId    String?
+  church      Church?       @relation(fields: [churchId], references: [id])
+  date        DateTime
+  content     String
+  type        OccurrenceType
+  prayerTurnId String
+  prayerTurn  PrayerTurn    @relation(fields: [prayerTurnId], references: [id])
+  relatedLeaderId String?   // ID do líder relacionado (para ausências/atrasos)
+  relatedLeader User?       @relation("RelatedLeader", fields: [relatedLeaderId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
  

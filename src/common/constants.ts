@@ -39,6 +39,13 @@ export const DashboardTabs = [
     },
   },
   {
+    indexTitle: "Ocorrências",
+    role: [ "LEADER", "ADMIN"],
+    route: {
+      url: "occurrences/new",
+    },
+  },
+  {
     indexTitle: "Geral Check-ins",
     role: ["ADMIN"],
     route: {

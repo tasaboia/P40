@@ -10,6 +10,7 @@ import LeadersTable from "./leaders-table";
 import Report from "./report";
 import ShiftsReport from "./shifts-report";
 import StatsCards from "./stats-cards";
+import OccurrencesList from "./occurrences-list";
 
 const SingleLeaderDialog = lazy(() => import("./single-leader-dialog")); //modal
 
@@ -91,6 +92,13 @@ export default function DashboardContainer() {
                 <Icons.FileText className="h-4 w-4 mr-1 md:mr-2" />
                 <span>Testemunhos</span>
               </UI.TabsTrigger>
+              <UI.TabsTrigger
+                value="occurrences"
+                className="text-xs md:text-sm"
+              >
+                <Icons.AlertTriangle className="h-4 w-4 mr-1 md:mr-2" />
+                <span>Ocorrências</span>
+              </UI.TabsTrigger>
               <UI.TabsTrigger value="reports" className="text-xs md:text-sm">
                 <Icons.FileText className="h-4 w-4 mr-1 md:mr-2" />
                 <span>Relatórios</span>
@@ -116,6 +124,9 @@ export default function DashboardContainer() {
             <TestimonyList
               
             />
+          </UI.TabsContent>
+          <UI.TabsContent value="occurrences" className="space-y-6">
+            <OccurrencesList />
           </UI.TabsContent>
           <UI.TabsContent value="reports" className="space-y-6">
             <Report />

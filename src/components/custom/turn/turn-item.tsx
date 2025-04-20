@@ -193,21 +193,24 @@ export function TurnItem({
             <CardFooter>
               {turnItem?.leaders?.length > 0 &&
               turnItem?.leaders.find((leader) => leader.id == userId) ? (
-                <Button
-                className="w-full text-destructive"
-                variant="secondary"
-                disabled={loading}
-                onClick={() => {
-                  handlePrayerTurnUnsubscribe({
-                    userId,
-                    prayerTurnId: turnItem.id,  
-                  });
-                }}
-                >
-                  <X />
-                  {t("actions.leave")}
-                </Button>
-              ) : (
+                //ninguem pode sair mais dos turnos
+              //   <Button
+              //   className="w-full text-destructive"
+              //   variant="secondary"
+              //   disabled={loading}
+              //   onClick={() => {
+              //     handlePrayerTurnUnsubscribe({
+              //       userId,
+              //       prayerTurnId: turnItem.id,  
+              //     });
+              //   }}
+              //   >
+              //     <X />
+              //     {t("actions.leave")}
+              //   </Button>
+              // )
+             null)
+              : (
                 <React.Fragment>
                   {(!turnItem?.leaders ||
                     turnItem?.leaders.length <
