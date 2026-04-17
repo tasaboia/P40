@@ -1,4 +1,3 @@
-import api from "@p40/lib/axios";
 import Log from "@p40/services/logging";
 import { authProver } from "@p40/services/prover";
 import NextAuth from "next-auth";
@@ -67,12 +66,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         try {
-          const { data: newUser } = await api.post("/api/auth/migrar/google", {
-            id: profile.id,
-            name: profile.name,
-            email: profile.email,
-            imageUrl: profile.picture ?? profile.imageUrl,
-          });
+          const baseUrl =
+            process.env.NEXT_PUBLIC_API_BASE_URL ??
+            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
+          if (!baseUrl) {
+            return false;
+          }
+
+          const response = await fetch(
+            new URL("/api/auth/migrar/google", baseUrl),
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                id: profile?.id,
+                name: profile?.name,
+                email: profile?.email,
+                imageUrl: profile?.picture ?? profile?.imageUrl,
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            return false;
+          }
+
+          const newUser = await response.json();
 
           user.id = newUser.user.id;
           user.idProver = newUser.user.idProver;

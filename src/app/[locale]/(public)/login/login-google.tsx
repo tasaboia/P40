@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 export default function GoogleLogin() {
-  const session = useSession();
+  const { data: sessionData, status } = useSession();
   const router = useRouter();
   const { onboardingData } = useOnboarding();
 
@@ -17,16 +17,16 @@ export default function GoogleLogin() {
   };
 
   useEffect(() => {
-    if (session.status == "authenticated" && session.data.user.churchId == "") {
+    if (status == "authenticated" && sessionData?.user.churchId == "") {
       const updateUser = async () => {
         const response = await api.post("/api/user/update", {
-          id: session.data.user.id,
-          name: session.data.user.name,
-          email: session.data.user.email,
-          whatsapp: session.data.user.whatsapp,
+          id: sessionData?.user.id,
+          name: sessionData?.user.name,
+          email: sessionData?.user.email,
+          whatsapp: sessionData?.user.whatsapp,
           zionId: onboardingData.location.id,
           serviceAreas: onboardingData.areas,
-          role:session.data.user.role || "LEADER",
+          role: sessionData?.user.role || "LEADER",
         });
 
         if (response.status == 200 || response.status == 201) {
@@ -35,9 +35,9 @@ export default function GoogleLogin() {
       };
       updateUser();
     }
-  }, [session]);
+  }, [status, sessionData?.user.churchId, onboardingData.location.id, onboardingData.areas, router]);
 
-  if (session.status == "authenticated") {
+  if (status == "authenticated") {
     return (
       <div className="w-screen h-screen justify-center flex items-center">
         <Loader2 className="animate-spin" />
