@@ -21,7 +21,8 @@ export default function EventConfigPage() {
   const router = useRouter();
   const eventConfigClient = new EventConfigClient();
   const [prayerTopics, setPrayerTopics] = useState<PrayerTopic[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("general");
   const [eventConfig, setEventConfig] = useState({
     id: "",
@@ -62,6 +63,7 @@ export default function EventConfigPage() {
         console.error("Erro ao carregar dados do dashboard:", error);
       } finally {
         setIsLoading(false);
+        setIsInitialLoading(false);
       }
     };
 
@@ -72,6 +74,19 @@ export default function EventConfigPage() {
     (eventConfig.endDate.getTime() - eventConfig.startDate.getTime()) /
       (1000 * 60 * 60 * 24)
   );
+
+  if (isInitialLoading) {
+    return (
+      <div className="container py-3 w-full px-6 pb-6">
+        <div className="w-full min-h-[50vh] flex items-center justify-center">
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <div className="h-5 w-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <span>Carregando configurações do evento...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

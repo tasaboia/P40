@@ -23,11 +23,12 @@ export async function GET(request: Request) {
         endTime: turn.endTime,
         leaders: turn.userShifts.map((shift) => shift.user),
         status:
-          turn.userShifts.length === 0
+          turn.status ||
+          (turn.userShifts.length === 0
             ? "empty"
             : turn.userShifts.length === 1
             ? "partial"
-            : "full",
+            : "full"),
       };
     });
 

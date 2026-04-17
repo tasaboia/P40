@@ -8,6 +8,11 @@ export class EventConfigService {
           churchId: churchId,
         },
         include: {
+          prayerTurns: {
+            select: {
+              allowChangeAfterStart: true,
+            },
+          },
           church: {
             select: {
               name: true,
@@ -19,6 +24,11 @@ export class EventConfigService {
       });
 
       if (event) {
+        const allowShiftChange =
+          event.prayerTurns.length === 0
+            ? true
+            : event.prayerTurns.every((turn) => turn.allowChangeAfterStart);
+
         return {
           id: event.id,
           name: event.name,
@@ -28,7 +38,7 @@ export class EventConfigService {
           startDate: event.startDate,
           endDate: event.endDate,
           leadersPerShift: event.maxParticipantsPerTurn || 2,
-          allowShiftChange: true, // PRECISA ALTERAR ESSE ITEM
+          allowShiftChange,
           eventType: event.type,
           shiftDuration: event.shiftDuration || 60,
         };

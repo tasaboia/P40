@@ -20,7 +20,7 @@ import { useRouter } from "@p40/i18n/routing";
 import { useTranslations } from "next-intl";
 import { Weekday } from "@p40/common/contracts/week/schedule";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //TODO: atualizar o valor na lista para o usuario antes mesmo de atualizar no backend
 
@@ -44,6 +44,13 @@ export function TurnItem({
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [localTurnItems, setLocalTurnItems] = useState<PrayerTurnResponse[]>(
+    turnItens || []
+  );
+
+  useEffect(() => {
+    setLocalTurnItems(turnItens || []);
+  }, [turnItens]);
 
   const handlePrayerTurnSubscribe = async ({
     userId,
@@ -92,6 +99,16 @@ export function TurnItem({
       const response = await unsubscribe(userId, prayerTurnId);
 
       if (!response?.error) {
+        setLocalTurnItems((prev) =>
+          prev.map((item) =>
+            item.id === prayerTurnId
+              ? {
+                  ...item,
+                  leaders: item.leaders.filter((leader) => leader.id !== userId),
+                }
+              : item
+          )
+        );
         toast({
           variant: "default",
 
@@ -120,11 +137,17 @@ export function TurnItem({
       )}
       {shift.map((turn) => {
         //garantir que vamos ter as informações do líder por turno
-        const turnItem = turnItens?.find(
+        const turnItem = localTurnItems?.find(
           (item) => item.startTime == turn.startTime
         );
 
         const weekdayIndex = Object.values(Weekday).indexOf(Weekday[weekday]);
+        const isCurrentTurn = Helpers.isCurrentTurn(
+          turn?.startTime,
+          event?.shiftDuration,
+          weekdayIndex
+        );
+        const canShowLeaveButton = Boolean(turnItem?.allowChangeAfterStart);
 
         return (
           <Card key={turn.endTime} className="m-3">
@@ -132,11 +155,7 @@ export function TurnItem({
               <CardTitle>
                 <div
                   className={`flex items-center space-x-4 rounded-md border p-4 ${
-                    Helpers.isCurrentTurn(
-                      turn?.startTime,
-                      event?.shiftDuration,
-                      weekdayIndex
-                    )
+                    isCurrentTurn
                       ? "text-green-600 animate-pulse"
                       : ""
                   }`}
@@ -147,11 +166,7 @@ export function TurnItem({
                       {turn.startTime}
                     </p>
                   </div>
-                  {Helpers.isCurrentTurn(
-                    turn?.startTime,
-                    event?.shiftDuration,
-                    weekdayIndex
-                  ) && (
+                  {isCurrentTurn && (
                     <div className="flex  gap-2 text-xs">
                       <span className="flex h-2 w-2 translate-y-1 rounded-full bg-green-400" />
                       Turno em andamento
@@ -193,23 +208,23 @@ export function TurnItem({
             <CardFooter>
               {turnItem?.leaders?.length > 0 &&
               turnItem?.leaders.find((leader) => leader.id == userId) ? (
-                //ninguem pode sair mais dos turnos
-              //   <Button
-              //   className="w-full text-destructive"
-              //   variant="secondary"
-              //   disabled={loading}
-              //   onClick={() => {
-              //     handlePrayerTurnUnsubscribe({
-              //       userId,
-              //       prayerTurnId: turnItem.id,  
-              //     });
-              //   }}
-              //   >
-              //     <X />
-              //     {t("actions.leave")}
-              //   </Button>
-              // )
-             null)
+                canShowLeaveButton ? (
+                  <Button
+                    className="w-full text-destructive"
+                    variant="secondary"
+                    disabled={loading}
+                    onClick={() => {
+                      handlePrayerTurnUnsubscribe({
+                        userId,
+                        prayerTurnId: turnItem.id,
+                      });
+                    }}
+                  >
+                    <X />
+                    {t("actions.leave")}
+                  </Button>
+                ) : null
+              )
               : (
                 <React.Fragment>
                   {(!turnItem?.leaders ||

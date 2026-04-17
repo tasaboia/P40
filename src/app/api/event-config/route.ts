@@ -100,16 +100,14 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    if (allowShiftChange) {
-      await prisma.prayerTurn.updateMany({
-        where: {
-          eventId: updatedEvent.id,
-        },
-        data: {
-          allowChangeAfterStart: allowShiftChange,
-        },
-      });
-    }
+    await prisma.prayerTurn.updateMany({
+      where: {
+        eventId: updatedEvent.id,
+      },
+      data: {
+        allowChangeAfterStart: Boolean(allowShiftChange),
+      },
+    });
 
     return NextResponse.json({
       success: true,

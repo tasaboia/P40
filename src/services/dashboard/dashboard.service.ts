@@ -3,6 +3,30 @@ import { FailException } from "@p40/common/contracts/exceptions/exception";
 import { prisma } from "@p40/app/api/prisma";
 
 export class DashboardService {
+  private buildDailySlots(shiftDuration: number) {
+    const safeDuration = shiftDuration && shiftDuration > 0 ? shiftDuration : 60;
+    const slotsPerDay = Math.floor((24 * 60) / safeDuration);
+
+    return Array.from({ length: slotsPerDay }, (_, index) => {
+      const startMinutes = index * safeDuration;
+      const endMinutes = startMinutes + safeDuration;
+
+      const startHour = Math.floor(startMinutes / 60) % 24;
+      const startMinute = startMinutes % 60;
+      const endHour = Math.floor(endMinutes / 60) % 24;
+      const endMinute = endMinutes % 60;
+
+      return {
+        startTime: `${startHour.toString().padStart(2, "0")}:${startMinute
+          .toString()
+          .padStart(2, "0")}`,
+        endTime: `${endHour.toString().padStart(2, "0")}:${endMinute
+          .toString()
+          .padStart(2, "0")}`,
+      };
+    });
+  }
+
   async getStats(churchId: string) {
     try {
       const totalLeaders = await prisma.user.count({
@@ -11,32 +35,19 @@ export class DashboardService {
         },
       });
 
-      const totalEvents = await prisma.event.count({
+      const events = await prisma.event.findMany({
         where: {
           churchId,
         },
-      });
-
-      const totalPrayerTurns = await prisma.prayerTurn.count({
-        where: {
-          event: {
-            churchId,
-          },
+        select: {
+          id: true,
+          shiftDuration: true,
+          maxParticipantsPerTurn: true,
         },
       });
+      const totalEvents = events.length;
 
-      const filledPrayerTurns = await prisma.prayerTurn.count({
-        where: {
-          event: {
-            churchId,
-          },
-          userShifts: {
-            some: {}, // Turnos com ao menos um líder
-          },
-        },
-      });
-
-      // Buscar todos os turnos e contar quantos têm menos que o máximo de participantes
+      // Buscar turnos já existentes
       const allPrayerTurns = await prisma.prayerTurn.findMany({
         where: {
           event: {
@@ -54,19 +65,46 @@ export class DashboardService {
         },
       });
 
-      const partialPrayerTurns = allPrayerTurns.filter(
-        (turn) =>
-          turn.userShifts.length > 0 &&
-          turn.userShifts.length < turn.event.maxParticipantsPerTurn
-      ).length;
+      const eventById = new Map(events.map((event) => [event.id, event]));
+      const existingTurnByKey = new Map(
+        allPrayerTurns.map((turn) => [
+          `${turn.eventId}-${turn.weekday}-${turn.startTime}`,
+          turn,
+        ])
+      );
 
-      const fullMaxParticipantsPerTurn = allPrayerTurns.filter(
-        (turn) =>
-          turn.event?.maxParticipantsPerTurn &&
-          turn.userShifts.length === turn.event.maxParticipantsPerTurn
-      ).length;
+      let totalPrayerTurns = 0;
+      let filledPrayerTurns = 0;
+      let partialPrayerTurns = 0;
+      let fullMaxParticipantsPerTurn = 0;
+      let emptyPrayerTurns = 0;
 
-      const emptyPrayerTurns = totalPrayerTurns - filledPrayerTurns;
+      for (const event of events) {
+        const daySlots = this.buildDailySlots(event.shiftDuration || 60);
+        const maxParticipants = event.maxParticipantsPerTurn ?? 1;
+
+        for (let weekday = 0; weekday <= 6; weekday++) {
+          for (const slot of daySlots) {
+            totalPrayerTurns++;
+            const key = `${event.id}-${weekday}-${slot.startTime}`;
+            const existingTurn = existingTurnByKey.get(key);
+            const participants = existingTurn?.userShifts?.length || 0;
+
+            if (participants === 0) {
+              emptyPrayerTurns++;
+              continue;
+            }
+
+            filledPrayerTurns++;
+
+            if (participants >= maxParticipants) {
+              fullMaxParticipantsPerTurn++;
+            } else {
+              partialPrayerTurns++;
+            }
+          }
+        }
+      }
 
       const leadersPercentage =
         totalEvents > 0 ? (totalLeaders / totalEvents) * 100 : 0;
@@ -260,26 +298,81 @@ export class DashboardService {
 
   async getEventTurns(churchId: string, limit: number = 10) {
     try {
-      return await prisma.prayerTurn.findMany({
-        where: {
-          event: {
+      const [events, existingTurns] = await Promise.all([
+        prisma.event.findMany({
+          where: {
             churchId,
           },
-        },
-        include: {
-          userShifts: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  imageUrl: true,
+          select: {
+            id: true,
+            shiftDuration: true,
+            maxParticipantsPerTurn: true,
+          },
+        }),
+        prisma.prayerTurn.findMany({
+          where: {
+            event: {
+              churchId,
+            },
+          },
+          include: {
+            userShifts: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    imageUrl: true,
+                  },
                 },
               },
             },
           },
-        },
-      });
+        }),
+      ]);
+
+      const existingTurnByKey = new Map(
+        existingTurns.map((turn) => [
+          `${turn.eventId}-${turn.weekday}-${turn.startTime}`,
+          turn,
+        ])
+      );
+
+      const allSlots = [];
+
+      for (const event of events) {
+        const daySlots = this.buildDailySlots(event.shiftDuration || 60);
+        const maxParticipants = event.maxParticipantsPerTurn ?? 1;
+
+        for (let weekday = 0; weekday <= 6; weekday++) {
+          for (const slot of daySlots) {
+            const key = `${event.id}-${weekday}-${slot.startTime}`;
+            const existingTurn = existingTurnByKey.get(key);
+            const leaders =
+              existingTurn?.userShifts?.map((shift) => shift.user) || [];
+            const participants = leaders.length;
+
+            const status =
+              participants === 0
+                ? "empty"
+                : participants >= maxParticipants
+                ? "full"
+                : "partial";
+
+            allSlots.push({
+              id: existingTurn?.id || `${event.id}-${weekday}-${slot.startTime}`,
+              eventId: event.id,
+              weekday,
+              startTime: slot.startTime,
+              endTime: slot.endTime,
+              userShifts: leaders.map((user) => ({ user })),
+              status,
+            });
+          }
+        }
+      }
+
+      return allSlots;
     } catch (error) {
       console.error("Erro ao buscar turnos vazios ou com 1 líder:", error);
       throw new Error("Erro ao buscar turnos vazios ou com 1 líder");

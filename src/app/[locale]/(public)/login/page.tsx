@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
@@ -19,9 +19,13 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Verificar onboarding
+  useEffect(() => {
+    if (!onboardingData.location.id) {
+      router.push("leaders-onboarding");
+    }
+  }, [onboardingData.location.id, router]);
+
   if (!onboardingData.location.id) {
-    router.push("leaders-onboarding");
     return null;
   }
 
