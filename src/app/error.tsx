@@ -97,8 +97,6 @@ export default function ErrorPage({
   useEffect(() => {
     const handleChunkError = async () => {
       if (error?.name === "ChunkLoadError") {
-        setIsChunkError(true);
-
         const currentAttempts = Number(
           sessionStorage.getItem(CHUNK_RELOAD_KEY) || "0",
         );
@@ -121,7 +119,9 @@ export default function ErrorPage({
           return;
         }
 
+        // Max retries exhausted — show the "new version available" UI
         clearChunkDebugParams();
+        setIsChunkError(true);
         return;
       }
 
