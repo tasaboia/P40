@@ -17,7 +17,15 @@ export default function DashboardError({
   useEffect(() => {
     console.error("Erro no dashboard:", error);
     if (error?.name === "ChunkLoadError") {
-      window.location.reload();
+      const reloadCount = parseInt(
+        sessionStorage.getItem("chunkReloadCount") || "0"
+      );
+      if (reloadCount < 2) {
+        sessionStorage.setItem("chunkReloadCount", String(reloadCount + 1));
+        window.location.reload();
+      } else {
+        sessionStorage.removeItem("chunkReloadCount");
+      }
     }
   }, [error]);
 
