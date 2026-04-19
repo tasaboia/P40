@@ -46,11 +46,16 @@ export default async function LocaleLayout({ children, params }: Props) {
     notFound();
   }
   const messages = await getMessages({ locale });
+  const releaseId =
+    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ??
+    process.env.VERCEL_GIT_COMMIT_SHA ??
+    process.env.VERCEL_DEPLOYMENT_ID ??
+    "local";
 
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} className="h-full">
+    <html lang={locale} className="h-full" data-release={releaseId}>
       <body className={clsx(inter.className, "h-full")}>
         <Providers>
           <BaseLayout locale={locale} messages={messages}>

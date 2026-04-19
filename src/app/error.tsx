@@ -25,6 +25,20 @@ type ChunkTelemetryPayload = {
   stack?: string;
   digest?: string;
   href: string;
+  pathname?: string;
+  search?: string;
+  hash?: string;
+  referrer?: string;
+  navigationType?: string;
+  release?: string;
+  failedChunk?: string;
+  resourceHits?: Array<{
+    name: string;
+    initiatorType?: string;
+    transferSize?: number;
+    encodedBodySize?: number;
+    duration?: number;
+  }>;
   userAgent: string;
   buildId?: string;
   attempt: number;
@@ -33,8 +47,40 @@ type ChunkTelemetryPayload = {
 };
 
 function getBuildId() {
-  return (window as Window & { __NEXT_DATA__?: { buildId?: string } })
-    .__NEXT_DATA__?.buildId;
+  return document.documentElement.dataset.release;
+}
+
+function getNavigationType() {
+  return (
+    performance.getEntriesByType("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined
+  )?.type;
+}
+
+function getFailedChunk(message: string) {
+  const match = message.match(/chunks\/(.+?\.js)/);
+  return match?.[1];
+}
+
+function getChunkResourceHits(failedChunk?: string) {
+  const resources = performance.getEntriesByType(
+    "resource",
+  ) as PerformanceResourceTiming[];
+  const chunkResources = resources.filter((entry) =>
+    entry.name.includes("/_next/static/chunks/"),
+  );
+  const matched = failedChunk
+    ? chunkResources.filter((entry) => entry.name.includes(failedChunk))
+    : chunkResources;
+
+  return matched.slice(-10).map((entry) => ({
+    name: entry.name,
+    initiatorType: entry.initiatorType,
+    transferSize: entry.transferSize,
+    encodedBodySize: entry.encodedBodySize,
+    duration: entry.duration,
+  }));
 }
 
 async function sendChunkTelemetry(payload: ChunkTelemetryPayload) {
@@ -106,6 +152,14 @@ export default function ErrorPage({
           message: error.message,
           stack: error.stack,
           href: window.location.href,
+          pathname: window.location.pathname,
+          search: window.location.search,
+          hash: window.location.hash,
+          referrer: document.referrer,
+          navigationType: getNavigationType(),
+          release: getBuildId(),
+          failedChunk: getFailedChunk(error.message),
+          resourceHits: getChunkResourceHits(getFailedChunk(error.message)),
           userAgent: window.navigator.userAgent,
           buildId: getBuildId(),
           attempt: currentAttempts,
