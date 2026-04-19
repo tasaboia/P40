@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -21,6 +22,12 @@ export default function ErrorPage({
 }) {
   const router = useRouter();
   const t = useTranslations("errors");
+
+  useEffect(() => {
+    if (error?.name === "ChunkLoadError") {
+      window.location.reload();
+    }
+  }, [error]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">

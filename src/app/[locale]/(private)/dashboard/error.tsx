@@ -16,6 +16,9 @@ export default function DashboardError({
 
   useEffect(() => {
     console.error("Erro no dashboard:", error);
+    if (error?.name === "ChunkLoadError") {
+      window.location.reload();
+    }
   }, [error]);
 
   return (
