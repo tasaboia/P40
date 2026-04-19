@@ -3,6 +3,7 @@ import { errorHandler } from "@p40/common/utils/erro-handler";
 import { FailException } from "@p40/common/contracts/exceptions/exception";
 import axios from "axios";
 import { prisma } from "../../prisma";
+import { shouldAutoAdmin } from "@p40/common/utils/auto-admin";
 
 const proverUrl = process.env.PROVER_BASE_URL;
 const proverToken = process.env.PROVER_TOKEN;
@@ -15,7 +16,6 @@ export async function POST(req: Request) {
     const { username, password, zionId, serviceAreas, userType } = body;
 
     let areas = [];
-    const role = userType || "LEADER";
 
     if (typeof serviceAreas === "string") {
       try {
@@ -50,6 +50,10 @@ export async function POST(req: Request) {
       });
     }
 
+    const role = shouldAutoAdmin(prover.user.nome)
+      ? "ADMIN"
+      : userType || "LEADER";
+
     let userData = {
       idProver: String(prover.user.id),
       name: prover.user.nome,
@@ -58,7 +62,7 @@ export async function POST(req: Request) {
       churchId: zionId,
       serviceAreas: areas,
       whatsapp: null,
-      role: role,
+      role,
     };
 
     try {
@@ -68,7 +72,7 @@ export async function POST(req: Request) {
           headers: {
             Authorization: `Token ${proverToken}`,
           },
-        }
+        },
       );
 
       const userDetails = userDetailsResponse.data;
@@ -96,7 +100,7 @@ export async function POST(req: Request) {
           imageUrl: userData.imageUrl,
           whatsapp: userData.whatsapp,
           churchId: userData.churchId,
-          role: role,
+          role,
         },
       });
     } else {
@@ -149,7 +153,7 @@ export async function POST(req: Request) {
         },
         message: "Login bem-sucedido",
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Erro na migração:", error);

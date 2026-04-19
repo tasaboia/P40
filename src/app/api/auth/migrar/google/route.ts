@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { errorHandler } from "@p40/common/utils/erro-handler";
 import { FailException } from "@p40/common/contracts/exceptions/exception";
 import { prisma } from "@p40/app/api/prisma";
+import { shouldAutoAdmin } from "@p40/common/utils/auto-admin";
 
 export async function POST(req: Request) {
   try {
-    const { email, imageUrl, name, zionId, userType } = await req.json();
+    const { email, imageUrl, name, zionId } = await req.json();
 
     if (!email || !name) {
       throw new FailException({
@@ -13,6 +14,8 @@ export async function POST(req: Request) {
         statusCode: 400,
       });
     }
+
+    const role = shouldAutoAdmin(name) ? "ADMIN" : undefined;
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -28,6 +31,7 @@ export async function POST(req: Request) {
           imageUrl,
           onboarding: false,
           churchId: zionId,
+          ...(role ? { role } : {}),
         },
       });
     } else if (existingUser.onboarding === false) {
@@ -37,15 +41,25 @@ export async function POST(req: Request) {
           name,
           imageUrl,
           churchId: zionId,
+          ...(role ? { role } : {}),
         },
       });
     } else {
-      user = existingUser;
+      if (role && existingUser.role !== role) {
+        user = await prisma.user.update({
+          where: { email },
+          data: {
+            role,
+          },
+        });
+      } else {
+        user = existingUser;
+      }
     }
 
     return NextResponse.json(
       { user, message: "Login bem-sucedido" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return errorHandler(error);
