@@ -83,29 +83,74 @@ function toTestimonyDashboardResponse(
   };
 }
 
+async function timed<T>(
+  label: string,
+  requestId: string,
+  fn: () => Promise<T>,
+): Promise<T> {
+  const start = Date.now();
+  try {
+    const result = await fn();
+    console.info(
+      `[dashboard-load][${requestId}] ${label} ok in ${Date.now() - start}ms`,
+    );
+    return result;
+  } catch (error) {
+    console.error(
+      `[dashboard-load][${requestId}] ${label} failed after ${Date.now() - start}ms`,
+      error,
+    );
+    throw error;
+  }
+}
+
 export async function loadDashboardData(churchId: string) {
+  const requestId = `dash-${Date.now().toString(36)}-${Math.random()
+    .toString(36)
+    .slice(2, 8)}`;
+  const start = Date.now();
+  console.info(`[dashboard-load][${requestId}] start churchId=${churchId}`);
+
   const service = new DashboardService();
 
-  const [stats, allPrayerTurns, singleLeaderShifts, leaders, testimonies] =
-    await Promise.all([
-      service.getStats(churchId),
-      service.getEventTurns(churchId),
-      service.getSingleLeaderAndEmptyShifts(churchId),
-      service.getLeaders(churchId),
-      service.getTestemuny(churchId),
-    ]);
+  try {
+    const [stats, allPrayerTurns, singleLeaderShifts, leaders, testimonies] =
+      await Promise.all([
+        timed("getStats", requestId, () => service.getStats(churchId)),
+        timed("getEventTurns", requestId, () =>
+          service.getEventTurns(churchId),
+        ),
+        timed("getSingleLeaderAndEmptyShifts", requestId, () =>
+          service.getSingleLeaderAndEmptyShifts(churchId),
+        ),
+        timed("getLeaders", requestId, () => service.getLeaders(churchId)),
+        timed("getTestemuny", requestId, () => service.getTestemuny(churchId)),
+      ]);
 
-  return {
-    statsData: {
-      success: true,
-      data: stats,
-    } as DashboardStatsResponse,
-    shiftsData: toShiftResponse(allPrayerTurns),
-    singleLeaderShiftsData: toSingleLeaderShiftResponse(singleLeaderShifts),
-    leadersData: {
-      success: true,
-      data: leaders,
-    } as LeadersDashboardResponse,
-    testimoniesData: toTestimonyDashboardResponse(testimonies),
-  };
+    const response = {
+      statsData: {
+        success: true,
+        data: stats,
+      } as DashboardStatsResponse,
+      shiftsData: toShiftResponse(allPrayerTurns),
+      singleLeaderShiftsData: toSingleLeaderShiftResponse(singleLeaderShifts),
+      leadersData: {
+        success: true,
+        data: leaders,
+      } as LeadersDashboardResponse,
+      testimoniesData: toTestimonyDashboardResponse(testimonies),
+    };
+
+    console.info(
+      `[dashboard-load][${requestId}] success in ${Date.now() - start}ms turns=${response.shiftsData.data.length} leaders=${response.leadersData.data.length} testimonies=${response.testimoniesData.data.length}`,
+    );
+
+    return response;
+  } catch (error) {
+    console.error(
+      `[dashboard-load][${requestId}] failed in ${Date.now() - start}ms`,
+      error,
+    );
+    throw error;
+  }
 }

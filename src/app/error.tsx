@@ -15,6 +15,59 @@ import { Button } from "@p40/components/ui/button";
 
 const CHUNK_RELOAD_KEY = "p40_chunk_reload_attempts";
 const MAX_CHUNK_RELOADS = 2;
+const CHUNK_RETRY_PARAM = "__chunk_retry";
+const CHUNK_RELOAD_TS_PARAM = "_chunkTs";
+
+type ChunkTelemetryPayload = {
+  source: "global-error";
+  name?: string;
+  message?: string;
+  stack?: string;
+  digest?: string;
+  href: string;
+  userAgent: string;
+  buildId?: string;
+  attempt: number;
+  maxAttempts: number;
+  timestamp: string;
+};
+
+function getBuildId() {
+  return (window as Window & { __NEXT_DATA__?: { buildId?: string } })
+    .__NEXT_DATA__?.buildId;
+}
+
+async function sendChunkTelemetry(payload: ChunkTelemetryPayload) {
+  console.error("[chunk-telemetry]", payload);
+
+  try {
+    await fetch("/api/telemetry/chunk-error", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+      keepalive: true,
+      body: JSON.stringify(payload),
+    });
+  } catch (telemetryError) {
+    console.error("Falha ao enviar telemetry de chunk:", telemetryError);
+  }
+}
+
+function reloadWithCacheBusting(attempt: number) {
+  const url = new URL(window.location.href);
+  url.searchParams.set(CHUNK_RETRY_PARAM, String(attempt));
+  url.searchParams.set(CHUNK_RELOAD_TS_PARAM, String(Date.now()));
+  window.location.replace(url.toString());
+}
+
+function clearChunkDebugParams() {
+  const url = new URL(window.location.href);
+  url.searchParams.delete(CHUNK_RETRY_PARAM);
+  url.searchParams.delete(CHUNK_RELOAD_TS_PARAM);
+  window.history.replaceState(null, "", url.toString());
+}
 
 function shouldReloadChunkError() {
   const currentAttempts = Number(
@@ -41,14 +94,39 @@ export default function ErrorPage({
   const t = useTranslations("errors");
 
   useEffect(() => {
-    if (error?.name === "ChunkLoadError") {
-      if (shouldReloadChunkError()) {
-        window.location.reload();
-      }
-      return;
-    }
+    const handleChunkError = async () => {
+      if (error?.name === "ChunkLoadError") {
+        const currentAttempts = Number(
+          sessionStorage.getItem(CHUNK_RELOAD_KEY) || "0",
+        );
 
-    sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+        await sendChunkTelemetry({
+          source: "global-error",
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+          href: window.location.href,
+          userAgent: window.navigator.userAgent,
+          buildId: getBuildId(),
+          attempt: currentAttempts,
+          maxAttempts: MAX_CHUNK_RELOADS,
+          timestamp: new Date().toISOString(),
+        });
+
+        if (shouldReloadChunkError()) {
+          reloadWithCacheBusting(currentAttempts + 1);
+          return;
+        }
+
+        clearChunkDebugParams();
+        return;
+      }
+
+      sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+      clearChunkDebugParams();
+    };
+
+    void handleChunkError();
   }, [error]);
 
   return (
