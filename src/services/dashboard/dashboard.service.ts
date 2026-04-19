@@ -4,7 +4,8 @@ import { prisma } from "@p40/app/api/prisma";
 
 export class DashboardService {
   private buildDailySlots(shiftDuration: number) {
-    const safeDuration = shiftDuration && shiftDuration > 0 ? shiftDuration : 60;
+    const safeDuration =
+      shiftDuration && shiftDuration > 0 ? shiftDuration : 60;
     const slotsPerDay = Math.floor((24 * 60) / safeDuration);
 
     return Array.from({ length: slotsPerDay }, (_, index) => {
@@ -70,7 +71,7 @@ export class DashboardService {
         allPrayerTurns.map((turn) => [
           `${turn.eventId}-${turn.weekday}-${turn.startTime}`,
           turn,
-        ])
+        ]),
       );
 
       let totalPrayerTurns = 0;
@@ -164,7 +165,7 @@ export class DashboardService {
 
         // Turnos com líder
         const filledTurns = event.prayerTurns.filter(
-          (turn) => turn.userShifts.length > 0
+          (turn) => turn.userShifts.length > 0,
         ).length;
 
         // Turnos sem líder
@@ -176,8 +177,8 @@ export class DashboardService {
         // Líderes distintos
         const distinctLeaders = new Set(
           event.prayerTurns.flatMap((turn) =>
-            turn.userShifts.map((shift) => shift.userId)
-          )
+            turn.userShifts.map((shift) => shift.userId),
+          ),
         ).size;
 
         return {
@@ -271,7 +272,7 @@ export class DashboardService {
       });
 
       const singleLeaderShifts = allPrayerTurns.filter(
-        (turn) => turn.userShifts.length === 1
+        (turn) => turn.userShifts.length === 1,
       );
 
       const result = singleLeaderShifts.map((turn) => {
@@ -335,7 +336,7 @@ export class DashboardService {
         existingTurns.map((turn) => [
           `${turn.eventId}-${turn.weekday}-${turn.startTime}`,
           turn,
-        ])
+        ]),
       );
 
       const allSlots = [];
@@ -356,11 +357,12 @@ export class DashboardService {
               participants === 0
                 ? "empty"
                 : participants >= maxParticipants
-                ? "full"
-                : "partial";
+                  ? "full"
+                  : "partial";
 
             allSlots.push({
-              id: existingTurn?.id || `${event.id}-${weekday}-${slot.startTime}`,
+              id:
+                existingTurn?.id || `${event.id}-${weekday}-${slot.startTime}`,
               eventId: event.id,
               weekday,
               startTime: slot.startTime,
@@ -484,6 +486,8 @@ export class DashboardService {
               endTime: true,
               id: true,
               eventId: true,
+              weekday: true,
+              type: true,
             },
           },
         },
@@ -520,7 +524,7 @@ export class DashboardService {
 
   async getAllServiceAreas() {
     try {
-      const response = await api.get('/api/service-areas');
+      const response = await api.get("/api/service-areas");
       return response.data.data;
     } catch (error) {
       console.error("Erro ao buscar áreas de serviço:", error);

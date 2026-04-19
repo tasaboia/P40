@@ -5,6 +5,23 @@ import { useRouter } from "next/navigation";
 import { Button } from "@p40/components/ui/button";
 import { AlertCircle } from "lucide-react";
 
+const CHUNK_RELOAD_KEY = "p40_chunk_reload_attempts";
+const MAX_CHUNK_RELOADS = 2;
+
+function shouldReloadChunkError() {
+  const currentAttempts = Number(
+    sessionStorage.getItem(CHUNK_RELOAD_KEY) || "0",
+  );
+
+  if (currentAttempts >= MAX_CHUNK_RELOADS) {
+    sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+    return false;
+  }
+
+  sessionStorage.setItem(CHUNK_RELOAD_KEY, String(currentAttempts + 1));
+  return true;
+}
+
 export default function DashboardError({
   error,
   reset,
@@ -17,8 +34,13 @@ export default function DashboardError({
   useEffect(() => {
     console.error("Erro no dashboard:", error);
     if (error?.name === "ChunkLoadError") {
-      window.location.reload();
+      if (shouldReloadChunkError()) {
+        window.location.reload();
+      }
+      return;
     }
+
+    sessionStorage.removeItem(CHUNK_RELOAD_KEY);
   }, [error]);
 
   return (
