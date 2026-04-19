@@ -206,7 +206,14 @@
     "general": {
       "title": "An error occurred",
       "description": "Something went wrong. Try again or go back to the home page",
-      "unknown": "Unknown error"
+      "unknown": "Unknown error",
+      "retry_button": "Try again",
+      "home_button": "Back to home"
+    },
+    "chunk_error": {
+      "title": "New version available",
+      "description": "The application has been updated. Please reload the page to continue.",
+      "reload_button": "Reload page"
     }
   },
   "setup": {

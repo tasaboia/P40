@@ -242,7 +242,14 @@
     "general": {
       "title": "Ocorreu um erro",
       "description": "Algo deu errado. Tente novamente ou volte para a página inicial",
-      "unknown": "Erro desconhecido"
+      "unknown": "Erro desconhecido",
+      "retry_button": "Tentar novamente",
+      "home_button": "Voltar para o início"
+    },
+    "chunk_error": {
+      "title": "Nova versão disponível",
+      "description": "O aplicativo foi atualizado. Por favor, recarregue a página para continuar.",
+      "reload_button": "Recarregar página"
     }
   },
   "setup": {

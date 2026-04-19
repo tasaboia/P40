@@ -206,7 +206,14 @@
     "general": {
       "title": "Ocurrió un error",
       "description": "Algo salió mal. Intenta de nuevo o vuelve a la página principal",
-      "unknown": "Error desconocido"
+      "unknown": "Error desconocido",
+      "retry_button": "Intentar de nuevo",
+      "home_button": "Volver al inicio"
+    },
+    "chunk_error": {
+      "title": "Nueva versión disponible",
+      "description": "La aplicación ha sido actualizada. Por favor, recarga la página para continuar.",
+      "reload_button": "Recargar página"
     }
   },
   "setup": {

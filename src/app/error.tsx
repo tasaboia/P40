@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -92,10 +92,13 @@ export default function ErrorPage({
 }) {
   const router = useRouter();
   const t = useTranslations("errors");
+  const [isChunkError, setIsChunkError] = useState(false);
 
   useEffect(() => {
     const handleChunkError = async () => {
       if (error?.name === "ChunkLoadError") {
+        setIsChunkError(true);
+
         const currentAttempts = Number(
           sessionStorage.getItem(CHUNK_RELOAD_KEY) || "0",
         );
@@ -129,6 +132,31 @@ export default function ErrorPage({
     void handleChunkError();
   }, [error]);
 
+  if (isChunkError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardHeader className="text-center">
+            <div className="flex justify-center">
+              <AlertCircle className="w-12 h-12 text-red-500" />
+            </div>
+            <CardTitle className="text-2xl text-red-600">
+              {t("chunk_error.title")}
+            </CardTitle>
+            <CardDescription className="text-gray-600">
+              {t("chunk_error.description")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-4">
+            <Button onClick={() => window.location.reload()}>
+              {t("chunk_error.reload_button")}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <Card className="w-full max-w-md shadow-lg">
@@ -149,9 +177,9 @@ export default function ErrorPage({
           </p>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => router.push("/")}>
-              {t("not_found.home_button")}
+              {t("general.home_button")}
             </Button>
-            <Button onClick={reset}>{t("not_found.home_button")}</Button>
+            <Button onClick={reset}>{t("general.retry_button")}</Button>
           </div>
         </CardContent>
       </Card>

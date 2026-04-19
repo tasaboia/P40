@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@p40/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const CHUNK_RELOAD_KEY = "p40_chunk_reload_attempts";
 const MAX_CHUNK_RELOADS = 2;
@@ -83,12 +84,16 @@ export default function DashboardError({
   reset: () => void;
 }) {
   const router = useRouter();
+  const t = useTranslations("errors");
+  const [isChunkError, setIsChunkError] = useState(false);
 
   useEffect(() => {
     const handleChunkError = async () => {
       console.error("Erro no dashboard:", error);
 
       if (error?.name === "ChunkLoadError") {
+        setIsChunkError(true);
+
         const currentAttempts = Number(
           sessionStorage.getItem(CHUNK_RELOAD_KEY) || "0",
         );
@@ -123,22 +128,38 @@ export default function DashboardError({
     void handleChunkError();
   }, [error]);
 
+  if (isChunkError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center space-y-6">
+        <AlertCircle className="h-10 w-10 text-destructive" />
+        <h1 className="text-2xl font-bold text-destructive">
+          {t("chunk_error.title")}
+        </h1>
+        <p className="text-muted-foreground max-w-md">
+          {t("chunk_error.description")}
+        </p>
+        <Button variant="default" onClick={() => window.location.reload()}>
+          {t("chunk_error.reload_button")}
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center space-y-6">
       <AlertCircle className="h-10 w-10 text-destructive" />
       <h1 className="text-2xl font-bold text-destructive">
-        Erro ao carregar o dashboard
+        {t("general.title")}
       </h1>
       <p className="text-muted-foreground max-w-md">
-        Ocorreu um erro inesperado. Tente novamente ou entre em contato com o
-        suporte.
+        {t("general.description")}
       </p>
       <div className="flex items-center gap-4">
         <Button variant="default" onClick={reset}>
-          Tentar novamente
+          {t("general.retry_button")}
         </Button>
         <Button variant="outline" onClick={() => router.push("schedule")}>
-          Voltar para o início
+          {t("general.home_button")}
         </Button>
       </div>
     </div>
