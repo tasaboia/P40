@@ -14,7 +14,22 @@ const publicPages = [
 
 const availableLocales = routing?.locales || ["en", "pt", "es"];
 
+const ALLOWED_ORIGIN =
+  process.env.NEXT_PUBLIC_APP_URL || "https://40dias.zionchurch.org.br";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+  "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
+  "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Authorization, Accept",
+  "Access-Control-Allow-Credentials": "true",
+};
+
 export default async function middleware(req: NextRequest) {
+  // Handle CORS preflight requests for API routes
+  if (req.method === "OPTIONS" && req.nextUrl.pathname.startsWith("/api/")) {
+    return NextResponse.json({}, { headers: corsHeaders });
+  }
+
   const publicPathnameRegex = RegExp(
     `^/(${availableLocales.join("|")})?(${publicPages.join("|")})/?$`,
     "i"
@@ -52,5 +67,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|.*\\..*).*)"],
+  matcher: ["/((?!_next|.*\\..*).*)"],
 };
