@@ -2,8 +2,16 @@ import Log from "@p40/services/logging";
 import axios from "axios";
 import { getSession } from "next-auth/react";
 
+// In the browser use a relative base URL so requests always go to the same
+// origin as the page, avoiding cross-origin CORS errors when a custom domain
+// is configured. On the server, fall back to NEXT_PUBLIC_API_BASE_URL.
+const baseURL =
+  typeof window !== "undefined"
+    ? ""
+    : process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

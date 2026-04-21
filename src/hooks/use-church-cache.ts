@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Church } from '@p40/common/contracts/church/zions';
 import api from '@p40/lib/axios';
+import Log from '@p40/services/logging';
 
 const CACHE_KEY = 'zion-storage';
 const CACHE_VERSION = '1.0.0';
@@ -55,7 +56,7 @@ export function useChurchCache() {
         localStorage.setItem(CACHE_KEY, JSON.stringify(newCache));
       }
     } catch (err) {
-      console.error('Erro ao buscar igrejas:', err);
+      Log(err);
       setError(err instanceof Error ? err : new Error('Erro ao buscar igrejas'));
     } finally {
       setIsLoading(false);
@@ -88,7 +89,7 @@ export function useChurchCache() {
           setIsLoading(false);
         }
       } catch (err) {
-        console.error('Erro ao verificar/atualizar cache:', err);
+        Log(err);
         setError(err instanceof Error ? err : new Error('Erro ao verificar cache'));
         setIsLoading(false);
       }
