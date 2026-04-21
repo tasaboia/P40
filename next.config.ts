@@ -1,6 +1,7 @@
 const withNextIntl = require("next-intl/plugin")();
 
-const ALLOWED_ORIGIN = "https://40dias.zionchurch.org.br";
+const ALLOWED_ORIGIN =
+  process.env.NEXT_PUBLIC_APP_URL || "https://40dias.zionchurch.org.br";
 
 const corsHeaders = [
   { key: "Access-Control-Allow-Origin", value: ALLOWED_ORIGIN },

@@ -14,7 +14,8 @@ const publicPages = [
 
 const availableLocales = routing?.locales || ["en", "pt", "es"];
 
-const ALLOWED_ORIGIN = "https://40dias.zionchurch.org.br";
+const ALLOWED_ORIGIN =
+  process.env.NEXT_PUBLIC_APP_URL || "https://40dias.zionchurch.org.br";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
