@@ -50,7 +50,7 @@ export async function GET() {
       })),
     }));
 
-    console.log(formattedResponse);
+    Log({ message: `church/list: ${formattedResponse.length} região(ões) retornada(s)`, name: "INFO" });
 
     return NextResponse.json(formattedResponse, { status: 200 });
   } catch (error) {
