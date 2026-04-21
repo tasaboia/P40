@@ -4,30 +4,27 @@ import { routing } from "./i18n/routing";
 import { auth } from "../auth";
 
 const intlMiddleware = createMiddleware(routing);
+
 const publicPages = [
   "/",
   "/login",
   "/leaders-onboarding",
   "/check-in/login",
-  "/daily-topic"
+  "/daily-topic",
 ];
 
 const availableLocales = routing?.locales || ["en", "pt", "es"];
 
-const ALLOWED_ORIGIN =
-  process.env.NEXT_PUBLIC_APP_URL || "https://40dias.zionchurch.org.br";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
-  "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
-  "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Authorization, Accept",
-  "Access-Control-Allow-Credentials": "true",
-};
-
 export default async function middleware(req: NextRequest) {
-  // Handle CORS preflight requests for API routes
-  if (req.method === "OPTIONS" && req.nextUrl.pathname.startsWith("/api/")) {
-    return NextResponse.json({}, { headers: corsHeaders });
+  const { pathname } = req.nextUrl;
+
+  if (
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/_next") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
   }
 
   const publicPathnameRegex = RegExp(
@@ -35,19 +32,19 @@ export default async function middleware(req: NextRequest) {
     "i"
   );
 
-  const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
+  const isPublicPage = publicPathnameRegex.test(pathname);
 
   let session = null;
   try {
     session = await auth();
   } catch (error) {
-    console.error("⚠ Erro ao obter a sessão:", error);
+    console.error("Erro ao obter a sessão:", error);
   }
 
-  const localeMatch = req.nextUrl.pathname.match(/^\/(en|pt|es)/);
-  const locale = localeMatch ? localeMatch[1] : "pt"; // Se não achar, assume "pt"
+  const localeMatch = pathname.match(/^\/(en|pt|es)/);
+  const locale = localeMatch ? localeMatch[1] : "pt";
 
-  if (!session && req.nextUrl.pathname === `/${locale}/login`) {
+  if (!session && pathname === `/${locale}/login`) {
     return NextResponse.next();
   }
 
@@ -55,11 +52,7 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
-  if (
-    session &&
-    session.user.churchId &&
-    req.nextUrl.pathname === `/${locale}/login`
-  ) {
+  if (session && session.user.churchId && pathname === `/${locale}/login`) {
     return NextResponse.redirect(new URL(`/${locale}/schedule`, req.url));
   }
 
@@ -67,5 +60,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|.*\\..*).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
