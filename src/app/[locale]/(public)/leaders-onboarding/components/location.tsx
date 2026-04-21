@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MapPin,  RefreshCw } from "lucide-react";
 import * as UI from "@p40/components/ui/index";
-import { ErrorHandler } from "@p40/components/custom/error-handler";
 import { Church } from "@p40/common/contracts/church/zions";
 import { useOnboarding } from "@p40/common/context/onboarding-context";
 import { useChurchCache } from "@p40/hooks/use-church-cache";
@@ -46,12 +45,21 @@ export default function Location() {
     );
 
   if (error) {
-    return ErrorHandler({
-      error: {
-        description: "Não foi possível carregar a lista de igrejas. Por favor, tente novamente.",
-        title: "Erro ao carregar igrejas",
-      },
-    });
+    return (
+      <div className="text-center py-12">
+        <p className="text-destructive font-medium">Erro ao carregar igrejas</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Não foi possível carregar a lista de igrejas. Por favor, tente novamente.
+        </p>
+        <UI.Button
+          variant="outline"
+          className="mt-4"
+          onClick={refreshZions}
+        >
+          Tentar novamente
+        </UI.Button>
+      </div>
+    );
   }
 
   return (
