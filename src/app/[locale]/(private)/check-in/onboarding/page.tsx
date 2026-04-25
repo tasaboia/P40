@@ -23,7 +23,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@p40/components/ui";
-import { Check, Clock, CalendarCheck } from "lucide-react";
+import { Check, Clock, CalendarCheck, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { getChurchList } from "@p40/services/zion";
@@ -81,6 +81,7 @@ export default function CheckInProcess() {
   });
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [currentCheckIn, setCurrentCheckIn] = useState<CheckIn | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [churches, setChurches] = useState<Church[]>([]);
   const [initialized, setInitialized] = useState(false);
 
@@ -145,6 +146,15 @@ export default function CheckInProcess() {
 
       const data = await response.json();
 
+      // Se a API retornou sucesso=false, exibir tela de erro
+      if (!data || data.success === false) {
+        setErrorMessage(
+          data?.message || "Não foi possível registrar o check-in."
+        );
+        setCurrentViewWithLog("error");
+        return;
+      }
+
       // Sempre definir os dados do check-in quando disponíveis
       if (data.data) {
         setCurrentCheckIn(data.data);
@@ -167,7 +177,7 @@ export default function CheckInProcess() {
         });
       }
 
-      // Sempre ir para a tela de sucesso após um tempo, independente do resultado
+      // Ir para a tela de sucesso após um tempo
       setTimeout(() => {
         setCurrentViewWithLog("success");
       }, 2000);
@@ -639,6 +649,54 @@ export default function CheckInProcess() {
                 className="w-full h-12 text-base font-medium"
               >
                 Registrar Presença
+              </Button>
+            </CardFooter>
+          </Card>
+        );
+        break;
+
+      case "error":
+        contentToRender = (
+          <Card className="w-full max-w-md shadow-lg bg-white overflow-hidden">
+            <div className="bg-red-500 h-2 w-full"></div>
+            <CardContent className="flex flex-col items-center justify-center pt-10 pb-6">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
+                  duration: 0.6,
+                }}
+                className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6"
+              >
+                <AlertCircle size={36} className="text-red-600" />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-center"
+              >
+                <h2 className="text-2xl font-bold mb-2">
+                  Check-in não realizado
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  {errorMessage ||
+                    "Não foi possível registrar sua presença neste horário."}
+                </p>
+              </motion.div>
+            </CardContent>
+
+            <CardFooter className="px-6 pb-6">
+              <Button
+                onClick={() => router.push("/my-checkin")}
+                variant="outline"
+                className="w-full h-12"
+              >
+                Voltar para o início
               </Button>
             </CardFooter>
           </Card>
