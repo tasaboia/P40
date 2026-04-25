@@ -262,9 +262,28 @@ export async function DELETE(req: Request) {
         statusCode: 404,
       });
     }
-    await prisma.userShift.delete({
-      where: { id: existingShift.id },
+    await prisma.$transaction(async (tx) => {
+      await tx.userShift.delete({
+        where: { id: existingShift.id },
+      });
+
+      const remainingShifts = await tx.userShift.count({
+        where: { prayerTurnId: prayerTurn.id },
+      });
+
+      if (remainingShifts === 0) {
+        const [checkInCount, testimonyCount, occurrenceCount] = await Promise.all([
+          tx.checkIn.count({ where: { prayerTurnId: prayerTurn.id } }),
+          tx.testimony.count({ where: { prayerTurnId: prayerTurn.id } }),
+          tx.occurrence.count({ where: { prayerTurnId: prayerTurn.id } }),
+        ]);
+
+        if (checkInCount === 0 && testimonyCount === 0 && occurrenceCount === 0) {
+          await tx.prayerTurn.delete({ where: { id: prayerTurn.id } });
+        }
+      }
     });
+
     return NextResponse.json({
       status: 200,
       message: "Você saiu do turno com sucesso.",
