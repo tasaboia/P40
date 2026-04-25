@@ -23,13 +23,11 @@ export async function POST(request: Request) {
     let finalPrayerTurnId = prayerTurnId;
 
     if (!finalPrayerTurnId) {
-      const now = new Date();
-      const weekday = now.getDay();
-      const timeString = now.toLocaleTimeString("pt-BR", { 
-        hour: "2-digit", 
-        minute: "2-digit",
-        hour12: false 
-      });
+      const targetDate = date ? new Date(date) : new Date();
+      const weekday = targetDate.getDay();
+      const hours = targetDate.getHours();
+      const minutes = targetDate.getMinutes();
+      const timeString = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 
       // Buscar turno atual
       const currentTurn = await prisma.prayerTurn.findFirst({
@@ -46,8 +44,6 @@ export async function POST(request: Request) {
 
       // Se não encontrar turno no formato normal, verificar turnos que cruzam a meia-noite
       if (!currentTurn) {
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
         const currentTimeInMinutes = hours * 60 + minutes;
 
         const allTurns = await prisma.prayerTurn.findMany({

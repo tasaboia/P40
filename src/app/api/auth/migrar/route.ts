@@ -14,6 +14,7 @@ export async function POST(req: Request) {
     console.log("Corpo da requisição recebido:", body);
 
     const { username, password, zionId, serviceAreas, userType } = body;
+    const normalizedEmail = username?.toLowerCase();
 
     let areas = [];
 
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
     let userData = {
       idProver: String(prover.user.id),
       name: prover.user.nome,
-      email: username,
+      email: normalizedEmail,
       imageUrl: `https://sis.sistemaprover.com.br/public/download/${prover.user.foto}`,
       churchId: zionId,
       serviceAreas: areas,
@@ -88,7 +89,7 @@ export async function POST(req: Request) {
     }
 
     let user = await prisma.user.findUnique({
-      where: { email: username },
+      where: { email: normalizedEmail },
     });
 
     if (!user) {
@@ -105,7 +106,7 @@ export async function POST(req: Request) {
       });
     } else {
       user = await prisma.user.update({
-        where: { email: username },
+        where: { email: normalizedEmail },
         data: {
           idProver: userData.idProver,
           name: userData.name,
