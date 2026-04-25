@@ -43,10 +43,12 @@ export default function DailyTopics({ eventConfigData }: DailyTopicsProps) {
         if (!response?.data) {
           throw new Error("Erro ao carregar as pautas de oração.");
         }
-        // Garante que todas as pautas tenham uma data válida
+        // Garante que todas as pautas tenham uma data válida no formato yyyy-MM-dd
         const formattedTopics = response.data.map(topic => ({
           ...topic,
-          date: topic.date || format(new Date(), "yyyy-MM-dd")
+          date: topic.date
+            ? format(new Date(topic.date), "yyyy-MM-dd")
+            : format(new Date(), "yyyy-MM-dd"),
         }));
         setPrayerTopics(formattedTopics);
       } catch (err) {
@@ -347,6 +349,9 @@ export default function DailyTopics({ eventConfigData }: DailyTopicsProps) {
                             ...topic,
                             date: e.target.value,
                           };
+                          setPrayerTopics((prev) =>
+                            prev.map((t) => (t.id === topic.id ? updatedTopic : t))
+                          );
                           handleTopicUpdate(updatedTopic);
                         }}
                         min={format(eventConfig.startDate, "yyyy-MM-dd")}
@@ -371,6 +376,9 @@ export default function DailyTopics({ eventConfigData }: DailyTopicsProps) {
                             ...topic,
                             description: e.target.value,
                           };
+                          setPrayerTopics((prev) =>
+                            prev.map((t) => (t.id === topic.id ? updatedTopic : t))
+                          );
                           handleTopicUpdate(updatedTopic);
                         }}
                         placeholder="Ex: Família, Nação, Igreja..."
