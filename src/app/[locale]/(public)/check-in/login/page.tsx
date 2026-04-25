@@ -239,7 +239,7 @@ export default function GoogleLogin() {
             {eventId && (
               <CardFooter className="px-6 pt-2 pb-6">
                 <Button
-                  onClick={async () => await signIn("google")}
+                  onClick={async () => await signIn("google", { callbackUrl: `/check-in/login?eventId=${eventId}` })}
                   variant="outline"
                   className="w-full h-10 border border-input bg-background hover:bg-accent"
                   disabled={isLoading}
