@@ -49,6 +49,12 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (!session && !isPublicPage) {
+    const isCheckInPath = pathname.includes("/check-in");
+    if (isCheckInPath) {
+      return NextResponse.redirect(
+        new URL(`/${locale}/check-in/login`, req.url)
+      );
+    }
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
