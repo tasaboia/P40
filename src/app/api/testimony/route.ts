@@ -23,7 +23,8 @@ export async function POST(request: Request) {
     let finalPrayerTurnId = prayerTurnId;
 
     if (!finalPrayerTurnId) {
-      const targetDate = date ? new Date(date) : new Date();
+      const parsedDate = date ? new Date(date) : null;
+      const targetDate = parsedDate && !isNaN(parsedDate.getTime()) ? parsedDate : new Date();
       const weekday = targetDate.getDay();
       const hours = targetDate.getHours();
       const minutes = targetDate.getMinutes();
