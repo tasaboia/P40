@@ -6,7 +6,8 @@ import { shouldAutoAdmin } from "@p40/common/utils/auto-admin";
 
 export async function POST(req: Request) {
   try {
-    const { email, imageUrl, name, zionId } = await req.json();
+    const { email: rawEmail, imageUrl, name, zionId } = await req.json();
+    const email = rawEmail?.toLowerCase();
 
     if (!email || !name) {
       throw new FailException({
