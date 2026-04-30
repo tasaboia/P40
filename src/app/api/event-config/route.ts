@@ -84,21 +84,26 @@ export async function POST(req: NextRequest) {
     //   );
     // }
 
-    const updatedEvent = await prisma.event.update({
-      where: {
-        id,
-      },
-      data: {
-        name,
-        description,
-        churchId,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-        maxParticipantsPerTurn: leadersPerShift,
-        type: eventType,
-        shiftDuration,
-      },
-    });
+    const eventData = {
+      name,
+      description,
+      churchId: user.churchId,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      maxParticipantsPerTurn: leadersPerShift,
+      type: eventType,
+      shiftDuration,
+      allowShiftChange: Boolean(allowShiftChange),
+    };
+
+    const updatedEvent = id
+      ? await prisma.event.update({
+          where: { id },
+          data: eventData,
+        })
+      : await prisma.event.create({
+          data: eventData,
+        });
 
     await prisma.prayerTurn.updateMany({
       where: {

@@ -26,7 +26,7 @@ export class EventConfigService {
       if (event) {
         const allowShiftChange =
           event.prayerTurns.length === 0
-            ? true
+            ? event.allowShiftChange
             : event.prayerTurns.every((turn) => turn.allowChangeAfterStart);
 
         return {
