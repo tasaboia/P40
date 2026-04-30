@@ -3,12 +3,12 @@ import { useOnboarding } from "@p40/common/context/onboarding-context";
 import { Button } from "@p40/components/ui/button";
 import api from "@p40/lib/axios";
 import { Loader2 } from "lucide-react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 export default function GoogleLogin() {
-  const { data: sessionData, status } = useSession();
+  const { data: sessionData, status, update } = useSession();
   const router = useRouter();
   const { onboardingData } = useOnboarding();
 
@@ -26,16 +26,24 @@ export default function GoogleLogin() {
           whatsapp: sessionData?.user.whatsapp,
           zionId: onboardingData.location.id,
           serviceAreas: onboardingData.areas,
-          role: sessionData?.user.role || "LEADER",
+          role: sessionData?.user.role === "ADMIN" ? "ADMIN" : "LEADER",
         });
 
         if (response.status == 200 || response.status == 201) {
-          router.push("schedule");
+          await signOut({ callbackUrl: "/login" });
         }
       };
       updateUser();
+    } else if (status == "authenticated" && sessionData?.user.role != "USER") {
+      router.push("/schedule");
     }
-  }, [status, sessionData?.user.churchId, onboardingData.location.id, onboardingData.areas, router]);
+  }, [
+    status,
+    sessionData?.user.churchId,
+    onboardingData.location.id,
+    onboardingData.areas,
+    router,
+  ]);
 
   if (status == "authenticated") {
     return (
