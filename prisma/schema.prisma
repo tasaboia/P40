@@ -76,6 +76,7 @@ model Event {
   prayerTurns               PrayerTurn[]
   checkIns                  CheckIn[]    
   prayerTopics              DailyPrayerTopic[]
+  allowShiftChange          Boolean @default(false)
   maxParticipantsPerTurn    Int?    @default(2)     
   shiftDuration             Int?    @default(60)  
   createdAt                 DateTime @default(now())
