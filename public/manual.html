@@ -1,0 +1,1568 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manual do Usuário — 40 Dias de Oração</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --purple: #6d28d9;
+        --purple-light: #7c3aed;
+        --purple-soft: #ede9fe;
+        --purple-softer: #f5f3ff;
+        --gold: #d97706;
+        --gold-soft: #fef3c7;
+        --green: #059669;
+        --green-soft: #d1fae5;
+        --blue: #2563eb;
+        --blue-soft: #dbeafe;
+        --red: #dc2626;
+        --red-soft: #fee2e2;
+        --text: #1e1b4b;
+        --text-muted: #6b7280;
+        --border: #e5e7eb;
+        --bg: #fafafa;
+        --white: #ffffff;
+        --radius: 12px;
+        --shadow: 0 2px 12px rgba(109, 40, 217, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      /* COVER */
+      .cover {
+        background: linear-gradient(
+          135deg,
+          #4c1d95 0%,
+          #6d28d9 40%,
+          #7c3aed 70%,
+          #8b5cf6 100%
+        );
+        color: white;
+        padding: 64px 48px;
+        position: relative;
+        overflow: hidden;
+      }
+      .cover::before {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+      }
+      .cover::after {
+        content: "";
+        position: absolute;
+        bottom: -60px;
+        left: -60px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 50%;
+      }
+      .cover-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 100px;
+        padding: 6px 16px;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 24px;
+      }
+      .cover h1 {
+        font-family: "Sora", sans-serif;
+        font-size: 42px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 16px;
+      }
+      .cover h1 span {
+        opacity: 0.7;
+        display: block;
+        font-size: 24px;
+        font-weight: 400;
+        margin-top: 4px;
+      }
+      .cover p {
+        font-size: 16px;
+        opacity: 0.85;
+        max-width: 520px;
+        margin-bottom: 32px;
+        --text: var(var(--bg));
+      }
+      .cover-meta {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+      .cover-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        opacity: 0.8;
+      }
+
+      /* NAV */
+      .toc {
+        background: white;
+        border-bottom: 1px solid var(--border);
+        padding: 16px 48px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+      .toc a {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-muted);
+        text-decoration: none;
+        padding: 5px 12px;
+        border-radius: 100px;
+        border: 1px solid var(--border);
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+      .toc a:hover {
+        background: var(--purple-softer);
+        color: var(--purple);
+        border-color: #c4b5fd;
+      }
+
+      /* LAYOUT */
+      .page {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 0 32px 80px;
+      }
+
+      /* SECTION */
+      .section {
+        margin-top: 56px;
+      }
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid var(--purple-soft);
+      }
+      .section-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--purple-soft);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+      .section-title h2 {
+        font-family: "Sora", sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--purple);
+      }
+      .section-title p {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      /* CARDS */
+      .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow);
+      }
+      .card-title {
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* STEPS */
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .step {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+      }
+      .step-num {
+        width: 28px;
+        height: 28px;
+        background: var(--purple);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .step-content {
+        flex: 1;
+      }
+      .step-content strong {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 2px;
+      }
+      .step-content span {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      /* BADGE */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 100px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .badge-admin {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge-leader {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .badge-user {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-purple {
+        background: var(--purple-soft);
+        color: var(--purple);
+      }
+      .badge-new {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      /* TABLE */
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      thead tr {
+        background: var(--purple-softer);
+      }
+      th {
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 600;
+        color: var(--purple);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      td {
+        padding: 12px 16px;
+        border-top: 1px solid var(--border);
+        vertical-align: top;
+      }
+      tr:hover td {
+        background: var(--purple-softer);
+      }
+
+      /* STATS GRID */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .stat-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+      }
+      .stat-num {
+        font-family: "Sora", sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--purple);
+      }
+      .stat-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      /* CALLOUT */
+      .callout {
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin: 16px 0;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        font-size: 13px;
+      }
+      .callout-icon {
+        font-size: 18px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .callout strong {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 14px;
+      }
+      .callout-info {
+        background: var(--blue-soft);
+        border-left: 3px solid var(--blue);
+        color: #1e3a8a;
+      }
+      .callout-warn {
+        background: var(--gold-soft);
+        border-left: 3px solid var(--gold);
+        color: #78350f;
+      }
+      .callout-success {
+        background: var(--green-soft);
+        border-left: 3px solid var(--green);
+        color: #064e3b;
+      }
+      .callout-purple {
+        background: var(--purple-soft);
+        border-left: 3px solid var(--purple);
+        color: #3b0764;
+      }
+
+      /* COLUMNS */
+      .cols-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      @media (max-width: 640px) {
+        .cols-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* INLINE CODE */
+      code {
+        background: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-size: 12px;
+        font-family: monospace;
+        color: var(--purple);
+      }
+
+      /* DIVIDER */
+      hr {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 32px 0;
+      }
+
+      /* ROLES TABLE SPECIAL */
+      .role-yes {
+        color: var(--green);
+        font-weight: 600;
+      }
+      .role-no {
+        color: #d1d5db;
+      }
+      .role-partial {
+        color: var(--gold);
+        font-weight: 600;
+      }
+
+      /* FOOTER */
+      .footer {
+        text-align: center;
+        padding: 40px 32px;
+        color: var(--text-muted);
+        font-size: 13px;
+        border-top: 1px solid var(--border);
+        margin-top: 64px;
+      }
+      .footer strong {
+        color: var(--purple);
+      }
+
+      /* SCREEN MOCK */
+      .screen-mock {
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 16px 0;
+      }
+      .screen-mock-bar {
+        background: var(--purple);
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .screen-mock-bar span {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 12px;
+      }
+      .screen-mock-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.4);
+      }
+      .screen-mock-body {
+        padding: 20px;
+      }
+
+      /* HIGHLIGHT */
+      .highlight-box {
+        background: linear-gradient(135deg, var(--purple-softer), #faf5ff);
+        border: 1px solid #c4b5fd;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin: 16px 0;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
+      ul li {
+        margin-bottom: 6px;
+        font-size: 14px;
+      }
+      ul li::marker {
+        color: var(--purple);
+      }
+      p {
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #374151;
+      }
+
+      .chip-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 8px 0;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--purple-soft);
+        color: var(--purple);
+        border-radius: 100px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- COVER -->
+    <div class="cover">
+      <div class="cover-badge">📖 Guia Completo da Plataforma</div>
+      <h1>
+        40 Dias de Oração
+        <span>Manual do Usuário — Todas as Funcionalidades</span>
+      </h1>
+      <p>
+        Guia completo para usar a plataforma de gestão dos turnos de oração da
+        Zion Church. Navegue pelas seções abaixo para encontrar o que precisa.
+      </p>
+      <div class="cover-meta">
+        <div class="cover-meta-item">
+          🌐 <span>40dias.zionchurch.org.br</span>
+        </div>
+        <div class="cover-meta-item">🌍 <span>Disponível em PT · EN</span></div>
+        <div class="cover-meta-item">
+          👤 <span>Perfis: Admin · Líder · Usuário</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="toc">
+      <a href="#login">1. Login</a>
+      <a href="#schedule">2. Agenda</a>
+      <a href="#dashboard">3. Dashboard (Admin)</a>
+      <a href="#checkin">4. Check-in</a>
+      <a href="#checkin-overview">5. Visão de Check-ins</a>
+      <a href="#daily-topic">6. Tópico Diário</a>
+      <a href="#occurrences">7. Ocorrências</a>
+      <a href="#testimonies">8. Testemunhos</a>
+      <a href="#event-config">9. Config. do Evento</a>
+      <a href="#my-checkin">10. Meus Check-ins</a>
+      <a href="#perfil">11. Perfil</a>
+      <a href="#roles">12. Permissões</a>
+    </nav>
+
+    <div class="page">
+      <!-- ═══ 1. LOGIN ═══ -->
+      <div class="section" id="login">
+        <div class="section-header">
+          <div class="section-icon">🔐</div>
+          <div class="section-title">
+            <h2>1. Login e Primeiro Acesso</h2>
+            <p>Como entrar na plataforma pela primeira vez</p>
+          </div>
+        </div>
+
+        <div class="cols-2">
+          <div class="card">
+            <div class="card-title">🟣 Login com Google (recomendado)</div>
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                  <strong>Acesse o site</strong
+                  ><span>40dias.zionchurch.org.br</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                  <strong>Clique em "Entrar com Google"</strong
+                  ><span>Use sua conta Google pessoal</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <strong>Selecione sua Igreja</strong
+                  ><span>Escolha a unidade Zion correspondente</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                  <strong>Selecione suas áreas de atuação</strong
+                  ><span>Ex: louvor, intercessão, cuidado</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-content">
+                  <strong>Pronto!</strong
+                  ><span>Você será redirecionado para a Agenda</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">⚪ Login com Prover</div>
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                  <strong>Acesse o site</strong
+                  ><span>40dias.zionchurch.org.br</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                  <strong>Clique em "Ou faça login com dados do Prover"</strong
+                  ><span>Parte inferior da tela de login</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <strong>Informe email e senha</strong
+                  ><span>Os mesmos do sistema Prover</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                  <strong>Selecione sua Igreja</strong
+                  ><span>Mesmo processo do login com Google</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">ℹ️</div>
+          <div>
+            <strong>Regiões disponíveis</strong> Brasil · Europa · América do
+            Norte · América Latina · Global — você sempre poderá ver igrejas de
+            todas as regiões.
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 2. AGENDA ═══ -->
+      <div class="section" id="schedule">
+        <div class="section-header">
+          <div class="section-icon">📅</div>
+          <div class="section-title">
+            <h2>2. Agenda — Turnos de Oração</h2>
+            <p>Visualize, filtre e se inscreva nos horários de oração</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🗂️ O que você vê na Agenda</div>
+          <p>
+            A Agenda exibe todos os turnos de oração do evento. Cada célula
+            representa um horário do dia, mostrando quais líderes já estão
+            inscritos e quantas vagas restam.
+          </p>
+          <div class="chip-row">
+            <span class="chip">📅 Dias da semana</span>
+            <span class="chip">⏰ Horários (ex: 06h–07h)</span>
+            <span class="chip">👤 Líderes inscritos</span>
+            <span class="chip">🟢 Vagas disponíveis</span>
+            <span class="chip">🔴 Horário lotado</span>
+          </div>
+        </div>
+
+        <div class="cols-2">
+          <div class="card">
+            <div class="card-title">➕ Adicionar uma Pauta (inscrever-se)</div>
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                  <strong>Localize o horário desejado</strong
+                  ><span>No calendário semanal</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                  <strong>Clique no horário vago</strong
+                  ><span>Células verdes = vagas disponíveis</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <strong>Confirme a inscrição</strong
+                  ><span>Clique em "Se inscrever no horário"</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                  <strong>Você assumiu o turno!</strong
+                  ><span>Responsável por esse horário nos 40 dias</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">🔍 Filtrar Horários Vagos</div>
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                  <strong>Use os filtros no topo da Agenda</strong
+                  ><span>Filtre por dia da semana, período ou área</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                  <strong>Veja apenas slots vazios</strong
+                  ><span>Ative o filtro "Horários vazios"</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <strong>Resultados em destaque</strong
+                  ><span>Horários sem inscritos aparecem em branco/cinza</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📤 Exportar CSV</div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong
+                  >Na Agenda ou no Dashboard, localize o botão "Exportar
+                  CSV"</strong
+                ><span>Geralmente no canto superior direito da tabela</span>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <strong>Clique para baixar</strong
+                ><span>O arquivo será salvo automaticamente</span>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <strong>Abra no Excel ou Google Sheets</strong
+                ><span>Contém: Nome, WhatsApp, Dia, Horário, Turno</span>
+              </div>
+            </div>
+          </div>
+          <div class="callout callout-warn" style="margin-top: 12px">
+            <div class="callout-icon">⚠️</div>
+            <div>
+              A exportação CSV pode estar disponível apenas para
+              <strong>Admins</strong>. Se não aparecer o botão, solicite ao
+              administrador da sua Igreja.
+            </div>
+          </div>
+        </div>
+
+        <div class="cols-2">
+          <div class="card">
+            <div class="card-title">🕐 Tipos de Evento</div>
+            <ul>
+              <li>
+                <strong>Turnos de Oração (SHIFT)</strong> — Blocos fixos de
+                tempo (ex: 1h por turno). Cada turno tem um líder responsável.
+              </li>
+              <li>
+                <strong>Relógio de Oração (CLOCK)</strong> — Formato circular
+                contínuo de 24h, onde cada horário do dia é coberto por um
+                líder.
+              </li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">🚪 Sair de um Turno</div>
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                  <strong>Localize seu turno na Agenda</strong
+                  ><span>Seus horários aparecem destacados</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                  <strong>Clique no turno</strong
+                  ><span>Abre opções do horário</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <strong>Clique em "Sair do horário"</strong
+                  ><span>⚠️ Só disponível se o Admin permitir</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 3. DASHBOARD ADMIN ═══ -->
+      <div class="section" id="dashboard">
+        <div class="section-header">
+          <div class="section-icon">📊</div>
+          <div class="section-title">
+            <h2>3. Dashboard — Painel Administrativo</h2>
+            <p>Visão geral do evento • exclusivo para Admins</p>
+          </div>
+        </div>
+
+        <div class="callout callout-purple">
+          <div class="callout-icon">🔒</div>
+          <div>
+            <strong>Acesso restrito</strong> O Dashboard completo é visível
+            apenas para usuários com perfil
+            <span class="badge badge-admin">Admin</span>. Líderes veem apenas a
+            Agenda e suas funcionalidades.
+          </div>
+        </div>
+
+        <p>O Dashboard é dividido em duas abas principais:</p>
+
+        <div class="cols-2">
+          <div class="card">
+            <div class="card-title">📋 Aba "Painel"</div>
+            <p
+              style="
+                font-size: 13px;
+                color: var(--text-muted);
+                margin-bottom: 12px;
+              "
+            >
+              Visão geral com métricas e lista de líderes
+            </p>
+            <div class="stats-grid" style="margin-bottom: 0">
+              <div class="stat-card">
+                <div class="stat-num">🟣</div>
+                <div class="stat-label">Líderes inscritos</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-num">⚠️</div>
+                <div class="stat-label">Horários com 1 líder</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-num">✅</div>
+                <div class="stat-label">Horários preenchidos</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-num">⬜</div>
+                <div class="stat-label">Horários vazios</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">📅 Aba "Agenda"</div>
+            <p style="font-size: 13px; color: var(--text-muted)">
+              Exibe o calendário completo com todos os turnos, igual à Agenda
+              dos líderes, mas com mais controles administrativos.
+            </p>
+            <ul style="margin-top: 8px">
+              <li>Ver todos os líderes inscritos por turno</li>
+              <li>Gerenciar horários de qualquer líder</li>
+              <li>Identificar horários críticos (vazios)</li>
+              <li>Exportar dados em CSV</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            📈 Gráfico: Pessoas e Horários por Turnos
+          </div>
+          <p>
+            O painel exibe um gráfico de barras com a distribuição de líderes e
+            horários por <strong>dia da semana</strong>. Isso permite
+            identificar rapidamente quais dias estão com menor cobertura de
+            oração e precisam de atenção.
+          </p>
+          <div class="callout callout-info" style="margin-top: 0">
+            <div class="callout-icon">💡</div>
+            <div>
+              Use o gráfico para
+              <strong>priorizar a captação de líderes</strong> nos dias com
+              barras menores (menos gente inscrita).
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">👥 Tabela de Líderes</div>
+          <p>
+            Abaixo do gráfico, uma tabela lista todos os líderes inscritos no
+            evento com as seguintes informações e ações:
+          </p>
+          <div class="table-wrap" style="margin-top: 12px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Coluna/Ação</th>
+                  <th>Descrição</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Nome</strong></td>
+                  <td>Nome completo do líder</td>
+                </tr>
+                <tr>
+                  <td><strong>WhatsApp</strong></td>
+                  <td>Contato direto para comunicação</td>
+                </tr>
+                <tr>
+                  <td><code>Filtrar por nome...</code></td>
+                  <td>
+                    Campo de busca em tempo real para encontrar um líder
+                    específico
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>⚙️ Ajustes → Gerenciar horários</strong></td>
+                  <td>
+                    Admin pode editar/remover os turnos de qualquer líder
+                    diretamente
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>⚙️ Ajustes → Permitir sair do turno</strong></td>
+                  <td>
+                    Libera ou bloqueia a permissão do líder de sair de um turno
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 4. CHECK-IN ═══ -->
+      <div class="section" id="checkin">
+        <div class="section-header">
+          <div class="section-icon">✅</div>
+          <div class="section-title">
+            <h2>4. Check-in — Marcar Presença</h2>
+            <p>Confirme sua presença no turno de oração</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📲 Como fazer o Check-in</div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong>Acesse a página "Check-in" no menu</strong
+                ><span>Disponível no horário do seu turno</span>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <strong>Confirme sua presença</strong
+                ><span>Clique em "Marcar Presença"</span>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <strong>Mensagem de confirmação</strong
+                ><span>"Muito bom ter você aqui conosco!" ✝️</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-success">
+          <div class="callout-icon">✅</div>
+          <div>
+            <strong>Por que fazer o Check-in?</strong> O check-in registra que
+            você efetivamente esteve presente no turno. Isso alimenta os
+            relatórios de cobertura do evento.
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 5. CHECKIN OVERVIEW ═══ -->
+      <div class="section" id="checkin-overview">
+        <div class="section-header">
+          <div class="section-icon">📋</div>
+          <div class="section-title">
+            <h2>5. Visão Geral de Check-ins</h2>
+            <p>Acompanhe a presença de todos os líderes • Admin</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">👁️ O que aparece nessa página</div>
+          <p>
+            O <strong>Checkin Overview</strong> é uma página de monitoramento
+            (principalmente para Admins) que exibe o histórico de presenças
+            confirmadas por todos os líderes. Permite acompanhar quem compareceu
+            e quais turnos ficaram sem cobertura real.
+          </p>
+          <div class="table-wrap" style="margin-top: 12px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Informação</th>
+                  <th>Descrição</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Líder</strong></td>
+                  <td>Nome de quem fez o check-in</td>
+                </tr>
+                <tr>
+                  <td><strong>Data/Hora</strong></td>
+                  <td>Quando o check-in foi registrado</td>
+                </tr>
+                <tr>
+                  <td><strong>Turno</strong></td>
+                  <td>Qual horário foi confirmado</td>
+                </tr>
+                <tr>
+                  <td><strong>Status</strong></td>
+                  <td>Presente / Ausente</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 6. TÓPICO DIÁRIO ═══ -->
+      <div class="section" id="daily-topic">
+        <div class="section-header">
+          <div class="section-icon">📖</div>
+          <div class="section-title">
+            <h2>6. Tópico Diário — Diretrizes Diárias</h2>
+            <p>Guia de oração para cada dia dos 40 dias</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🙏 O que são as Diretrizes Diárias?</div>
+          <p>
+            Cada dia dos 40 Dias de Oração tem um
+            <strong>tema e diretrizes específicas</strong> para guiar a oração.
+            Essa página exibe o tópico do dia atual, com passagens bíblicas,
+            pontos de intercessão e orientações para quem está no turno.
+          </p>
+          <div class="chip-row">
+            <span class="chip">📖 Versículo do dia</span>
+            <span class="chip">🎯 Tema de oração</span>
+            <span class="chip">📝 Pontos de intercessão</span>
+            <span class="chip">📅 Dia do evento (1 a 40)</span>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">💡</div>
+          <div>
+            Acesse as Diretrizes Diárias
+            <strong>antes de entrar no seu turno</strong> para chegar preparado
+            com o tema do dia!
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 7. OCORRÊNCIAS ═══ -->
+      <div class="section" id="occurrences">
+        <div class="section-header">
+          <div class="section-icon">⚠️</div>
+          <div class="section-title">
+            <h2>7. Ocorrências</h2>
+            <p>Registre e acompanhe situações especiais durante os turnos</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📝 O que é uma Ocorrência?</div>
+          <p>
+            Ocorrências são registros de situações que aconteceram durante um
+            turno de oração — pode ser um pedido de oração especial, uma pessoa
+            que precisou de atendimento, ou qualquer acontecimento relevante que
+            o líder queira documentar.
+          </p>
+          <div class="cols-2" style="margin-top: 12px">
+            <div>
+              <p style="font-weight: 600; font-size: 13px; margin-bottom: 8px">
+                🔵 Para Líderes:
+              </p>
+              <ul>
+                <li>Registrar ocorrências do seu turno</li>
+                <li>Ver ocorrências dos seus turnos anteriores</li>
+              </ul>
+            </div>
+            <div>
+              <p style="font-weight: 600; font-size: 13px; margin-bottom: 8px">
+                🟣 Para Admins:
+              </p>
+              <ul>
+                <li>Ver todas as ocorrências de todos os turnos</li>
+                <li>Filtrar por líder, data ou tipo</li>
+                <li>Exportar histórico de ocorrências</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 8. TESTEMUNHOS ═══ -->
+      <div class="section" id="testimonies">
+        <div class="section-header">
+          <div class="section-icon">✨</div>
+          <div class="section-title">
+            <h2>8. Testemunhos</h2>
+            <p>Compartilhe e aprove relatos dos 40 dias</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💬 Como funcionam os Testemunhos</div>
+          <p>
+            Participantes podem compartilhar testemunhos de como Deus se moveu
+            durante os 40 Dias de Oração. Os relatos passam por aprovação antes
+            de aparecerem publicamente.
+          </p>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong>Acesse "Testemunhos" no menu</strong
+                ><span>Disponível para todos os usuários</span>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <strong>Clique em "Adicionar Testemunho"</strong
+                ><span>Escreva seu relato no campo de texto</span>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <strong>Envie para aprovação</strong
+                ><span>O Admin irá revisar e publicar</span>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <strong>(Admin) Aprovar ou recusar</strong
+                ><span>Testemunhos aprovados ficam visíveis a todos</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-success">
+          <div class="callout-icon">✨</div>
+          <div>
+            <strong>Dica para Admins:</strong> Acesse Testemunhos regularmente
+            para aprovar relatos e estimular a comunidade. Testemunhos aprovados
+            criam engajamento e motivam outros a participar.
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 9. CONFIG EVENTO ═══ -->
+      <div class="section" id="event-config">
+        <div class="section-header">
+          <div class="section-icon">⚙️</div>
+          <div class="section-title">
+            <h2>9. Configuração do Evento</h2>
+            <p>Configure os parâmetros do evento • exclusivo para Admins</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warn">
+          <div class="callout-icon">🔒</div>
+          <div>
+            <strong>Apenas Admins</strong> têm acesso à configuração do evento.
+            Esta página define as regras para toda a Igreja.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🛠️ O que pode ser configurado</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Campo</th>
+                  <th>Descrição</th>
+                  <th>Exemplo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Data de Início</strong></td>
+                  <td>Primeiro dia dos 40 Dias de Oração</td>
+                  <td>01/05/2025</td>
+                </tr>
+                <tr>
+                  <td><strong>Data de Término</strong></td>
+                  <td>Último dia do evento</td>
+                  <td>09/06/2025</td>
+                </tr>
+                <tr>
+                  <td><strong>Tipo do Evento</strong></td>
+                  <td>Turnos de Oração (SHIFT) ou Relógio de Oração (CLOCK)</td>
+                  <td>CLOCK</td>
+                </tr>
+                <tr>
+                  <td><strong>Máx. Participantes por Turno</strong></td>
+                  <td>
+                    Quantos líderes podem se inscrever em um mesmo horário
+                  </td>
+                  <td>2 líderes</td>
+                </tr>
+                <tr>
+                  <td><strong>Duração do Turno</strong></td>
+                  <td>Quanto tempo dura cada slot de oração</td>
+                  <td>1 hora / 30 min</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="callout callout-warn">
+          <div class="callout-icon">⚠️</div>
+          <div>
+            <strong>Atenção:</strong> Alterar as configurações após o início do
+            evento pode afetar os turnos já cadastrados. Recomenda-se configurar
+            antes do lançamento.
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 10. MEU CHECKIN ═══ -->
+      <div class="section" id="my-checkin">
+        <div class="section-header">
+          <div class="section-icon">🗓️</div>
+          <div class="section-title">
+            <h2>10. Meus Check-ins</h2>
+            <p>Histórico pessoal de presença nos turnos</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📆 Acompanhe sua participação</div>
+          <p>
+            A página <strong>Meus Check-ins</strong> exibe seu histórico
+            pessoal: quais turnos você se comprometeu e quais efetivamente
+            confirmou presença. É uma forma de acompanhar sua própria fidelidade
+            durante os 40 dias.
+          </p>
+          <div class="chip-row">
+            <span class="chip">✅ Turnos confirmados</span>
+            <span class="chip">⏰ Turnos agendados</span>
+            <span class="chip">❌ Turnos sem check-in</span>
+            <span class="chip">📊 % de presença</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 11. PERFIL ═══ -->
+      <div class="section" id="perfil">
+        <div class="section-header">
+          <div class="section-icon">👤</div>
+          <div class="section-title">
+            <h2>11. Perfil e Configurações</h2>
+            <p>Atualize seus dados pessoais e preferências</p>
+          </div>
+        </div>
+
+        <div class="cols-2">
+          <div class="card">
+            <div class="card-title">✏️ Meus Dados</div>
+            <div class="steps">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                  <strong>Clique no seu avatar/nome</strong
+                  ><span>Canto superior direito da tela</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                  <strong>Selecione "Meu Perfil" ou "Meus dados"</strong
+                  ><span>No menu dropdown</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <strong>Edite seus dados</strong
+                  ><span>Nome, Email, WhatsApp</span>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                  <strong>Clique em "Salvar"</strong
+                  ><span>Confirmação aparece em verde</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">🌐 Idioma</div>
+            <p>
+              Clique no ícone de globo (🌐) no canto superior direito para
+              trocar o idioma da plataforma.
+            </p>
+            <div class="chip-row">
+              <span class="chip">🇧🇷 Português</span>
+              <span class="chip">🇺🇸 English</span>
+            </div>
+            <hr style="margin: 12px 0" />
+            <div class="card-title" style="margin-bottom: 8px">
+              🚪 Sair da conta
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted)">
+              No mesmo menu dropdown do perfil, clique em
+              <strong>"Sair"</strong> para encerrar a sessão.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ 12. PERMISSÕES ═══ -->
+      <div class="section" id="roles">
+        <div class="section-header">
+          <div class="section-icon">🔑</div>
+          <div class="section-title">
+            <h2>12. Perfis e Permissões</h2>
+            <p>O que cada nível de acesso pode fazer</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Funcionalidade</th>
+                <th><span class="badge badge-admin">Admin</span></th>
+                <th><span class="badge badge-leader">Líder</span></th>
+                <th><span class="badge badge-user">Usuário</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ver Agenda (Turnos)</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Se inscrever em turnos</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+                <td class="role-partial">Limitado</td>
+              </tr>
+              <tr>
+                <td>Fazer Check-in</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Ver Meus Check-ins</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Ver Tópico Diário</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Registrar Ocorrência</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+                <td class="role-no">—</td>
+              </tr>
+              <tr>
+                <td>Compartilhar Testemunho</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+                <td class="role-yes">✓</td>
+              </tr>
+              <tr>
+                <td><strong>Dashboard (Painel Admin)</strong></td>
+                <td class="role-yes">✓</td>
+                <td class="role-no">—</td>
+                <td class="role-no">—</td>
+              </tr>
+              <tr>
+                <td><strong>Ver todos os líderes</strong></td>
+                <td class="role-yes">✓</td>
+                <td class="role-no">—</td>
+                <td class="role-no">—</td>
+              </tr>
+              <tr>
+                <td><strong>Gerenciar horários de líderes</strong></td>
+                <td class="role-yes">✓</td>
+                <td class="role-no">—</td>
+                <td class="role-no">—</td>
+              </tr>
+              <tr>
+                <td><strong>Exportar CSV</strong></td>
+                <td class="role-yes">✓</td>
+                <td class="role-no">—</td>
+                <td class="role-no">—</td>
+              </tr>
+              <tr>
+                <td><strong>Aprovar Testemunhos</strong></td>
+                <td class="role-yes">✓</td>
+                <td class="role-no">—</td>
+                <td class="role-no">—</td>
+              </tr>
+              <tr>
+                <td><strong>Ver Checkin Overview</strong></td>
+                <td class="role-yes">✓</td>
+                <td class="role-partial">Parcial</td>
+                <td class="role-no">—</td>
+              </tr>
+              <tr>
+                <td><strong>Configurar Evento</strong></td>
+                <td class="role-yes">✓</td>
+                <td class="role-no">—</td>
+                <td class="role-no">—</td>
+              </tr>
+              <tr>
+                <td><strong>Permitir/Bloquear saída de turno</strong></td>
+                <td class="role-yes">✓</td>
+                <td class="role-no">—</td>
+                <td class="role-no">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-info" style="margin-top: 16px">
+          <div class="callout-icon">💡</div>
+          <div>
+            Seu perfil é atribuído automaticamente pelo sistema durante o
+            onboarding. Se precisar de acesso Admin, entre em contato com o
+            responsável da sua Igreja.
+          </div>
+        </div>
+      </div>
+
+      <!-- DICAS RÁPIDAS -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon">⚡</div>
+          <div class="section-title">
+            <h2>Referência Rápida — Atalhos</h2>
+            <p>Acesso rápido às ações mais comuns</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>O que quero fazer</th>
+                <th>Onde acessar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>📅 Me inscrever num horário de oração</td>
+                <td>Menu → <strong>Agenda</strong> → clique no horário vago</td>
+              </tr>
+              <tr>
+                <td>🔍 Ver horários que precisam de líder</td>
+                <td>
+                  Menu → <strong>Agenda</strong> → filtro "Horários vazios"
+                </td>
+              </tr>
+              <tr>
+                <td>✅ Confirmar que estou no meu turno</td>
+                <td>Menu → <strong>Check-in</strong> → Marcar Presença</td>
+              </tr>
+              <tr>
+                <td>📖 Ver o tema de oração de hoje</td>
+                <td>Menu → <strong>Tópico Diário</strong></td>
+              </tr>
+              <tr>
+                <td>📊 Ver quantos líderes já se inscreveram</td>
+                <td>Menu → <strong>Dashboard</strong> → Painel (Admin)</td>
+              </tr>
+              <tr>
+                <td>👥 Gerenciar horários de um líder específico</td>
+                <td>Dashboard → Tabela → ⚙️ Ajustes → Gerenciar horários</td>
+              </tr>
+              <tr>
+                <td>📤 Baixar lista de líderes em Excel</td>
+                <td>
+                  Dashboard → Agenda → botão <strong>Exportar CSV</strong>
+                </td>
+              </tr>
+              <tr>
+                <td>✨ Ver / aprovar testemunhos</td>
+                <td>Menu → <strong>Testemunhos</strong></td>
+              </tr>
+              <tr>
+                <td>⚠️ Registrar algo que aconteceu no turno</td>
+                <td>Menu → <strong>Ocorrências</strong> → Nova ocorrência</td>
+              </tr>
+              <tr>
+                <td>⚙️ Alterar datas ou tipo do evento</td>
+                <td>Menu → <strong>Configuração do Evento</strong> (Admin)</td>
+              </tr>
+              <tr>
+                <td>🌐 Mudar idioma (PT/EN)</td>
+                <td>Ícone 🌐 no canto superior direito</td>
+              </tr>
+              <tr>
+                <td>🚪 Sair da conta</td>
+                <td>Avatar → dropdown → <strong>Sair</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- /page -->
+
+    <div class="footer">
+      Manual gerado para a plataforma
+      <strong>40 Dias de Oração — Zion Church</strong><br />
+      <span style="margin-top: 4px; display: block"
+        >40dias.zionchurch.org.br &nbsp;·&nbsp; Versão 2025</span
+      >
+    </div>
+  </body>
+</html>
